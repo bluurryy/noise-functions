@@ -80,6 +80,7 @@ use crate::simd::splat;
 
 pub use crate::util::fractal_bounding;
 
+#[derive(Debug, Clone, Copy)]
 pub struct Frequency<Noise> {
     pub base: Noise,
     pub frequency: f32,
