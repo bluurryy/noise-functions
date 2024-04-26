@@ -42,5 +42,6 @@ rand = { version = "0.8.5", default-features = false, features = ["small_rng"] }
 members = [
   "crates/test-no_std",
   "crates/inspect-asm", 
+  "crates/noise-functions-config", 
   "generate-example-images",
 ]

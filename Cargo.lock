@@ -89,6 +89,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "noise-functions-config"
+version = "0.2.0"
+dependencies = [
+ "noise-functions",
+]
+
+[[package]]
 name = "num-traits"
 version = "0.2.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"

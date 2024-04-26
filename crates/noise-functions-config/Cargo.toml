@@ -1,0 +1,27 @@
+[package]
+name = "noise-functions-config"
+version = "0.2.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Configurable noise generator for `noise-functions`."
+categories = ["no-std", "graphics", "game-development", "algorithms"]
+keywords = ["noise", "perlin", "simplex", "procedural", "random"]
+documentation = "https://docs.rs/noise-functions-config"
+repository = "https://github.com/bluurryy/noise-functions-config"
+readme = "README.md"
+exclude = ["justfile"]
+
+[dependencies]
+noise-functions = { path = "../..", version = "0.1.2", default-features = false }
+
+[features]
+default = ["std"]
+
+### Uses floating point functions from the standard library.
+std = ["noise-functions/std"]
+
+### Required for `no_std`.
+libm = ["noise-functions/libm"]
+
+### Adds support for sampling with simd types.
+nightly-simd = ["noise-functions/nightly-simd"]
