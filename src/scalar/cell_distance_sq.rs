@@ -1,19 +1,17 @@
 use crate::private_prelude::*;
 
 #[inline]
-pub fn gen2(pos: [f32; 2], seed: i32) -> f32 {
-    gen2_distance_squared(pos, seed) - 1.0
+pub fn gen2(pos: [f32; 2], seed: i32, jitter: f32) -> f32 {
+    gen2_distance_squared(pos, seed, jitter) - 1.0
 }
 
 #[inline]
-pub fn gen3(pos: [f32; 3], seed: i32) -> f32 {
-    gen3_distance_squared(pos, seed) - 1.0
+pub fn gen3(pos: [f32; 3], seed: i32, jitter: f32) -> f32 {
+    gen3_distance_squared(pos, seed, jitter) - 1.0
 }
 
 #[inline(always)]
-pub fn gen2_distance_squared([x, y]: [f32; 2], seed: i32) -> f32 {
-    const JITTER: f32 = 0.43701595;
-
+pub fn gen2_distance_squared([x, y]: [f32; 2], seed: i32, jitter: f32) -> f32 {
     let xr: i32 = round_to_int(x);
     let yr: i32 = round_to_int(y);
 
@@ -28,8 +26,8 @@ pub fn gen2_distance_squared([x, y]: [f32; 2], seed: i32) -> f32 {
             let hash: i32 = hash2(seed, x_primed, y_primed);
             let [rand_x, rand_y] = *RAND_VECS_2D[Index2::new(hash)].as_array();
 
-            let vec_x: f32 = (xi as f32 - x) + rand_x * JITTER;
-            let vec_y: f32 = (yi as f32 - y) + rand_y * JITTER;
+            let vec_x: f32 = (xi as f32 - x) + rand_x * jitter;
+            let vec_y: f32 = (yi as f32 - y) + rand_y * jitter;
 
             let new_distance: f32 = vec_x * vec_x + vec_y * vec_y;
             distance = fast_min(distance, new_distance);
@@ -42,9 +40,7 @@ pub fn gen2_distance_squared([x, y]: [f32; 2], seed: i32) -> f32 {
 }
 
 #[inline(always)]
-pub fn gen3_distance_squared([x, y, z]: [f32; 3], seed: i32) -> f32 {
-    const JITTER: f32 = 0.39614353;
-
+pub fn gen3_distance_squared([x, y, z]: [f32; 3], seed: i32, jitter: f32) -> f32 {
     let xr: i32 = round_to_int(x);
     let yr: i32 = round_to_int(y);
     let zr: i32 = round_to_int(z);
@@ -65,9 +61,9 @@ pub fn gen3_distance_squared([x, y, z]: [f32; 3], seed: i32) -> f32 {
                 let hash: i32 = hash3(seed, x_primed, y_primed, z_primed);
                 let [rand_x, rand_y, rand_z, _] = *RAND_VECS_3D[Index3::new(hash)].as_array();
 
-                let vec_x: f32 = (xi as f32 - x) + rand_x * JITTER;
-                let vec_y: f32 = (yi as f32 - y) + rand_y * JITTER;
-                let vec_z: f32 = (zi as f32 - z) + rand_z * JITTER;
+                let vec_x: f32 = (xi as f32 - x) + rand_x * jitter;
+                let vec_y: f32 = (yi as f32 - y) + rand_y * jitter;
+                let vec_z: f32 = (zi as f32 - z) + rand_z * jitter;
 
                 let new_distance: f32 = vec_x * vec_x + vec_y * vec_y + vec_z * vec_z;
                 distance = fast_min(distance, new_distance);

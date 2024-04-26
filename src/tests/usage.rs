@@ -1,3 +1,4 @@
+use crate::cellular::Jitter;
 use crate::*;
 
 #[allow(dead_code)]
@@ -36,7 +37,7 @@ where
 }
 
 macro_rules! assert_noises {
-    ($($noise:ident)*) => {
+    ($($noise:ty)*) => {
         $(
             can_sample::<$noise>();
             can_sample::<Seeded<$noise>>();
@@ -62,6 +63,10 @@ const _STATIC_ASSERTS: () = {
         Perlin
         Value
         ValueCubic
+
+        Jitter<CellDistance>
+        Jitter<CellDistanceSq>
+        Jitter<CellValue>
     }
 };
 

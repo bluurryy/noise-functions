@@ -55,7 +55,7 @@ macro_rules! settings {
 
 #[test]
 fn simple() {
-    const SEED: i32 = 1;
+    const SEED: i32 = 0;
     const FREQUENCY: f32 = 0.01;
 
     let settings = [
@@ -141,13 +141,13 @@ fn fbm_weighted() {
             for lacunarity in range(0.0, 10.0, 10) {
                 for octaves in 3..=5 {
                     let mut noise = FastNoiseLite::new(SEED);
-                    noise.set_frequency(FREQUENCY);
-                    noise.set_fractal_gain(gain);
-                    noise.set_fractal_weighted_strength(weighted_strength);
-                    noise.set_fractal_lacunarity(lacunarity);
-                    noise.set_fractal_octaves(octaves as usize);
-                    noise.set_fractal_type(FractalType::FBm);
-                    noise.set_noise_type(NoiseType::Perlin);
+                    basic_noise.set_frequency(FREQUENCY);
+                    basic_noise.set_fractal_gain(gain);
+                    basic_noise.set_fractal_weighted_strength(weighted_strength);
+                    basic_noise.set_fractal_lacunarity(lacunarity);
+                    basic_noise.set_fractal_octaves(octaves as usize);
+                    basic_noise.set_fractal_type(FractalType::FBm);
+                    basic_noise.set_noise_type(NoiseType::Perlin);
 
                     let gen3 = |mut x: f32, mut y: f32, mut z: f32| {
                         x *= FREQUENCY;
@@ -164,11 +164,11 @@ fn fbm_weighted() {
                                 let x = x as f32;
                                 let y = y as f32;
                                 let z = z as f32;
-                                let reference = noise.get_noise_3d(x, y, z);
+                                let reference = basic_noise.get_noise_3d(x, y, z);
                                 let ours = gen3(x, y, z);
 
                                 if reference != ours {
-                                    let reference = noise.get_noise_3d(x, y, z);
+                                    let reference = basic_noise.get_noise_3d(x, y, z);
                                     let ours = gen3(x, y, z);
                                     assert_eq!(reference, ours, "gain={gain} weighted_strength={weighted_strength} lacunarity={lacunarity} octaves={octaves} x={x} y={y} z={z}");
                                 }

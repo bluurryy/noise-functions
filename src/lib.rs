@@ -4,7 +4,7 @@
 //! Check out the [live demo](https://bluurryy.github.io/noise-functions-demo/)!
 //!
 //! ```
-//! use noise_functions::{ Perlin, OpenSimplex2s, Sample2, NoiseFn };
+//! use noise_functions::{ Perlin, CellDistance, OpenSimplex2s, Sample2, NoiseFn };
 //!
 //! let point = [1.0, 2.0];
 //!
@@ -22,6 +22,12 @@
 //!
 //! // perlin noise with adjusted frequency
 //! let value = Perlin.frequency(3.0).sample2(point);
+//!
+//! // cell distance (voronoi) noise
+//! let value = CellDistance.sample2(point);
+//!
+//! // cell distance (voronoi) noise with jitter multiplier
+//! let value = CellDistance.jitter(0.5).sample2(point);
 //!
 //! // domain warped OpenSimplex2s noise
 //! let warped_noise = |pos: [f32; 2]| {
@@ -119,6 +125,17 @@ where
     fn sample(&self, mut pos: Simd<f32, LANES>) -> f32 {
         pos *= splat(self.frequency);
         self.base.sample(pos)
+    }
+}
+
+const DEFAULT_JITTER_2D: f32 = 0.43701595;
+const DEFAULT_JITTER_3D: f32 = 0.39614353;
+
+pub mod cellular {
+    #[derive(Debug, Clone, Copy)]
+    pub struct Jitter<CellularNoise> {
+        pub base: CellularNoise,
+        pub jitter: f32,
     }
 }
 
@@ -377,13 +394,19 @@ pub(crate) use cfg_const_feature;
 pub(crate) use cfg_const_feature_float;
 
 macro_rules! noise {
+    ($(#[$attr:meta])* $ty:ident) => {
+        $(#[$attr])*
+        #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+        pub struct $ty;
+    };
+}
+
+macro_rules! basic_noise {
     ($(#[$attr:meta])* $mod:ident::$ty:ident) => {
         mod $mod {
             use super::*;
 
-			$(#[$attr])*
-            #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-            pub struct $ty;
+            noise!($(#[$attr])* $ty);
 
             impl $ty {
                 impl_modifiers!();
@@ -485,8 +508,6 @@ macro_rules! noise {
 
 macro_rules! open_simplex {
     ($mod:ident::$ty:ident) => {
-        noise!($mod::$ty);
-
         impl $ty {
             /// Improves 3D orientation as a fallback.
             pub const fn improve3(self) -> open_simplex::Improve3<Self> {
@@ -503,19 +524,216 @@ macro_rules! open_simplex {
                 open_simplex::Improve3Xz(self)
             }
         }
+
+        basic_noise!($mod::$ty);
     };
 }
 
-pub(crate) use noise;
+macro_rules! cellular {
+    ($mod:ident::$ty:ident) => {
+        pub use $mod::$ty;
 
-noise!(cell_distance::CellDistance);
-noise!(cell_distance_sq::CellDistanceSq);
-noise!(cell_value::CellValue);
+        mod $mod {
+            use super::*;
+            use cellular::Jitter;
+
+            noise!($ty);
+
+            impl $ty {
+                /// Multiplies jitter by the provided value.
+                pub const fn jitter(self, jitter: f32) -> Jitter<Self> {
+                    Jitter { base: self, jitter }
+                }
+
+                impl_modifiers!();
+            }
+
+            impl Sample<2> for $ty {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                }
+            }
+
+            impl Sample<3> for $ty {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                }
+            }
+
+            impl Sample<2> for Jitter<$ty> {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(pos, 0, self.jitter)
+                }
+            }
+
+            impl Sample<3> for Jitter<$ty> {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(pos, 0, self.jitter)
+                }
+            }
+
+            impl Sample<2> for Seeded<$ty> {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                }
+            }
+
+            impl Sample<3> for Seeded<$ty> {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                }
+            }
+
+            impl Sample<2> for Seeded<Jitter<$ty>> {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(pos, self.seed, self.base.jitter * DEFAULT_JITTER_2D)
+                }
+            }
+
+            impl Sample<3> for Seeded<Jitter<$ty>> {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(pos, self.seed, self.base.jitter * DEFAULT_JITTER_3D)
+                }
+            }
+
+            impl Sample<2> for Seeded<&$ty> {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                }
+            }
+
+            impl Sample<3> for Seeded<&$ty> {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                }
+            }
+
+            impl Sample<2> for Seeded<&Jitter<$ty>> {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(pos, self.seed, self.base.jitter * DEFAULT_JITTER_2D)
+                }
+            }
+
+            impl Sample<3> for Seeded<&Jitter<$ty>> {
+                #[inline(always)]
+                fn sample(&self, pos: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(pos, self.seed, self.base.jitter * DEFAULT_JITTER_3D)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            pub mod simd {
+                use super::*;
+
+                impl Sample<2, f32x2> for $ty {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                    }
+                }
+
+                impl Sample<3, f32x4> for $ty {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                    }
+                }
+
+                impl Sample<2, f32x2> for Jitter<$ty> {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(pos, 0, self.jitter * DEFAULT_JITTER_2D)
+                    }
+                }
+
+                impl Sample<3, f32x4> for Jitter<$ty> {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(pos, 0, self.jitter * DEFAULT_JITTER_3D)
+                    }
+                }
+
+                impl Sample<2, f32x2> for Seeded<$ty> {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                    }
+                }
+
+                impl Sample<3, f32x4> for Seeded<$ty> {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                    }
+                }
+
+                impl Sample<2, f32x2> for Seeded<Jitter<$ty>> {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(pos, self.seed, self.base.jitter * DEFAULT_JITTER_2D)
+                    }
+                }
+
+                impl Sample<3, f32x4> for Seeded<Jitter<$ty>> {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(pos, self.seed, self.base.jitter * DEFAULT_JITTER_3D)
+                    }
+                }
+
+                impl Sample<2, f32x2> for Seeded<&$ty> {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                    }
+                }
+
+                impl Sample<3, f32x4> for Seeded<&$ty> {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                    }
+                }
+
+                impl Sample<2, f32x2> for Seeded<&Jitter<$ty>> {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(pos, self.seed, self.base.jitter * DEFAULT_JITTER_2D)
+                    }
+                }
+
+                impl Sample<3, f32x4> for Seeded<&Jitter<$ty>> {
+                    #[inline(always)]
+                    fn sample(&self, pos: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(pos, self.seed, self.base.jitter * DEFAULT_JITTER_3D)
+                    }
+                }
+            }
+        }
+    };
+}
+
+pub(crate) use basic_noise;
+
+cellular!(cell_distance::CellDistance);
+cellular!(cell_distance_sq::CellDistanceSq);
+cellular!(cell_value::CellValue);
 open_simplex!(open_simplex_2::OpenSimplex2);
 open_simplex!(open_simplex_2s::OpenSimplex2s);
-noise!(perlin::Perlin);
-noise!(value::Value);
-noise!(value_cubic::ValueCubic);
+basic_noise!(perlin::Perlin);
+basic_noise!(value::Value);
+basic_noise!(value_cubic::ValueCubic);
 
 #[cfg(test)]
 mod tests;

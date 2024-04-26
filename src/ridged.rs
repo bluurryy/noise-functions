@@ -22,7 +22,7 @@ impl<Noise> Ridged<Noise> {
 
 impl<Noise, const DIM: usize> Sample<DIM, [f32; DIM]> for Ridged<Noise>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]> + Copy,
+    for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
 {
     #[inline]
     fn sample(&self, mut pos: [f32; DIM]) -> f32 {
@@ -57,7 +57,7 @@ where
 
 impl<Noise, const DIM: usize> Sample<DIM, [f32; DIM]> for Seeded<Ridged<Noise>>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]> + Copy,
+    for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
 {
     #[inline]
     fn sample(&self, mut pos: [f32; DIM]) -> f32 {
@@ -95,7 +95,7 @@ where
 #[cfg(feature = "nightly-simd")]
 impl<Noise, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for Ridged<Noise>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>> + Copy,
+    for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
@@ -129,7 +129,7 @@ where
 #[cfg(feature = "nightly-simd")]
 impl<Noise, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for Seeded<Ridged<Noise>>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>> + Copy,
+    for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]

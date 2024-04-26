@@ -6,6 +6,7 @@ default:
   cargo clippy --tests --features nightly-simd
 
 all: default
+  just doc
   just test
   cargo ('+' + (open Cargo.toml).package.rust-version) check
   cargo semver-checks
