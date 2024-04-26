@@ -1,0 +1,8 @@
+[package]
+name = "generate-example-images"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+noise-functions = { path = ".." }
+image = { version = "0.25.1", default-features = false, features = ["jpeg"] }

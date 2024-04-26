@@ -1,0 +1,12 @@
+# This was written for nushell version 0.91.0
+set shell := ["nu", "-c"]
+
+default:
+  cargo fmt
+  cargo clippy
+
+@inspect-asm *args:
+  nu inspect-asm.nu x86-64 {{args}} --target-cpu x86-64
+
+@inspect-wasm:
+  nu inspect-asm.nu wasm32 --wasm

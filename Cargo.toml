@@ -1,0 +1,52 @@
+[package]
+name = "noise-functions"
+version = "0.0.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Fast and lightweight noise functions."
+categories = ["no-std", "graphics", "game-development", "algorithms"]
+keywords = ["noise", "perlin", "simplex", "procedural", "random"]
+documentation = "https://docs.rs/noise-functions"
+repository = "https://github.com/bluurryy/noise-functions"
+readme = "README.md"
+rust-version = "1.64.0"
+exclude = ["inspect-asm", "example-images", "justfile"]
+
+[features]
+default = ["std"]
+
+### Required for `no_std`.
+libm = ["dep:libm"]
+
+### Uses floating point functions from the standard library, activates `alloc` feature.
+std = ["alloc"]
+
+### Required for creating samplers from a `Config`.
+alloc = []
+
+### Adds support for sampling with simd types.
+nightly-simd = []
+
+### Makes `fbm(_weighted)` and `ridged(_weighted)` `const fn`s.
+nightly-const-fn-float = []
+
+[dependencies]
+libm = { version = "0.2.8", optional = true, default-features = false }
+document-features = { version = "0.2", optional = true }
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dev-dependencies]
+fast-noise-lite-rs = "0.8.0"
+rand = { version = "0.8.5", default-features = false, features = ["small_rng"] }
+
+[profile.dev.package.fast-noise-lite-rs]
+overflow-checks = false
+
+[workspace]
+members = [
+  "test-no_std",
+  "inspect-asm", 
+  "generate-example-images",
+]
