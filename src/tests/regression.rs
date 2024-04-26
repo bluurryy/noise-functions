@@ -4,7 +4,7 @@ use crate::{
     private_prelude::*,
     tests::{test_n, test_seed},
 };
-use fast_noise_lite_rs::*;
+use fastnoise_lite::*;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 
 struct Settings {
@@ -73,11 +73,11 @@ fn simple() {
     let mut rng = SmallRng::seed_from_u64(test_seed());
 
     for setting in settings {
-        let mut noise = FastNoiseLite::new(SEED);
-        noise.set_frequency(FREQUENCY);
-        noise.set_noise_type(setting.noise_type);
-        noise.set_cellular_distance_function(setting.cellular_distance_function);
-        noise.set_cellular_return_type(setting.cellular_return_type);
+        let mut noise = FastNoiseLite::with_seed(SEED);
+        noise.set_frequency(Some(FREQUENCY));
+        noise.set_noise_type(Some(setting.noise_type));
+        noise.set_cellular_distance_function(Some(setting.cellular_distance_function));
+        noise.set_cellular_return_type(Some(setting.cellular_return_type));
 
         if let Some(gen) = setting.gen2 {
             let gen2 = |mut x: f32, mut y: f32| {

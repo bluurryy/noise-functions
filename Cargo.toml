@@ -35,11 +35,8 @@ document-features = { version = "0.2.8", optional = true }
 all-features = true
 
 [dev-dependencies]
-fast-noise-lite-rs = "0.8.0"
+fastnoise-lite = "1.1.1"
 rand = { version = "0.8.5", default-features = false, features = ["small_rng"] }
-
-[profile.dev.package.fast-noise-lite-rs]
-overflow-checks = false
 
 [workspace]
 members = [

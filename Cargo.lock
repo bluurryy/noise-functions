@@ -30,10 +30,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "fast-noise-lite-rs"
-version = "0.8.0"
+name = "fastnoise-lite"
+version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c68de7bb949a6ad95d284a0f24cc3d316df3dde70d2711a6d5e882fa6e73f83e"
+checksum = "3e5f3c3cc9081e5d0e18bcd50e80cd33cba47fc22f88a9da9c33ecd1c87ea5c0"
+dependencies = [
+ "num-traits",
+]
 
 [[package]]
 name = "generate-example-images"
@@ -80,7 +83,7 @@ name = "noise-functions"
 version = "0.1.1"
 dependencies = [
  "document-features",
- "fast-noise-lite-rs",
+ "fastnoise-lite",
  "libm",
  "rand",
 ]
