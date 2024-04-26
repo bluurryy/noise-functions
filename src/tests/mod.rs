@@ -2,6 +2,8 @@ mod regression;
 
 #[cfg(feature = "nightly-simd")]
 mod simd_regression;
+
+#[cfg(feature = "nightly-simd")]
 mod usage;
 
 #[cfg(miri)]
