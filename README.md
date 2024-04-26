@@ -21,7 +21,7 @@ The implementation of these noise functions are from FastNoiseLite ([github](htt
 ![](/example-images/value.jpg "Value")
 ![](/example-images/value_cubic.jpg "Value Cubic")
 
-![](/example-images/fbm.jpg "Fbm")
-![](/example-images/ridged.jpg "Ridged")
-![](/example-images/warped.jpg "Domain Warped")
-![](/example-images/warped_fbm.jpg "Domain Warped Fbm")
+![](/example-images/fbm.jpg "Fbm (OpenSimplex2)")
+![](/example-images/ridged.jpg "Ridged (OpenSimplex2)")
+![](/example-images/warped.jpg "Domain Warped (OpenSimplex2s)")
+![](/example-images/warped_fbm.jpg "Domain Warped Fbm (OpenSimplex2s)")
