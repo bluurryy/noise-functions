@@ -7,7 +7,7 @@ description = "Configurable noise generator for `noise-functions`."
 categories = ["no-std", "graphics", "game-development", "algorithms"]
 keywords = ["noise", "perlin", "simplex", "procedural", "random"]
 documentation = "https://docs.rs/noise-functions-config"
-repository = "https://github.com/bluurryy/noise-functions-config"
+repository = "https://github.com/bluurryy/noise-functions"
 readme = "README.md"
 exclude = ["justfile"]
 
