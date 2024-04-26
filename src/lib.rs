@@ -8,11 +8,22 @@
 //!
 //! let point = [1.0, 2.0];
 //!
+//! // perlin noise
 //! let value = Perlin.sample2(point);
+//!
+//! // seeded perlin noise
 //! let value = Perlin.seed(42).sample2(point);
+//!
+//! // fractal perlin noise
 //! let value = Perlin.fbm(3, 0.5, 3.0).sample2(point);
+//!
+//! // seeded fractal perlin noise
 //! let value = Perlin.fbm(3, 0.5, 3.0).seed(42).sample2(point);
 //!
+//! // perlin noise with adjusted frequency
+//! let value = Perlin.frequency(3.0).sample2(point);
+//!
+//! // domain warped OpenSimplex2s noise
 //! let warped_noise = |pos: [f32; 2]| {
 //!     let warp_x = OpenSimplex2s.seed(1).sample2(pos);
 //!     let warp_y = OpenSimplex2s.seed(2).sample2(pos);
