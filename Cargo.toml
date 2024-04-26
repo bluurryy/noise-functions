@@ -18,11 +18,8 @@ default = ["std"]
 ### Required for `no_std`.
 libm = ["dep:libm"]
 
-### Uses floating point functions from the standard library, activates `alloc` feature.
-std = ["alloc"]
-
-### Required for creating samplers from a `Config`.
-alloc = []
+### Uses floating point functions from the standard library.
+std = []
 
 ### Adds support for sampling with simd types.
 nightly-simd = []
