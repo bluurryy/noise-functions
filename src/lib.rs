@@ -4,7 +4,7 @@
 //! Check out the [live demo](https://bluurryy.github.io/noise-functions-demo/)!
 //!
 //! ```
-//! use noise_functions::{ Perlin, OpenSimplex2s, Sample2, SampleFn };
+//! use noise_functions::{ Perlin, OpenSimplex2s, Sample2, NoiseFn };
 //!
 //! let point = [1.0, 2.0];
 //!
@@ -252,9 +252,9 @@ macro_rules! impl_modifiers {
 /// With a seed parameter it can be used for fractals:
 ///
 /// ```rust
-/// use noise_functions::{ SampleFn, Sample2, OpenSimplex2s };
+/// use noise_functions::{ NoiseFn, Sample2, OpenSimplex2s };
 ///
-/// let warped = SampleFn(|pos: [f32; 2], seed: i32| {
+/// let warped = NoiseFn(|pos: [f32; 2], seed: i32| {
 ///     let warp_x = OpenSimplex2s.seed(seed + 100).sample2(pos);
 ///     let warp_y = OpenSimplex2s.seed(seed + 200).sample2(pos);
 ///     let warped = [pos[0] + warp_x, pos[1] + warp_y];
@@ -265,13 +265,13 @@ macro_rules! impl_modifiers {
 ///
 /// let value = warped_fbm.sample2([1.0, 2.0]);
 /// ```
-pub struct SampleFn<F>(pub F);
+pub struct NoiseFn<F>(pub F);
 
-impl<F> SampleFn<F> {
+impl<F> NoiseFn<F> {
     impl_modifiers!();
 }
 
-impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for SampleFn<F>
+impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for NoiseFn<F>
 where
     F: Fn(Pos) -> f32,
 {
@@ -280,7 +280,7 @@ where
     }
 }
 
-impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for Seeded<SampleFn<F>>
+impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for Seeded<NoiseFn<F>>
 where
     F: Fn(Pos, i32) -> f32,
 {
@@ -290,7 +290,7 @@ where
     }
 }
 
-impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for Seeded<&SampleFn<F>>
+impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for Seeded<&NoiseFn<F>>
 where
     F: Fn(Pos, i32) -> f32,
 {

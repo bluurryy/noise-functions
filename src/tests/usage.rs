@@ -66,8 +66,8 @@ const _STATIC_ASSERTS: () = {
 };
 
 const _STATIC_ASSERTS_NOISE_FN: () = {
-    can_sample2::<Fbm<SampleFn<Box<dyn Fn([f32; 2], i32) -> f32>>>>();
-    can_sample2a::<Fbm<SampleFn<Box<dyn Fn(f32x2, i32) -> f32>>>>();
-    can_sample3::<Fbm<SampleFn<Box<dyn Fn([f32; 3], i32) -> f32>>>>();
-    can_sample3a::<Fbm<SampleFn<Box<dyn Fn(f32x4, i32) -> f32>>>>();
+    can_sample2::<Fbm<NoiseFn<Box<dyn Fn([f32; 2], i32) -> f32>>>>();
+    can_sample2a::<Fbm<NoiseFn<Box<dyn Fn(f32x2, i32) -> f32>>>>();
+    can_sample3::<Fbm<NoiseFn<Box<dyn Fn([f32; 3], i32) -> f32>>>>();
+    can_sample3a::<Fbm<NoiseFn<Box<dyn Fn(f32x4, i32) -> f32>>>>();
 };

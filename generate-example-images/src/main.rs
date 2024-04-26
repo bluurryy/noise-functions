@@ -32,15 +32,15 @@ fn main() {
     noise_to_png("value", Value);
     noise_to_png("value_cubic", ValueCubic);
 
-    let fbm = SampleFn(|pos: [f32; 2]| OpenSimplex2.fbm(3, 0.5, 2.0).sample(pos));
+    let fbm = NoiseFn(|pos: [f32; 2]| OpenSimplex2.fbm(3, 0.5, 2.0).sample(pos));
 
     noise_to_png("fbm", fbm);
 
-    let ridged = SampleFn(|pos: [f32; 2]| OpenSimplex2.ridged(3, 0.5, 2.0).sample(pos));
+    let ridged = NoiseFn(|pos: [f32; 2]| OpenSimplex2.ridged(3, 0.5, 2.0).sample(pos));
 
     noise_to_png("ridged", ridged);
 
-    let warped = SampleFn(|pos: [f32; 2]| {
+    let warped = NoiseFn(|pos: [f32; 2]| {
         let warp_x = OpenSimplex2s.seed(1).sample(pos);
         let warp_y = OpenSimplex2s.seed(2).sample(pos);
         let warped = [pos[0] + warp_x, pos[1] + warp_y];
@@ -49,7 +49,7 @@ fn main() {
 
     noise_to_png("warped", warped);
 
-    let warped_fbm = SampleFn(|pos: [f32; 2], seed: i32| {
+    let warped_fbm = NoiseFn(|pos: [f32; 2], seed: i32| {
         let warp_x = OpenSimplex2s.seed(seed + 100).sample(pos);
         let warp_y = OpenSimplex2s.seed(seed + 200).sample(pos);
         let warped = [pos[0] + warp_x, pos[1] + warp_y];
