@@ -7,13 +7,15 @@ use crate::{
 use fastnoise_lite::*;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 
+trait SampleBoth: Sample<2> + Sample<3> {}
+impl<T> SampleBoth for T where T: Sample<2> + Sample<3> {}
+
 struct Settings {
     name: &'static str,
     cellular_distance_function: CellularDistanceFunction,
     cellular_return_type: CellularReturnType,
     noise_type: NoiseType,
-    gen2: Option<fn([f32; 2], i32) -> f32>,
-    gen3: Option<fn([f32; 3], i32) -> f32>,
+    sampler: Option<Box<dyn SampleBoth>>,
     improve3: Option<fn([f32; 3]) -> [f32; 3]>,
 }
 
@@ -24,8 +26,7 @@ impl Default for Settings {
             cellular_distance_function: CellularDistanceFunction::Euclidean,
             cellular_return_type: CellularReturnType::Distance,
             noise_type: NoiseType::Value,
-            gen2: None,
-            gen3: None,
+            sampler: None,
             improve3: None,
         }
     }
@@ -36,15 +37,14 @@ pub fn default<T: Default>() -> T {
 }
 
 macro_rules! settings {
-    ($($module:ident)::* as { $($field:ident: $value:expr),* $(,)? }) => {{
+    ($name:ident as { $($field:ident: $value:expr),* $(,)? }) => {{
       #[allow(unused_imports)] use NoiseType::*;
       #[allow(unused_imports)] use CellularDistanceFunction::*;
       #[allow(unused_imports)] use CellularReturnType::*;
 
       Settings {
-        name: stringify!($($module)*),
-        gen2: Some(scalar::$($module::)*gen2),
-        gen3: Some(scalar::$($module::)*gen3),
+        name: stringify!($name),
+        sampler: Some(Box::new(crate::$name.seed(SEED))),
         $(
           $field: $value,
         )*
@@ -59,14 +59,14 @@ fn simple() {
     const FREQUENCY: f32 = 0.01;
 
     let settings = [
-        settings!(perlin as { noise_type: Perlin }),
-        settings!(open_simplex_2 as { noise_type: OpenSimplex2, improve3: Some(scalar::open_simplex_2::improve3) }),
-        settings!(open_simplex_2s as { noise_type: OpenSimplex2S, improve3: Some(scalar::open_simplex_2s::improve3) }),
-        settings!(value as { noise_type: Value }),
-        settings!(value_cubic as { noise_type: ValueCubic }),
-        settings!(cell_distance as { noise_type: Cellular, cellular_distance_function: Euclidean }),
-        settings!(cell_distance_sq as { noise_type: Cellular, cellular_distance_function: EuclideanSq }),
-        settings!(cell_value as { noise_type: Cellular, cellular_distance_function: EuclideanSq, cellular_return_type: CellValue }),
+        settings!(Perlin as { noise_type: Perlin }),
+        settings!(OpenSimplex2 as { noise_type: OpenSimplex2, improve3: Some(scalar::open_simplex_2::improve3) }),
+        settings!(OpenSimplex2s as { noise_type: OpenSimplex2S, improve3: Some(scalar::open_simplex_2s::improve3) }),
+        settings!(Value as { noise_type: Value }),
+        settings!(ValueCubic as { noise_type: ValueCubic }),
+        settings!(CellDistance as { noise_type: Cellular, cellular_distance_function: Euclidean }),
+        settings!(CellDistanceSq as { noise_type: Cellular, cellular_distance_function: EuclideanSq }),
+        settings!(CellValue as { noise_type: Cellular, cellular_distance_function: EuclideanSq, cellular_return_type: CellValue }),
     ];
 
     let n = test_n();
@@ -79,11 +79,11 @@ fn simple() {
         noise.set_cellular_distance_function(Some(setting.cellular_distance_function));
         noise.set_cellular_return_type(Some(setting.cellular_return_type));
 
-        if let Some(gen) = setting.gen2 {
+        if let Some(sampler) = setting.sampler.as_deref() {
             let gen2 = |mut x: f32, mut y: f32| {
                 x *= FREQUENCY;
                 y *= FREQUENCY;
-                gen([x, y], SEED)
+                sampler.sample([x, y])
             };
 
             for i in 0..n {
@@ -98,15 +98,14 @@ fn simple() {
                     assert_eq!(reference, ours, "{}::gen2 x={} y={}", setting.name, x, y);
                 }
             }
-        }
 
-        if let Some(gen) = setting.gen3 {
             let improve3 = setting.improve3.unwrap_or(identity);
+
             let gen3 = |mut x: f32, mut y: f32, mut z: f32| {
                 x *= FREQUENCY;
                 y *= FREQUENCY;
                 z *= FREQUENCY;
-                gen(improve3([x, y, z]), SEED)
+                sampler.sample(improve3([x, y, z]))
             };
 
             for i in 0..n {
