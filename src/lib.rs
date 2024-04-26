@@ -47,6 +47,9 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide), doc(cfg_hide(no_global_oom_handling, feature = "nightly-const-fn-float")))]
 #![allow(clippy::excessive_precision, clippy::needless_late_init, clippy::too_many_arguments)]
 
+#[cfg(all(not(feature = "std"), not(feature = "libm")))]
+compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature must be enabled"#);
+
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
