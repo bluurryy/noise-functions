@@ -14,7 +14,7 @@ test:
   cargo test --features nightly-simd
 
 doc *args:
-  cargo rustdoc {{args}} --features nightly-simd -- --cfg docsrs
+  cargo rustdoc {{args}} --features nightly-simd,document-features -- --cfg docsrs
 
 inspect-asm:
   just inspect-asm/inspect-asm

@@ -35,6 +35,12 @@
 //! ```
 //!
 //! The implementation of these noise functions are from FastNoiseLite ([github](https://github.com/Auburn/FastNoiseLite)/[crate](https://docs.rs/fastnoise-lite/latest/fastnoise_lite/)).
+//!
+//! ## Feature flags
+#![cfg_attr(
+    feature = "document-features",
+    cfg_attr(doc, doc = ::document_features::document_features!())
+)]
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "nightly-simd", feature(portable_simd))]
 #![cfg_attr(feature = "nightly-const-fn-float", feature(const_fn_floating_point_arithmetic))]

@@ -15,21 +15,21 @@ exclude = ["inspect-asm", "example-images", "justfile"]
 [features]
 default = ["std"]
 
-### Required for `no_std`.
-libm = ["dep:libm"]
-
-### Uses floating point functions from the standard library.
+## Uses floating point functions from the standard library.
 std = []
 
-### Adds support for sampling with simd types.
+## Uses `libm` for floating point functions. Required for `no_std`.
+libm = ["dep:libm"]
+
+## Adds support for sampling with simd types.
 nightly-simd = []
 
-### Makes `fbm(_weighted)` and `ridged(_weighted)` `const fn`s.
+## Makes `fbm(_weighted)` and `ridged(_weighted)` `const fn`s.
 nightly-const-fn-float = []
 
 [dependencies]
 libm = { version = "0.2.8", optional = true, default-features = false }
-document-features = { version = "0.2", optional = true }
+document-features = { version = "0.2.8", optional = true }
 
 [package.metadata.docs.rs]
 all-features = true
