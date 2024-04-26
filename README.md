@@ -24,3 +24,4 @@ The implementation of these noise functions are from FastNoiseLite ([github](htt
 ![](/example-images/fbm.jpg "Fbm")
 ![](/example-images/ridged.jpg "Ridged")
 ![](/example-images/warped.jpg "Domain Warped")
+![](/example-images/warped_fbm.jpg "Domain Warped Fbm")

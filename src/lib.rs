@@ -176,21 +176,100 @@ helper_trait!(
     3 as f32x4
 );
 
+macro_rules! impl_modifiers {
+    () => {
+        #[inline(always)]
+        pub const fn seed(self, seed: i32) -> Seeded<Self> {
+            Seeded { base: self, seed }
+        }
+
+        #[inline(always)]
+        pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
+            Frequency { base: self, frequency }
+        }
+
+        cfg_const_feature_float! {
+            #[inline(always)]
+            pub fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> Fbm<Self> {
+                Fbm {
+                    base: self,
+                    octaves,
+                    gain,
+                    lacunarity,
+                    fractal_bounding: fractal_bounding(octaves, gain),
+                }
+            }
+        }
+
+        cfg_const_feature_float! {
+            #[inline(always)]
+            pub fn fbm_weighted(self, octaves: u32, gain: f32, lacunarity: f32, weighted_strength: f32) -> FbmWeighted<Self> {
+                FbmWeighted {
+                    base: self,
+                    octaves,
+                    gain,
+                    lacunarity,
+                    fractal_bounding: fractal_bounding(octaves, gain),
+                    weighted_strength,
+                }
+            }
+        }
+
+        cfg_const_feature_float! {
+            #[inline(always)]
+            pub fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> Ridged<Self> {
+                Ridged {
+                    base: self,
+                    octaves,
+                    gain,
+                    lacunarity,
+                    fractal_bounding: fractal_bounding(octaves, gain),
+                }
+            }
+        }
+
+        cfg_const_feature_float! {
+            #[inline(always)]
+            pub fn ridged_weighted(self, octaves: u32, gain: f32, lacunarity: f32, weighted_strength: f32) -> RidgedWeighted<Self> {
+                RidgedWeighted {
+                    base: self,
+                    octaves,
+                    gain,
+                    lacunarity,
+                    fractal_bounding: fractal_bounding(octaves, gain),
+                    weighted_strength,
+                }
+            }
+        }
+    };
+}
+
 /// Wraps a function to make it implement [`Sample`].
+///
+/// The function is expected to take one parameter for the position and optionally
+/// a seed parameter.
+///
+/// With a seed parameter it can be used for fractals:
 ///
 /// ```rust
 /// use noise_functions::{ SampleFn, Sample2, OpenSimplex2s };
 ///
-/// let warped_noise = SampleFn(|pos: [f32; 2]| {
-///     let warp_x = OpenSimplex2s.seed(1).sample2(pos);
-///     let warp_y = OpenSimplex2s.seed(2).sample2(pos);
+/// let warped = SampleFn(|pos: [f32; 2], seed: i32| {
+///     let warp_x = OpenSimplex2s.seed(seed + 100).sample2(pos);
+///     let warp_y = OpenSimplex2s.seed(seed + 200).sample2(pos);
 ///     let warped = [pos[0] + warp_x, pos[1] + warp_y];
 ///     OpenSimplex2s.sample2(warped)
 /// });
 ///
-/// let value = warped_noise.sample2([1.0, 2.0]);
+/// let warped_fbm = warped.fbm(3, 0.5, 2.0);
+///
+/// let value = warped_fbm.sample2([1.0, 2.0]);
 /// ```
 pub struct SampleFn<F>(pub F);
+
+impl<F> SampleFn<F> {
+    impl_modifiers!();
+}
 
 impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for SampleFn<F>
 where
@@ -198,6 +277,26 @@ where
 {
     fn sample(&self, pos: Pos) -> f32 {
         self.0(pos)
+    }
+}
+
+impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for Seeded<SampleFn<F>>
+where
+    F: Fn(Pos, i32) -> f32,
+{
+    fn sample(&self, pos: Pos) -> f32 {
+        let &Seeded { ref base, seed } = self;
+        base.0(pos, seed)
+    }
+}
+
+impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for Seeded<&SampleFn<F>>
+where
+    F: Fn(Pos, i32) -> f32,
+{
+    fn sample(&self, pos: Pos) -> f32 {
+        let &Seeded { base, seed } = self;
+        base.0(pos, seed)
     }
 }
 
@@ -277,69 +376,7 @@ macro_rules! noise {
             pub struct $ty;
 
             impl $ty {
-                #[inline(always)]
-                pub const fn seed(self, seed: i32) -> Seeded<Self> {
-                    Seeded { base: self, seed }
-                }
-
-                #[inline(always)]
-                pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
-                    Frequency { base: self, frequency }
-                }
-
-                cfg_const_feature_float! {
-                    #[inline(always)]
-                    pub fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> Fbm<Self> {
-                        Fbm {
-                            base: self,
-                            octaves,
-                            gain,
-                            lacunarity,
-                            fractal_bounding: fractal_bounding(octaves, gain),
-                        }
-                    }
-                }
-
-                cfg_const_feature_float! {
-                    #[inline(always)]
-                    pub fn fbm_weighted(self, octaves: u32, gain: f32, lacunarity: f32, weighted_strength: f32) -> FbmWeighted<Self> {
-                        FbmWeighted {
-                            base: self,
-                            octaves,
-                            gain,
-                            lacunarity,
-                            fractal_bounding: fractal_bounding(octaves, gain),
-                            weighted_strength,
-                        }
-                    }
-                }
-
-                cfg_const_feature_float! {
-                    #[inline(always)]
-                    pub fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> Ridged<Self> {
-                        Ridged {
-                            base: self,
-                            octaves,
-                            gain,
-                            lacunarity,
-                            fractal_bounding: fractal_bounding(octaves, gain),
-                        }
-                    }
-                }
-
-                cfg_const_feature_float! {
-                    #[inline(always)]
-                    pub fn ridged_weighted(self, octaves: u32, gain: f32, lacunarity: f32, weighted_strength: f32) -> RidgedWeighted<Self> {
-                        RidgedWeighted {
-                            base: self,
-                            octaves,
-                            gain,
-                            lacunarity,
-                            fractal_bounding: fractal_bounding(octaves, gain),
-                            weighted_strength,
-                        }
-                    }
-                }
+                impl_modifiers!();
             }
 
             impl Sample<2> for $ty {
