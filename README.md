@@ -39,9 +39,9 @@ fn my_noise(point: Vec2) -> f32 {
 }
 ```
 
-**But** for now, the `noise` crate has more noise functions, more dimensions for noise functions and more noise combinators. The `noise` crate uses `f64` instead of `f32`.
+For now, the `noise` crate has more noise functions, more dimensions for noise functions and more noise combinators. The `noise` crate uses `f64` instead of `f32`.
 
 ### Why not [`fastnoise-lite`](https://lib.rs/crates/fastnoise-lite)?
 `fastnoise-lite` provides its noise generation via a big struct that you are to mutate to get the noise you want. If you already know what noise you want this api is inconvenient and inefficient. There is the [`noise-functions-config`](https://lib.rs/crates/noise-functions-config) crate that provides a similar api if you need it.
 
-**But** for now, `fastnoise-lite` provides more cellular noise variations, the fractal `PingPong` type and domain warping built into the config struct.
+For now, `fastnoise-lite` provides more cellular noise variations, the fractal `PingPong` type and domain warping built into the config struct.
