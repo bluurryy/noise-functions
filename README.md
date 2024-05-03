@@ -11,7 +11,7 @@ Check out the [live demo](https://bluurryy.github.io/noise-functions-demo/)!
 
 The implementation of these noise functions are from FastNoiseLite ([github](https://github.com/Auburn/FastNoiseLite)/[crate](https://docs.rs/fastnoise-lite/latest/fastnoise_lite/)).
 
-## Base noise functions
+### Base noise functions
 ![](/example-images/cell_distance_sq.jpg "Cell Distance Squared")
 ![](/example-images/cell_distance.jpg "Cell Distance")
 ![](/example-images/cell_value.jpg "Cell Value")
@@ -21,8 +21,27 @@ The implementation of these noise functions are from FastNoiseLite ([github](htt
 ![](/example-images/value.jpg "Value")
 ![](/example-images/value_cubic.jpg "Value Cubic")
 
-## Examples of combined noises
+### Examples of combined noises
 ![](/example-images/fbm.jpg "Fbm (OpenSimplex2)")
 ![](/example-images/ridged.jpg "Ridged (OpenSimplex2)")
 ![](/example-images/warped.jpg "Domain Warped (OpenSimplex2s)")
 ![](/example-images/warped_fbm.jpg "Domain Warped Fbm (OpenSimplex2s)")
+
+## Alternatives
+
+### Why not [`noise`](https://lib.rs/crates/noise)?
+With `noise`, constructing a noise struct like `Perlin` creates a permutation table at runtime. So to use the noise efficiently, you need to keep that instance of `Perlin` around.
+
+With `noise-functions`, `Perlin` does not carry any state. So there is no overhead to calling a function like this in a tight loop:
+```rust
+fn my_noise(point: Vec2) -> f32 {
+    Perlin.fbm(3, 0.5, 2.0).seed(42).frequency(3.0).sample2(point)
+}
+```
+
+**But** for now, the `noise` crate has more noise functions, more dimensions for noise functions and more noise combinators. The `noise` crate uses `f64` instead of `f32`.
+
+### Why not [`fastnoise-lite`](https://lib.rs/crates/fastnoise-lite)?
+`fastnoise-lite` provides its noise generation via a big struct that you are to mutate to get the noise you want. If you already know what noise you want this api is inconvenient and inefficient. There is the [`noise-functions-config`](https://lib.rs/crates/noise-functions-config) crate that provides a similar api if you need it.
+
+**But** for now, `fastnoise-lite` provides more cellular noise variations, the fractal `PingPong` type and domain warping built into the config struct.
