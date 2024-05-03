@@ -1,5 +1,3 @@
-use core::convert::identity;
-
 use crate::{
     private_prelude::*,
     tests::{test_n, test_seed},
@@ -16,7 +14,6 @@ struct Settings {
     cellular_return_type: CellularReturnType,
     noise_type: NoiseType,
     sampler: Option<Box<dyn SampleBoth>>,
-    improve3: Option<fn([f32; 3]) -> [f32; 3]>,
 }
 
 impl Default for Settings {
@@ -27,7 +24,6 @@ impl Default for Settings {
             cellular_return_type: CellularReturnType::Distance,
             noise_type: NoiseType::Value,
             sampler: None,
-            improve3: None,
         }
     }
 }
@@ -41,7 +37,7 @@ macro_rules! settings {
       #[allow(unused_imports)] use NoiseType::*;
       #[allow(unused_imports)] use CellularDistanceFunction::*;
       #[allow(unused_imports)] use CellularReturnType::*;
-
+      #[allow(clippy::needless_update)]
       Settings {
         name: stringify!($name),
         sampler: Some(Box::new(crate::$name.seed(SEED))),
@@ -60,8 +56,8 @@ fn simple() {
 
     let settings = [
         settings!(Perlin as { noise_type: Perlin }),
-        settings!(OpenSimplex2 as { noise_type: OpenSimplex2, improve3: Some(scalar::open_simplex_2::improve3) }),
-        settings!(OpenSimplex2s as { noise_type: OpenSimplex2S, improve3: Some(scalar::open_simplex_2s::improve3) }),
+        settings!(OpenSimplex2 as { noise_type: OpenSimplex2 }),
+        settings!(OpenSimplex2s as { noise_type: OpenSimplex2S }),
         settings!(Value as { noise_type: Value }),
         settings!(ValueCubic as { noise_type: ValueCubic }),
         settings!(CellDistance as { noise_type: Cellular, cellular_distance_function: Euclidean }),
@@ -98,14 +94,11 @@ fn simple() {
                     assert_eq!(reference, ours, "{}::gen2 x={} y={}", setting.name, x, y);
                 }
             }
-
-            let improve3 = setting.improve3.unwrap_or(identity);
-
             let gen3 = |mut x: f32, mut y: f32, mut z: f32| {
                 x *= FREQUENCY;
                 y *= FREQUENCY;
                 z *= FREQUENCY;
-                sampler.sample(improve3([x, y, z]))
+                sampler.sample([x, y, z])
             };
 
             for i in 0..n {

@@ -4,6 +4,7 @@
 - **breaking:** removed `*Weighted` structs, `Weighted` becomes a modifier struct
 - **breaking:** rename `base` to `noise`
 - **breaking:** `Fbm`, `Ridged`, `PingPong`, `Weighted` and `fractal_bounding` is no longer in the crate root but in the `fractal` module
+- **breaking:** `OpenSimplex2(s)` apply the fallback orientation improvement by default, you can change the orientation improvement with `improve_xy`, `improve_xz` and `ImproveXy`, `ImproveXz`
 
 ## 0.1.3 (2024-05-03)
 - **added:** `Seeded::frequency`

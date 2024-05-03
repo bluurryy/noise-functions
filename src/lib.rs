@@ -75,6 +75,7 @@ mod util;
 
 pub use frequency::Frequency;
 pub use noise_fn::NoiseFn;
+pub use open_simplex::{OpenSimplex2, OpenSimplex2s};
 pub use sample::{Sample, Sample2, Sample3};
 pub use seeded::Seeded;
 
@@ -327,39 +328,6 @@ macro_rules! basic_noise {
     };
 }
 
-macro_rules! open_simplex {
-    ($mod:ident::$ty:ident) => {
-        impl $ty {
-            /// Improves 3D orientation as a fallback.
-            pub const fn improve3(self) -> open_simplex::Improve3<Self> {
-                open_simplex::Improve3(self)
-            }
-
-            /// Improves 3D orientation for the `XY` plane.
-            pub const fn improve3_xy(self) -> open_simplex::Improve3Xy<Self> {
-                open_simplex::Improve3Xy(self)
-            }
-
-            /// Improves 3D orientation for the `XZ` plane.
-            pub const fn improve3_xz(self) -> open_simplex::Improve3Xz<Self> {
-                open_simplex::Improve3Xz(self)
-            }
-        }
-
-        basic_noise! {
-            /// 2/3 Dimensional OpenSimplex2 noise.
-            ///
-            /// When sampling in 3 Dimensions you should choose one of the `Improve*` wrappers ([`Improve3`], [`Improve3Xy`], [`Improve3Xz`])
-            /// to improve the orientation of the noise. This wrapper should be put at the end as it can't be seeded or used in fractals.
-            ///
-            /// [`Improve3`]: crate::open_simplex::Improve3
-            /// [`Improve3Xy`]: crate::open_simplex::Improve3Xy
-            /// [`Improve3Xz`]: crate::open_simplex::Improve3Xz
-            $mod::$ty
-        }
-    };
-}
-
 macro_rules! cellular {
     ($mod:ident::$ty:ident) => {
         pub use $mod::$ty;
@@ -560,8 +528,6 @@ pub(crate) use basic_noise;
 cellular!(cell_distance::CellDistance);
 cellular!(cell_distance_sq::CellDistanceSq);
 cellular!(cell_value::CellValue);
-open_simplex!(open_simplex_2::OpenSimplex2);
-open_simplex!(open_simplex_2s::OpenSimplex2s);
 basic_noise!(perlin::Perlin);
 basic_noise!(value::Value);
 basic_noise!(value_cubic::ValueCubic);

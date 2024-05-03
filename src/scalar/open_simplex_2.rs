@@ -158,14 +158,3 @@ pub fn gen3([x, y, z]: [f32; 3], mut seed: i32) -> f32 {
 
     value * 32.69428253173828125
 }
-
-#[cfg(test)]
-#[inline]
-pub fn improve3([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
-    const R3: f32 = 2.0 / 3.0;
-    let r: f32 = (x + y + z) * R3; // Rotation, not skew
-    x = r - x;
-    y = r - y;
-    z = r - z;
-    [x, y, z]
-}

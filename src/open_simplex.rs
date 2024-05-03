@@ -1,59 +1,275 @@
 use crate::private_prelude::*;
 
-/// Improves 3D orientation as a fallback.
-pub struct Improve3<Noise>(pub Noise);
-
-/// Improves 3D orientation for the `XY` plane.
-pub struct Improve3Xy<Noise>(pub Noise);
-
-/// Improves 3D orientation for the `XZ` plane.
-pub struct Improve3Xz<Noise>(pub Noise);
-
-macro_rules! impl_improve {
-    ($improve:ident) => {
-        impl<Noise> $improve<Noise> {
+macro_rules! impl_fallback {
+    ($noise:ident in $noise_mod:ident) => {
+        impl Sample<2> for $noise {
             #[inline(always)]
-            pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
-                Frequency { noise: self, frequency }
+            fn sample(&self, point: [f32; 2]) -> f32 {
+                crate::scalar::$noise_mod::gen2(point, 0)
+            }
+        }
+
+        impl Sample<2> for Seeded<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 2]) -> f32 {
+                crate::scalar::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        impl Sample<2> for Seeded<&$noise> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 2]) -> f32 {
+                crate::scalar::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        impl Sample<3> for $noise {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 3]) -> f32 {
+                crate::scalar::$noise_mod::gen3(scalar_improve::improve3(point), 0)
+            }
+        }
+
+        impl Sample<3> for Seeded<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 3]) -> f32 {
+                crate::scalar::$noise_mod::gen3(scalar_improve::improve3(point), self.seed)
+            }
+        }
+
+        impl Sample<3> for Seeded<&$noise> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 3]) -> f32 {
+                crate::scalar::$noise_mod::gen3(scalar_improve::improve3(point), self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<2, f32x2> for $noise {
+            #[inline(always)]
+            fn sample(&self, point: f32x2) -> f32 {
+                crate::simd::$noise_mod::gen2(point, 0)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<2, f32x2> for Seeded<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: f32x2) -> f32 {
+                crate::simd::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<2, f32x2> for Seeded<&$noise> {
+            #[inline(always)]
+            fn sample(&self, point: f32x2) -> f32 {
+                crate::simd::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<3, f32x4> for $noise {
+            #[inline(always)]
+            fn sample(&self, point: f32x4) -> f32 {
+                crate::simd::$noise_mod::gen3(simd_improve::improve3(point), 0)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<3, f32x4> for Seeded<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: f32x4) -> f32 {
+                crate::simd::$noise_mod::gen3(simd_improve::improve3(point), self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<3, f32x4> for Seeded<&$noise> {
+            #[inline(always)]
+            fn sample(&self, point: f32x4) -> f32 {
+                crate::simd::$noise_mod::gen3(simd_improve::improve3(point), self.seed)
             }
         }
     };
 }
 
-impl_improve!(Improve3);
-impl_improve!(Improve3Xy);
-impl_improve!(Improve3Xz);
+macro_rules! impl_improve {
+    ($improve_fn:ident as $improve:ident for $noise:ident in $noise_mod:ident) => {
+        impl Sample<2> for $improve<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 2]) -> f32 {
+                crate::scalar::$noise_mod::gen2(point, 0)
+            }
+        }
+
+        impl Sample<2> for Seeded<$improve<$noise>> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 2]) -> f32 {
+                crate::scalar::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        impl Sample<2> for Seeded<&$improve<$noise>> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 2]) -> f32 {
+                crate::scalar::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        impl Sample<3> for $improve<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 3]) -> f32 {
+                crate::scalar::$noise_mod::gen3(scalar_improve::$improve_fn(point), 0)
+            }
+        }
+
+        impl Sample<3> for Seeded<$improve<$noise>> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 3]) -> f32 {
+                crate::scalar::$noise_mod::gen3(scalar_improve::$improve_fn(point), self.seed)
+            }
+        }
+
+        impl Sample<3> for Seeded<&$improve<$noise>> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 3]) -> f32 {
+                crate::scalar::$noise_mod::gen3(scalar_improve::$improve_fn(point), self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<2, f32x2> for $improve<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: f32x2) -> f32 {
+                crate::simd::$noise_mod::gen2(point, 0)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<2, f32x2> for Seeded<$improve<$noise>> {
+            #[inline(always)]
+            fn sample(&self, point: f32x2) -> f32 {
+                crate::simd::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<2, f32x2> for Seeded<&$improve<$noise>> {
+            #[inline(always)]
+            fn sample(&self, point: f32x2) -> f32 {
+                crate::simd::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<3, f32x4> for $improve<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: f32x4) -> f32 {
+                crate::simd::$noise_mod::gen3(simd_improve::$improve_fn(point), 0)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<3, f32x4> for Seeded<$improve<$noise>> {
+            #[inline(always)]
+            fn sample(&self, point: f32x4) -> f32 {
+                crate::simd::$noise_mod::gen3(simd_improve::$improve_fn(point), self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<3, f32x4> for Seeded<&$improve<$noise>> {
+            #[inline(always)]
+            fn sample(&self, point: f32x4) -> f32 {
+                crate::simd::$noise_mod::gen3(simd_improve::$improve_fn(point), self.seed)
+            }
+        }
+    };
+}
+
+macro_rules! improve_wrapper {
+    (
+        $(#[$attr:meta])*
+        $name:ident
+    ) => {
+        $(#[$attr])*
+        #[derive(Debug, Clone, Copy)]
+        pub struct $name<Noise>(pub Noise);
+
+        impl<Noise> $name<Noise> {
+            impl_modifiers!();
+        }
+    };
+}
+
+macro_rules! base {
+    (
+        $(#[$attr:meta])*
+        $noise:ident in $noise_mod:ident
+    ) => {
+        $(#[$attr])*
+        ///
+        /// When sampling in 3 Dimensions you should choose one of the `Improve*` wrappers ([`Improve3`], [`Improve3Xy`], [`Improve3Xz`])
+        /// to improve the orientation of the noise. This wrapper should be put at the end as it can't be seeded or used in fractals.
+        ///
+        /// [`Improve3`]: crate::open_simplex::Improve3
+        /// [`Improve3Xy`]: crate::open_simplex::Improve3Xy
+        /// [`Improve3Xz`]: crate::open_simplex::Improve3Xz
+        #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+        pub struct $noise;
+
+        impl $noise {
+            impl_modifiers!();
+        }
+
+        impl $noise {
+            /// Improves 3D orientation for the `XY` plane.
+            pub const fn improve_xy(self) -> open_simplex::ImproveXy<Self> {
+                open_simplex::ImproveXy(self)
+            }
+
+            /// Improves 3D orientation for the `XZ` plane.
+            pub const fn improve_xz(self) -> open_simplex::ImproveXz<Self> {
+                open_simplex::ImproveXz(self)
+            }
+        }
+
+        impl_fallback! {
+            $noise in $noise_mod
+        }
+
+        impl_improve! {
+            improve3_xy as ImproveXy for $noise in $noise_mod
+        }
+
+        impl_improve! {
+            improve3_xz as ImproveXz for $noise in $noise_mod
+        }
+    };
+}
+
+base! {
+    /// 2/3 Dimensional OpenSimplex2 noise.
+    OpenSimplex2 in open_simplex_2
+}
+
+base! {
+    /// 2/3 Dimensional OpenSimplex2s noise.
+    OpenSimplex2s in open_simplex_2s
+}
+
+improve_wrapper! {
+    /// Improves 3D orientation for the `XY` plane.
+    ImproveXy
+}
+
+improve_wrapper! {
+    /// Improves 3D orientation for the `XZ` plane.
+    ImproveXz
+}
 
 mod scalar_improve {
-    use super::*;
-
-    impl<Noise> Sample<3> for Improve3<Noise>
-    where
-        Noise: Sample<3>,
-    {
-        fn sample(&self, point: [f32; 3]) -> f32 {
-            self.0.sample(improve3(point))
-        }
-    }
-
-    impl<Noise> Sample<3> for Improve3Xy<Noise>
-    where
-        Noise: Sample<3>,
-    {
-        fn sample(&self, point: [f32; 3]) -> f32 {
-            self.0.sample(improve3_xy(point))
-        }
-    }
-
-    impl<Noise> Sample<3> for Improve3Xz<Noise>
-    where
-        Noise: Sample<3>,
-    {
-        fn sample(&self, point: [f32; 3]) -> f32 {
-            self.0.sample(improve3_xz(point))
-        }
-    }
-
     #[inline]
     pub fn improve3([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
         const R3: f32 = 2.0 / 3.0;
@@ -90,33 +306,6 @@ mod scalar_improve {
 #[cfg(feature = "nightly-simd")]
 mod simd_improve {
     use super::*;
-
-    impl<Noise> Sample<3, f32x4> for Improve3<Noise>
-    where
-        Noise: Sample<3, f32x4>,
-    {
-        fn sample(&self, point: f32x4) -> f32 {
-            self.0.sample(improve3(point))
-        }
-    }
-
-    impl<Noise> Sample<3, f32x4> for Improve3Xy<Noise>
-    where
-        Noise: Sample<3, f32x4>,
-    {
-        fn sample(&self, point: f32x4) -> f32 {
-            self.0.sample(improve3_xy(point))
-        }
-    }
-
-    impl<Noise> Sample<3, f32x4> for Improve3Xz<Noise>
-    where
-        Noise: Sample<3, f32x4>,
-    {
-        fn sample(&self, point: f32x4) -> f32 {
-            self.0.sample(improve3_xz(point))
-        }
-    }
 
     #[inline]
     pub fn improve3(point: f32x4) -> f32x4 {

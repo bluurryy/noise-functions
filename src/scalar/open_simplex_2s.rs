@@ -1,8 +1,5 @@
 pub(crate) use super::open_simplex_2::improve2;
 
-#[cfg(test)]
-pub(crate) use super::open_simplex_2::improve3;
-
 use crate::private_prelude::*;
 
 #[inline]
