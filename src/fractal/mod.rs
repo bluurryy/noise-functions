@@ -18,6 +18,11 @@ pub struct Weighted<Fractal> {
 
 impl<Fractal> Weighted<Fractal> {
     #[inline(always)]
+    pub const fn seed(self, seed: i32) -> Seeded<Self> {
+        Seeded { noise: self, seed }
+    }
+
+    #[inline(always)]
     pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
         Frequency { noise: self, frequency }
     }

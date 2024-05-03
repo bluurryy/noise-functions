@@ -9,6 +9,21 @@ pub struct Improve3Xy<Noise>(pub Noise);
 /// Improves 3D orientation for the `XZ` plane.
 pub struct Improve3Xz<Noise>(pub Noise);
 
+macro_rules! impl_improve {
+    ($improve:ident) => {
+        impl<Noise> $improve<Noise> {
+            #[inline(always)]
+            pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
+                Frequency { noise: self, frequency }
+            }
+        }
+    };
+}
+
+impl_improve!(Improve3);
+impl_improve!(Improve3Xy);
+impl_improve!(Improve3Xz);
+
 mod scalar_improve {
     use super::*;
 

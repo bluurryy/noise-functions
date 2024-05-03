@@ -7,8 +7,5 @@ pub struct Jitter<CellularNoise> {
 }
 
 impl<CellularNoise> Jitter<CellularNoise> {
-    #[inline(always)]
-    pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
-        Frequency { noise: self, frequency }
-    }
+    impl_modifiers!();
 }
