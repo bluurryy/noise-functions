@@ -174,6 +174,35 @@ macro_rules! impl_modifiers {
                 }
             }
         }
+
+        cfg_const_feature_float! {
+            #[inline(always)]
+            pub fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> PingPong<Self> {
+                PingPong {
+                    base: self,
+                    octaves,
+                    gain,
+                    lacunarity,
+                    fractal_bounding: fractal_bounding(octaves, gain),
+                    strength,
+                }
+            }
+        }
+
+        cfg_const_feature_float! {
+            #[inline(always)]
+            pub fn ping_pong_weighted(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32, weighted_strength: f32) -> PingPongWeighted<Self> {
+                PingPongWeighted {
+                    base: self,
+                    octaves,
+                    gain,
+                    lacunarity,
+                    fractal_bounding: fractal_bounding(octaves, gain),
+                    strength,
+                    weighted_strength,
+                }
+            }
+        }
     };
 }
 

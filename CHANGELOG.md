@@ -2,6 +2,7 @@
 
 ## Unreleased
 - **added:** `Seeded::frequency`
+- **added:** `ping_pong(_weighted)` with `PingPong(Weighted)`
 
 ## 0.1.2 (2024-04-26)
 - **added:** configurable jitter for cellular noises
