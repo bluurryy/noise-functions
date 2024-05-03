@@ -65,6 +65,7 @@ mod util;
 
 mod scalar;
 
+mod fractal;
 #[cfg(feature = "nightly-simd")]
 mod simd;
 
@@ -340,16 +341,9 @@ impl<Noise> Seeded<Noise> {
     }
 }
 
-mod fbm;
-mod fbm_weighted;
 pub mod open_simplex;
-mod ridged;
-mod ridged_weighted;
 
-pub use fbm::Fbm;
-pub use fbm_weighted::FbmWeighted;
-pub use ridged::Ridged;
-pub use ridged_weighted::RidgedWeighted;
+pub use fractal::{Fbm, FbmWeighted, Ridged, RidgedWeighted};
 
 macro_rules! cfg_const {
 	(
