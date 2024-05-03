@@ -72,7 +72,7 @@ mod scalar;
 mod simd;
 mod util;
 
-pub use fractal::{Fbm, FbmWeighted, Ridged, RidgedWeighted};
+pub use fractal::{Fbm, FbmWeighted, PingPong, PingPongWeighted, Ridged, RidgedWeighted};
 pub use frequency::Frequency;
 pub use noise_fn::NoiseFn;
 pub use sample::{Sample, Sample2, Sample3};
