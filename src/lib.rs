@@ -333,6 +333,13 @@ pub struct Seeded<Noise> {
     pub seed: i32,
 }
 
+impl<Noise> Seeded<Noise> {
+    #[inline(always)]
+    pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
+        Frequency { base: self, frequency }
+    }
+}
+
 mod fbm;
 mod fbm_weighted;
 pub mod open_simplex;

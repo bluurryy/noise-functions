@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- **added:** `Seeded::frequency`
+
 ## 0.1.2 (2024-04-26)
 - **added:** configurable jitter for cellular noises
 - **added:** removed unnecessary generic copy bound for generics
