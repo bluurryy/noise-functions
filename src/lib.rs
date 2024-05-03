@@ -68,6 +68,7 @@ mod noise_fn;
 pub mod open_simplex;
 mod sample;
 mod scalar;
+mod seeded;
 #[cfg(feature = "nightly-simd")]
 mod simd;
 mod util;
@@ -75,6 +76,7 @@ mod util;
 pub use frequency::Frequency;
 pub use noise_fn::NoiseFn;
 pub use sample::{Sample, Sample2, Sample3};
+pub use seeded::Seeded;
 
 #[cfg(feature = "nightly-simd")]
 pub use sample::{Sample2a, Sample3a};
@@ -162,19 +164,6 @@ macro_rules! impl_modifiers {
 }
 
 pub(crate) use impl_modifiers;
-
-#[derive(Debug, Clone, Copy)]
-pub struct Seeded<Noise> {
-    pub base: Noise,
-    pub seed: i32,
-}
-
-impl<Noise> Seeded<Noise> {
-    #[inline(always)]
-    pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
-        Frequency { base: self, frequency }
-    }
-}
 
 macro_rules! cfg_const {
 	(
