@@ -11,3 +11,5 @@ pub use ping_pong::PingPong;
 pub use ping_pong_weighted::PingPongWeighted;
 pub use ridged::Ridged;
 pub use ridged_weighted::RidgedWeighted;
+
+pub use crate::util::fractal_bounding;

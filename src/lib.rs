@@ -60,7 +60,7 @@ compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature mu
 extern crate alloc;
 
 pub mod cellular;
-mod fractal;
+pub mod fractal;
 mod frequency;
 mod lookup;
 mod math;
@@ -72,7 +72,6 @@ mod scalar;
 mod simd;
 mod util;
 
-pub use fractal::{Fbm, FbmWeighted, PingPong, PingPongWeighted, Ridged, RidgedWeighted};
 pub use frequency::Frequency;
 pub use noise_fn::NoiseFn;
 pub use sample::{Sample, Sample2, Sample3};
@@ -81,6 +80,7 @@ pub use sample::{Sample, Sample2, Sample3};
 pub use sample::{Sample2a, Sample3a};
 
 mod private_prelude {
+    pub(crate) use crate::fractal::*;
     pub(crate) use crate::lookup::*;
     pub(crate) use crate::math::*;
     pub(crate) use crate::util::*;
@@ -103,8 +103,6 @@ mod private_prelude {
 }
 
 use crate::private_prelude::*;
-
-pub use crate::util::fractal_bounding;
 
 const DEFAULT_JITTER_2D: f32 = 0.43701595;
 const DEFAULT_JITTER_3D: f32 = 0.39614353;

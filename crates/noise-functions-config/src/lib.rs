@@ -12,6 +12,7 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide), doc(cfg_hide(no_global_oom_handling, feature = "nightly-const-fn-float")))]
 
 use noise_functions::{
+    fractal::*,
     open_simplex::{Improve3, Improve3Xy, Improve3Xz},
     *,
 };
