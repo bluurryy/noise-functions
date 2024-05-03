@@ -2,8 +2,7 @@ use crate::private_prelude::*;
 
 /// Wraps a function to make it implement [`Sample`].
 ///
-/// The function is expected to take one parameter for the position and optionally
-/// a seed parameter.
+/// The function is expected to take one parameter for the point and optionally a seed parameter.
 ///
 /// With a seed parameter it can be used for fractals:
 ///
