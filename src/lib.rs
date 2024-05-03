@@ -59,12 +59,17 @@ compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature mu
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+/// Cellular noise functions and combinators.
 pub mod cellular;
+
+/// Fractal noise combinators.
 pub mod fractal;
 mod frequency;
 mod lookup;
 mod math;
 mod noise_fn;
+
+/// OpenSimplex2 noise functions and combinators.
 pub mod open_simplex;
 mod sample;
 mod scalar;
@@ -329,14 +334,14 @@ macro_rules! basic_noise {
 }
 
 macro_rules! cellular {
-    ($mod:ident::$ty:ident) => {
+    ($(#[$attr:meta])* $mod:ident::$ty:ident) => {
         pub use $mod::$ty;
 
         mod $mod {
             use super::*;
             use cellular::Jitter;
 
-            noise!($ty);
+            noise!($(#[$attr])* $ty);
 
             impl $ty {
                 /// Multiplies jitter by the provided value.
@@ -525,12 +530,31 @@ macro_rules! cellular {
 
 pub(crate) use basic_noise;
 
-cellular!(cell_distance::CellDistance);
-cellular!(cell_distance_sq::CellDistanceSq);
-cellular!(cell_value::CellValue);
-basic_noise!(perlin::Perlin);
-basic_noise!(value::Value);
-basic_noise!(value_cubic::ValueCubic);
+cellular! {
+    /// 2/3 dimensional noise of the distance to the closest cell
+    cell_distance::CellDistance
+}
+cellular! {
+    /// 2/3 dimensional noise of the squared distance to the closest cell
+    cell_distance_sq::CellDistanceSq
+}
+cellular! {
+    /// 2/3 dimensional noise of the value of the closest cell
+    cell_value::CellValue
+}
+
+basic_noise! {
+    /// 2/3 dimensional Perlin noise
+    perlin::Perlin
+}
+basic_noise! {
+    /// 2/3 dimensional Value noise
+    value::Value
+}
+basic_noise! {
+    /// 2/3 dimensional Cubic Value noise
+    value_cubic::ValueCubic
+}
 
 #[cfg(test)]
 mod tests;

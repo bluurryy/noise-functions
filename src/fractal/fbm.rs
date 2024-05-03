@@ -1,5 +1,8 @@
 use crate::private_prelude::*;
 
+/// Fractal Brownian motion (fBm) noise.
+///
+/// `fBm` noise is created by calling the base noise `octaves` amount of times with increasing frequency and decreasing amplitude.
 #[derive(Debug, Clone, Copy)]
 pub struct Fbm<Noise> {
     pub noise: Noise,

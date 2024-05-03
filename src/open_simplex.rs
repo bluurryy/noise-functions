@@ -248,12 +248,12 @@ macro_rules! base {
 }
 
 base! {
-    /// 2/3 Dimensional OpenSimplex2 noise.
+    /// 2/3 dimensional OpenSimplex2 noise. Fast variant.
     OpenSimplex2 in open_simplex_2
 }
 
 base! {
-    /// 2/3 Dimensional OpenSimplex2s noise.
+    /// 2/3 dimensional OpenSimplex2s noise. Smooth variant.
     OpenSimplex2s in open_simplex_2s
 }
 

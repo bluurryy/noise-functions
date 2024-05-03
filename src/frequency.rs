@@ -1,5 +1,8 @@
 use crate::private_prelude::*;
 
+/// Wraps a noise and modifies its frequency.
+///
+/// This multiplies the point by the provided `frequency` before sampling.
 #[derive(Debug, Clone, Copy)]
 pub struct Frequency<Noise> {
     pub noise: Noise,
