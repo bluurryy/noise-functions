@@ -134,20 +134,6 @@ macro_rules! impl_modifiers {
 
         cfg_const_feature_float! {
             #[inline(always)]
-            pub fn fbm_weighted(self, octaves: u32, gain: f32, lacunarity: f32, weighted_strength: f32) -> FbmWeighted<Self> {
-                FbmWeighted {
-                    base: self,
-                    octaves,
-                    gain,
-                    lacunarity,
-                    fractal_bounding: fractal_bounding(octaves, gain),
-                    weighted_strength,
-                }
-            }
-        }
-
-        cfg_const_feature_float! {
-            #[inline(always)]
             pub fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> Ridged<Self> {
                 Ridged {
                     base: self,
@@ -155,20 +141,6 @@ macro_rules! impl_modifiers {
                     gain,
                     lacunarity,
                     fractal_bounding: fractal_bounding(octaves, gain),
-                }
-            }
-        }
-
-        cfg_const_feature_float! {
-            #[inline(always)]
-            pub fn ridged_weighted(self, octaves: u32, gain: f32, lacunarity: f32, weighted_strength: f32) -> RidgedWeighted<Self> {
-                RidgedWeighted {
-                    base: self,
-                    octaves,
-                    gain,
-                    lacunarity,
-                    fractal_bounding: fractal_bounding(octaves, gain),
-                    weighted_strength,
                 }
             }
         }
@@ -183,21 +155,6 @@ macro_rules! impl_modifiers {
                     lacunarity,
                     fractal_bounding: fractal_bounding(octaves, gain),
                     strength,
-                }
-            }
-        }
-
-        cfg_const_feature_float! {
-            #[inline(always)]
-            pub fn ping_pong_weighted(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32, weighted_strength: f32) -> PingPongWeighted<Self> {
-                PingPongWeighted {
-                    base: self,
-                    octaves,
-                    gain,
-                    lacunarity,
-                    fractal_bounding: fractal_bounding(octaves, gain),
-                    strength,
-                    weighted_strength,
                 }
             }
         }

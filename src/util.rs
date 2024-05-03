@@ -3,7 +3,7 @@ use core::ops::RangeInclusive;
 use crate::private_prelude::*;
 
 cfg_const_feature_float! {
-    /// Calculates the `fractal_bounding` property for [`Fbm`](crate::Fbm), [`FbmWeighted`](crate::FbmWeighted), [`Ridged`](crate::Ridged) and [`RidgedWeighted`](crate::RidgedWeighted).
+    /// Calculates the `fractal_bounding` property for [`Fbm`], [`Ridged`] and [`PingPong`].
     ///
     #[inline(always)]
     pub fn fractal_bounding(octaves: u32, gain: f32) -> f32 {

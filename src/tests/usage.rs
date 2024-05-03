@@ -42,13 +42,15 @@ macro_rules! assert_noises {
             can_sample::<$noise>();
             can_sample::<Seeded<$noise>>();
             can_sample::<Fbm<$noise>>();
-            can_sample::<FbmWeighted<$noise>>();
+            can_sample::<Weighted<Fbm<$noise>>>();
             can_sample::<Ridged<$noise>>();
-            can_sample::<RidgedWeighted<$noise>>();
+            can_sample::<Weighted<Ridged<$noise>>>();
             can_sample::<Seeded<Fbm<$noise>>>();
-            can_sample::<Seeded<FbmWeighted<$noise>>>();
+            can_sample::<Seeded<Weighted<Fbm<$noise>>>>();
             can_sample::<Seeded<Ridged<$noise>>>();
-            can_sample::<Seeded<RidgedWeighted<$noise>>>();
+            can_sample::<Seeded<Weighted<Ridged<$noise>>>>();
+            can_sample::<Seeded<PingPong<$noise>>>();
+            can_sample::<Seeded<Weighted<PingPong<$noise>>>>();
         )*
     };
 }

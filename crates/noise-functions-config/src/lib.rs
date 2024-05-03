@@ -159,14 +159,14 @@ macro_rules! make_fbm {
             frequency: $self.frequency,
             base: Seeded {
                 seed: $self.seed,
-                base: FbmWeighted {
+                base: Fbm {
                     base: $base,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,
                     fractal_bounding: fractal_bounding($self.octaves, $self.gain),
-                    weighted_strength: $self.weighted_strength,
-                },
+                }
+                .weighted($self.weighted_strength),
             },
         })
     };
@@ -175,14 +175,14 @@ macro_rules! make_fbm {
             frequency: $self.frequency,
             base: $improve(Seeded {
                 seed: $self.seed,
-                base: FbmWeighted {
+                base: Fbm {
                     base: $base,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,
                     fractal_bounding: fractal_bounding($self.octaves, $self.gain),
-                    weighted_strength: $self.weighted_strength,
-                },
+                }
+                .weighted($self.weighted_strength),
             }),
         })
     };
@@ -194,14 +194,14 @@ macro_rules! make_ridged {
             frequency: $self.frequency,
             base: Seeded {
                 seed: $self.seed,
-                base: RidgedWeighted {
+                base: Ridged {
                     base: $base,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,
                     fractal_bounding: fractal_bounding($self.octaves, $self.gain),
-                    weighted_strength: $self.weighted_strength,
-                },
+                }
+                .weighted($self.weighted_strength),
             },
         })
     };
@@ -210,14 +210,14 @@ macro_rules! make_ridged {
             frequency: $self.frequency,
             base: $improve(Seeded {
                 seed: $self.seed,
-                base: RidgedWeighted {
+                base: Ridged {
                     base: $base,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,
                     fractal_bounding: fractal_bounding($self.octaves, $self.gain),
-                    weighted_strength: $self.weighted_strength,
-                },
+                }
+                .weighted($self.weighted_strength),
             }),
         })
     };
@@ -229,15 +229,15 @@ macro_rules! make_ping_pong {
             frequency: $self.frequency,
             base: Seeded {
                 seed: $self.seed,
-                base: PingPongWeighted {
+                base: PingPong {
                     base: $base,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,
                     fractal_bounding: fractal_bounding($self.octaves, $self.gain),
                     strength: $self.ping_pong_strength,
-                    weighted_strength: $self.weighted_strength,
-                },
+                }
+                .weighted($self.weighted_strength),
             },
         })
     };
@@ -246,15 +246,15 @@ macro_rules! make_ping_pong {
             frequency: $self.frequency,
             base: $improve(Seeded {
                 seed: $self.seed,
-                base: PingPongWeighted {
+                base: PingPong {
                     base: $base,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,
                     fractal_bounding: fractal_bounding($self.octaves, $self.gain),
                     strength: $self.ping_pong_strength,
-                    weighted_strength: $self.weighted_strength,
-                },
+                }
+                .weighted($self.weighted_strength),
             }),
         })
     };

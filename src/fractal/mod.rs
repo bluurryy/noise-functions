@@ -1,15 +1,24 @@
 mod fbm;
-mod fbm_weighted;
 mod ping_pong;
-mod ping_pong_weighted;
 mod ridged;
-mod ridged_weighted;
 
 pub use fbm::Fbm;
-pub use fbm_weighted::FbmWeighted;
 pub use ping_pong::PingPong;
-pub use ping_pong_weighted::PingPongWeighted;
 pub use ridged::Ridged;
-pub use ridged_weighted::RidgedWeighted;
 
 pub use crate::util::fractal_bounding;
+
+use crate::private_prelude::*;
+
+#[derive(Debug, Clone, Copy)]
+pub struct Weighted<Fractal> {
+    pub fractal: Fractal,
+    pub strength: f32,
+}
+
+impl<Fractal> Weighted<Fractal> {
+    #[inline(always)]
+    pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
+        Frequency { base: self, frequency }
+    }
+}
