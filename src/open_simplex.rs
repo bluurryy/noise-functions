@@ -1,4 +1,4 @@
-use super::*;
+use crate::private_prelude::*;
 
 /// Improves 3D orientation as a fallback.
 pub struct Improve3<Noise>(pub Noise);

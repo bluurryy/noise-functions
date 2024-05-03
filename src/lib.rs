@@ -59,15 +59,26 @@ compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature mu
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+pub mod cellular;
+mod fractal;
+mod frequency;
 mod lookup;
 mod math;
-mod util;
-
+mod noise_fn;
+pub mod open_simplex;
+mod sample;
 mod scalar;
-
-mod fractal;
 #[cfg(feature = "nightly-simd")]
 mod simd;
+mod util;
+
+pub use fractal::{Fbm, FbmWeighted, Ridged, RidgedWeighted};
+pub use frequency::Frequency;
+pub use noise_fn::NoiseFn;
+pub use sample::{Sample, Sample2, Sample3};
+
+#[cfg(feature = "nightly-simd")]
+pub use sample::{Sample2a, Sample3a};
 
 mod private_prelude {
     pub(crate) use crate::lookup::*;
@@ -76,7 +87,7 @@ mod private_prelude {
     pub(crate) use crate::*;
 
     #[cfg(feature = "nightly-simd")]
-    pub(crate) use crate::simd::*;
+    pub(crate) use crate::simd::{PRIME_XY, PRIME_XYZ};
 
     #[cfg(feature = "nightly-simd")]
     pub(crate) use core::simd::{LaneCount, SimdElement, SupportedLaneCount};
@@ -86,123 +97,17 @@ mod private_prelude {
 
     #[cfg(feature = "nightly-simd")]
     pub(crate) use core::simd::num::SimdFloat;
+
+    #[cfg(feature = "nightly-simd")]
+    pub(crate) use crate::simd::splat;
 }
 
-#[cfg(feature = "nightly-simd")]
-use core::simd::{prelude::*, LaneCount, SupportedLaneCount};
-
-#[cfg(feature = "nightly-simd")]
-use crate::simd::splat;
+use crate::private_prelude::*;
 
 pub use crate::util::fractal_bounding;
 
-#[derive(Debug, Clone, Copy)]
-pub struct Frequency<Noise> {
-    pub base: Noise,
-    pub frequency: f32,
-}
-
-impl<const DIM: usize, Noise> Sample<DIM, [f32; DIM]> for Frequency<Noise>
-where
-    Noise: Sample<DIM, [f32; DIM]>,
-{
-    fn sample(&self, mut pos: [f32; DIM]) -> f32 {
-        let frequency = self.frequency;
-
-        for x in &mut pos {
-            *x *= frequency;
-        }
-
-        self.base.sample(pos)
-    }
-}
-
-#[cfg(feature = "nightly-simd")]
-impl<const DIM: usize, const LANES: usize, Noise> Sample<DIM, Simd<f32, LANES>> for Frequency<Noise>
-where
-    Noise: Sample<DIM, Simd<f32, LANES>>,
-    LaneCount<LANES>: SupportedLaneCount,
-{
-    fn sample(&self, mut pos: Simd<f32, LANES>) -> f32 {
-        pos *= splat(self.frequency);
-        self.base.sample(pos)
-    }
-}
-
 const DEFAULT_JITTER_2D: f32 = 0.43701595;
 const DEFAULT_JITTER_3D: f32 = 0.39614353;
-
-pub mod cellular {
-    #[derive(Debug, Clone, Copy)]
-    pub struct Jitter<CellularNoise> {
-        pub base: CellularNoise,
-        pub jitter: f32,
-    }
-}
-
-pub trait Sample<const DIM: usize, Pos = [f32; DIM]> {
-    fn sample(&self, pos: Pos) -> f32;
-}
-
-impl<const DIM: usize, Pos, Noise> Sample<DIM, Pos> for &Noise
-where
-    Noise: Sample<DIM, Pos>,
-{
-    #[inline(always)]
-    fn sample(&self, pos: Pos) -> f32 {
-        Noise::sample(self, pos)
-    }
-}
-
-macro_rules! helper_trait {
-	($(#[$attr:meta])* $trait:ident, $fn:ident, $dim:literal as $ty:ty) => {
-		#[doc = concat!(
-			"Helper trait that provides `",
-			stringify!($fn),
-			"` as a shorthand for `Sample<",
-			stringify!($dim),
-			", ",
-			stringify!($ty),
-			">::sample`.",
-		)]
-		///
-		#[doc = concat!(
-			"It also works for any `impl Into<",
-			stringify!($ty),
-			">`.",
-		)]
-		$(#[$attr])*
-		pub trait $trait {
-			fn $fn(&self, pos: impl Into<$ty>) -> f32;
-		}
-
-		$(#[$attr])*
-		impl<Noise> $trait for Noise
-		where
-			Noise: Sample<$dim, $ty>,
-		{
-			#[inline(always)]
-			fn $fn(&self, pos: impl Into<$ty>) -> f32 {
-				Noise::sample(self, pos.into())
-			}
-		}
-	};
-}
-
-helper_trait!(Sample2, sample2, 2 as [f32; 2]);
-helper_trait!(Sample3, sample3, 3 as [f32; 3]);
-helper_trait!(
-    #[cfg(feature = "nightly-simd")]
-    Sample2a,
-    sample2a,
-    2 as f32x2
-);
-helper_trait!(
-    #[cfg(feature = "nightly-simd")]
-    Sample3a,
-    sample3a,
-    3 as f32x4
-);
 
 macro_rules! impl_modifiers {
     () => {
@@ -272,61 +177,7 @@ macro_rules! impl_modifiers {
     };
 }
 
-/// Wraps a function to make it implement [`Sample`].
-///
-/// The function is expected to take one parameter for the position and optionally
-/// a seed parameter.
-///
-/// With a seed parameter it can be used for fractals:
-///
-/// ```rust
-/// use noise_functions::{ NoiseFn, Sample2, OpenSimplex2s };
-///
-/// let warped = NoiseFn(|pos: [f32; 2], seed: i32| {
-///     let warp_x = OpenSimplex2s.seed(seed + 100).sample2(pos);
-///     let warp_y = OpenSimplex2s.seed(seed + 200).sample2(pos);
-///     let warped = [pos[0] + warp_x, pos[1] + warp_y];
-///     OpenSimplex2s.sample2(warped)
-/// });
-///
-/// let warped_fbm = warped.fbm(3, 0.5, 2.0);
-///
-/// let value = warped_fbm.sample2([1.0, 2.0]);
-/// ```
-pub struct NoiseFn<F>(pub F);
-
-impl<F> NoiseFn<F> {
-    impl_modifiers!();
-}
-
-impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for NoiseFn<F>
-where
-    F: Fn(Pos) -> f32,
-{
-    fn sample(&self, pos: Pos) -> f32 {
-        self.0(pos)
-    }
-}
-
-impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for Seeded<NoiseFn<F>>
-where
-    F: Fn(Pos, i32) -> f32,
-{
-    fn sample(&self, pos: Pos) -> f32 {
-        let &Seeded { ref base, seed } = self;
-        base.0(pos, seed)
-    }
-}
-
-impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for Seeded<&NoiseFn<F>>
-where
-    F: Fn(Pos, i32) -> f32,
-{
-    fn sample(&self, pos: Pos) -> f32 {
-        let &Seeded { base, seed } = self;
-        base.0(pos, seed)
-    }
-}
+pub(crate) use impl_modifiers;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Seeded<Noise> {
@@ -340,10 +191,6 @@ impl<Noise> Seeded<Noise> {
         Frequency { base: self, frequency }
     }
 }
-
-pub mod open_simplex;
-
-pub use fractal::{Fbm, FbmWeighted, Ridged, RidgedWeighted};
 
 macro_rules! cfg_const {
 	(
