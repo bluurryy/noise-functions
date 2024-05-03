@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.3 (2024-05-03)
 - **added:** `Seeded::frequency`
 - **added:** `ping_pong(_weighted)` with `PingPong(Weighted)`
 
