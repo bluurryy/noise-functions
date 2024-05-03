@@ -41,7 +41,7 @@ where
         let mut amp = fractal_bounding;
 
         for _ in 0..octaves {
-            let noise = (Seeded { base, seed }.sample(pos) + 1.0) * strength;
+            let noise = ping_pong((Seeded { base, seed }.sample(pos) + 1.0) * strength);
             seed = seed.wrapping_add(1);
             sum += (noise - 0.5) * 2.0 * amp;
             amp *= noise;
@@ -81,7 +81,7 @@ where
         let mut amp = fractal_bounding;
 
         for _ in 0..octaves {
-            let noise = (Seeded { base, seed }.sample(pos) + 1.0) * strength;
+            let noise = ping_pong((Seeded { base, seed }.sample(pos) + 1.0) * strength);
             seed = seed.wrapping_add(1);
             sum += (noise - 0.5) * 2.0 * amp;
             amp *= noise;
@@ -120,7 +120,7 @@ where
         let mut amp = fractal_bounding;
 
         for _ in 0..octaves {
-            let noise = (Seeded { base, seed }.sample(pos) + 1.0) * strength;
+            let noise = ping_pong((Seeded { base, seed }.sample(pos) + 1.0) * strength);
             seed = seed.wrapping_add(1);
             sum += (noise - 0.5) * 2.0 * amp;
             amp *= noise;
@@ -159,7 +159,7 @@ where
         let mut amp = fractal_bounding;
 
         for _ in 0..octaves {
-            let noise = (Seeded { base, seed }.sample(pos) + 1.0) * strength;
+            let noise = ping_pong((Seeded { base, seed }.sample(pos) + 1.0) * strength);
             seed = seed.wrapping_add(1);
             sum += (noise - 0.5) * 2.0 * amp;
             amp *= noise;
@@ -169,5 +169,15 @@ where
         }
 
         sum
+    }
+}
+
+#[inline(always)]
+fn ping_pong(t: f32) -> f32 {
+    let t = t - (t * 0.5).trunc() * 2.0;
+    if t < 1.0 {
+        t
+    } else {
+        2.0 - t
     }
 }
