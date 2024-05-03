@@ -70,7 +70,7 @@ mod math;
 mod noise_fn;
 
 /// OpenSimplex2 noise functions and combinators.
-pub mod open_simplex;
+pub mod open_simplex_2;
 mod sample;
 mod scalar;
 mod seeded;
@@ -81,7 +81,7 @@ mod util;
 pub use cellular::{CellDistance, CellDistanceSq, CellValue};
 pub use frequency::Frequency;
 pub use noise_fn::NoiseFn;
-pub use open_simplex::{OpenSimplex2, OpenSimplex2s};
+pub use open_simplex_2::{OpenSimplex2, OpenSimplex2s};
 pub use sample::{Sample, Sample2, Sample3};
 pub use seeded::Seeded;
 
