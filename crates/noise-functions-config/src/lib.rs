@@ -97,6 +97,7 @@ simple_enum! {
         None,
         Fbm,
         Ridged,
+        PingPong,
     }
 }
 
@@ -117,6 +118,7 @@ pub struct Config {
     pub lacunarity: f32,
     pub octaves: u32,
     pub gain: f32,
+    pub ping_pong_strength: f32,
     pub weighted_strength: f32,
     pub seed: i32,
     pub frequency: f32,
@@ -220,6 +222,43 @@ macro_rules! make_ridged {
     };
 }
 
+macro_rules! make_ping_pong {
+    ($self:ident, $base:expr) => {
+        Box::new(Frequency {
+            frequency: $self.frequency,
+            base: Seeded {
+                seed: $self.seed,
+                base: PingPongWeighted {
+                    base: $base,
+                    octaves: $self.octaves,
+                    gain: $self.gain,
+                    lacunarity: $self.lacunarity,
+                    fractal_bounding: fractal_bounding($self.octaves, $self.gain),
+                    strength: $self.ping_pong_strength,
+                    weighted_strength: $self.weighted_strength,
+                },
+            },
+        })
+    };
+    ($self:ident, $base:expr, $improve:ident) => {
+        Box::new(Frequency {
+            frequency: $self.frequency,
+            base: $improve(Seeded {
+                seed: $self.seed,
+                base: PingPongWeighted {
+                    base: $base,
+                    octaves: $self.octaves,
+                    gain: $self.gain,
+                    lacunarity: $self.lacunarity,
+                    fractal_bounding: fractal_bounding($self.octaves, $self.gain),
+                    strength: $self.ping_pong_strength,
+                    weighted_strength: $self.weighted_strength,
+                },
+            }),
+        })
+    };
+}
+
 macro_rules! sampler2 {
     ($self:ident) => {
         match $self.fractal {
@@ -252,6 +291,16 @@ macro_rules! sampler2 {
                 Noise::Perlin => make_ridged!($self, Perlin),
                 Noise::ValueCubic => make_ridged!($self, ValueCubic),
                 Noise::Value => make_ridged!($self, Value),
+            },
+            Fractal::PingPong => match $self.noise {
+                Noise::CellDistanceSq => make_ping_pong!($self, CellDistanceSq.jitter($self.jitter)),
+                Noise::CellDistance => make_ping_pong!($self, CellDistance.jitter($self.jitter)),
+                Noise::CellValue => make_ping_pong!($self, CellValue.jitter($self.jitter)),
+                Noise::OpenSimplex2 => make_ping_pong!($self, OpenSimplex2),
+                Noise::OpenSimplex2s => make_ping_pong!($self, OpenSimplex2s),
+                Noise::Perlin => make_ping_pong!($self, Perlin),
+                Noise::ValueCubic => make_ping_pong!($self, ValueCubic),
+                Noise::Value => make_ping_pong!($self, Value),
             },
         }
     };
@@ -319,6 +368,26 @@ macro_rules! sampler3 {
                 Noise::Perlin => make_ridged!($self, Perlin),
                 Noise::ValueCubic => make_ridged!($self, ValueCubic),
                 Noise::Value => make_ridged!($self, Value),
+            },
+            Fractal::PingPong => match $self.noise {
+                Noise::CellDistanceSq => make_ping_pong!($self, CellDistanceSq.jitter($self.jitter)),
+                Noise::CellDistance => make_ping_pong!($self, CellDistance.jitter($self.jitter)),
+                Noise::CellValue => make_ping_pong!($self, CellValue.jitter($self.jitter)),
+                Noise::OpenSimplex2 => match $self.improve {
+                    Improve::None => make_ping_pong!($self, OpenSimplex2),
+                    Improve::Default => make_ping_pong!($self, OpenSimplex2, Improve3),
+                    Improve::Xy => make_ping_pong!($self, OpenSimplex2, Improve3Xy),
+                    Improve::Xz => make_ping_pong!($self, OpenSimplex2, Improve3Xz),
+                },
+                Noise::OpenSimplex2s => match $self.improve {
+                    Improve::None => make_ping_pong!($self, OpenSimplex2s),
+                    Improve::Default => make_ping_pong!($self, OpenSimplex2s, Improve3),
+                    Improve::Xy => make_ping_pong!($self, OpenSimplex2s, Improve3Xy),
+                    Improve::Xz => make_ping_pong!($self, OpenSimplex2s, Improve3Xz),
+                },
+                Noise::Perlin => make_ping_pong!($self, Perlin),
+                Noise::ValueCubic => make_ping_pong!($self, ValueCubic),
+                Noise::Value => make_ping_pong!($self, Value),
             },
         }
     };
