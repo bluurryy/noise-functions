@@ -1,5 +1,7 @@
 //! Configurable noise generator struct for the [`noise-functions`](https://docs.rs/noise-functions) crate.
 //!
+//! Every `enum` of this crate implements `FromStr`, `to_str` and has a `VARIANTS` constant.
+//! 
 //! ## Feature flags
 #![cfg_attr(
     feature = "document-features",
