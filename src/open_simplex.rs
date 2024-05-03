@@ -218,10 +218,6 @@ macro_rules! base {
         pub struct $noise;
 
         impl $noise {
-            impl_modifiers!();
-        }
-
-        impl $noise {
             /// Improves 3D orientation for the `XY` plane.
             pub const fn improve_xy(self) -> open_simplex::ImproveXy<Self> {
                 open_simplex::ImproveXy(self)
@@ -231,6 +227,10 @@ macro_rules! base {
             pub const fn improve_xz(self) -> open_simplex::ImproveXz<Self> {
                 open_simplex::ImproveXz(self)
             }
+        }
+
+        impl $noise {
+            impl_modifiers!();
         }
 
         impl_fallback! {
