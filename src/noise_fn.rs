@@ -10,10 +10,10 @@ use crate::private_prelude::*;
 /// ```rust
 /// use noise_functions::{ NoiseFn, Sample2, OpenSimplex2s };
 ///
-/// let warped = NoiseFn(|pos: [f32; 2], seed: i32| {
-///     let warp_x = OpenSimplex2s.seed(seed + 100).sample2(pos);
-///     let warp_y = OpenSimplex2s.seed(seed + 200).sample2(pos);
-///     let warped = [pos[0] + warp_x, pos[1] + warp_y];
+/// let warped = NoiseFn(|point: [f32; 2], seed: i32| {
+///     let warp_x = OpenSimplex2s.seed(seed + 100).sample2(point);
+///     let warp_y = OpenSimplex2s.seed(seed + 200).sample2(point);
+///     let warped = [point[0] + warp_x, point[1] + warp_y];
 ///     OpenSimplex2s.sample2(warped)
 /// });
 ///
@@ -27,31 +27,31 @@ impl<F> NoiseFn<F> {
     impl_modifiers!();
 }
 
-impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for NoiseFn<F>
+impl<const DIM: usize, Point, F> Sample<DIM, Point> for NoiseFn<F>
 where
-    F: Fn(Pos) -> f32,
+    F: Fn(Point) -> f32,
 {
-    fn sample(&self, pos: Pos) -> f32 {
-        self.0(pos)
+    fn sample(&self, point: Point) -> f32 {
+        self.0(point)
     }
 }
 
-impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for Seeded<NoiseFn<F>>
+impl<const DIM: usize, Point, F> Sample<DIM, Point> for Seeded<NoiseFn<F>>
 where
-    F: Fn(Pos, i32) -> f32,
+    F: Fn(Point, i32) -> f32,
 {
-    fn sample(&self, pos: Pos) -> f32 {
+    fn sample(&self, point: Point) -> f32 {
         let &Seeded { ref noise, seed } = self;
-        noise.0(pos, seed)
+        noise.0(point, seed)
     }
 }
 
-impl<const DIM: usize, Pos, F> Sample<DIM, Pos> for Seeded<&NoiseFn<F>>
+impl<const DIM: usize, Point, F> Sample<DIM, Point> for Seeded<&NoiseFn<F>>
 where
-    F: Fn(Pos, i32) -> f32,
+    F: Fn(Point, i32) -> f32,
 {
-    fn sample(&self, pos: Pos) -> f32 {
+    fn sample(&self, point: Point) -> f32 {
         let &Seeded { noise, seed } = self;
-        noise.0(pos, seed)
+        noise.0(point, seed)
     }
 }

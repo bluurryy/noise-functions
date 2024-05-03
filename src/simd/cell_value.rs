@@ -1,8 +1,8 @@
 use crate::private_prelude::*;
 
 #[inline]
-pub(crate) fn gen2(pos: f32x2, seed: i32, jitter: f32) -> f32 {
-    let rounded = round_to_int(pos);
+pub(crate) fn gen2(point: f32x2, seed: i32, jitter: f32) -> f32 {
+    let rounded = round_to_int(point);
     let mut distance: f32 = 1e10;
     let mut closest_hash: i32 = 0;
 
@@ -16,7 +16,7 @@ pub(crate) fn gen2(pos: f32x2, seed: i32, jitter: f32) -> f32 {
             let hash = hash2(seed, x_primed, y_primed);
             let rand = RAND_VECS_2D[Index2::new(hash)].0;
             let coor = f32x2::from_array([xi as f32, yi as f32]);
-            let vec = (coor - pos) + rand * splat(jitter);
+            let vec = (coor - point) + rand * splat(jitter);
             let new_distance = length_squared(vec);
 
             if new_distance < distance {
@@ -33,8 +33,8 @@ pub(crate) fn gen2(pos: f32x2, seed: i32, jitter: f32) -> f32 {
 }
 
 #[inline]
-pub fn gen3(pos: f32x4, seed: i32, jitter: f32) -> f32 {
-    let rounded = round_to_int(pos);
+pub fn gen3(point: f32x4, seed: i32, jitter: f32) -> f32 {
+    let rounded = round_to_int(point);
 
     let mut distance: f32 = 1e10;
     let mut closest_hash: i32 = 0;
@@ -53,7 +53,7 @@ pub fn gen3(pos: f32x4, seed: i32, jitter: f32) -> f32 {
                 let hash = hash3(seed, x_primed, y_primed, z_primed);
                 let rand = RAND_VECS_3D[Index3::new(hash)].0;
                 let coor = f32x4::from_array([xi as f32, yi as f32, zi as f32, zi as f32]);
-                let vec = (coor - pos) + rand * splat(jitter);
+                let vec = (coor - point) + rand * splat(jitter);
                 let new_distance = length_squared(vec);
 
                 if new_distance < distance {

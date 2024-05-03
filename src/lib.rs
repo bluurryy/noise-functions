@@ -30,10 +30,10 @@
 //! let value = CellDistance.jitter(0.5).sample2(point);
 //!
 //! // domain warped OpenSimplex2s noise
-//! let warped_noise = |pos: [f32; 2]| {
-//!     let warp_x = OpenSimplex2s.seed(1).sample2(pos);
-//!     let warp_y = OpenSimplex2s.seed(2).sample2(pos);
-//!     let warped = [pos[0] + warp_x, pos[1] + warp_y];
+//! let warped_noise = |point: [f32; 2]| {
+//!     let warp_x = OpenSimplex2s.seed(1).sample2(point);
+//!     let warp_y = OpenSimplex2s.seed(2).sample2(point);
+//!     let warped = [point[0] + warp_x, point[1] + warp_y];
 //!     OpenSimplex2s.sample2(warped)
 //! };
 //!
@@ -235,43 +235,43 @@ macro_rules! basic_noise {
 
             impl Sample<2> for $ty {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 2]) -> f32 {
-                    (*self).seed(0).sample(pos)
+                fn sample(&self, point: [f32; 2]) -> f32 {
+                    (*self).seed(0).sample(point)
                 }
             }
 
             impl Sample<2> for Seeded<$ty> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(pos, self.seed)
+                fn sample(&self, point: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(point, self.seed)
                 }
             }
 
             impl Sample<2> for Seeded<&$ty> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(pos, self.seed)
+                fn sample(&self, point: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(point, self.seed)
                 }
             }
 
             impl Sample<3> for $ty {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 3]) -> f32 {
-                    (*self).seed(0).sample(pos)
+                fn sample(&self, point: [f32; 3]) -> f32 {
+                    (*self).seed(0).sample(point)
                 }
             }
 
             impl Sample<3> for Seeded<$ty> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(pos, self.seed)
+                fn sample(&self, point: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(point, self.seed)
                 }
             }
 
             impl Sample<3> for Seeded<&$ty> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(pos, self.seed)
+                fn sample(&self, point: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(point, self.seed)
                 }
             }
 
@@ -281,43 +281,43 @@ macro_rules! basic_noise {
 
                 impl Sample<2, f32x2> for $ty {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x2) -> f32 {
-                        (*self).seed(0).sample(pos)
+                    fn sample(&self, point: f32x2) -> f32 {
+                        (*self).seed(0).sample(point)
                     }
                 }
 
                 impl Sample<2, f32x2> for Seeded<$ty> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(pos, self.seed)
+                    fn sample(&self, point: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(point, self.seed)
                     }
                 }
 
                 impl Sample<2, f32x2> for Seeded<&$ty> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(pos, self.seed)
+                    fn sample(&self, point: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(point, self.seed)
                     }
                 }
 
                 impl Sample<3, f32x4> for $ty {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x4) -> f32 {
-                        (*self).seed(0).sample(pos)
+                    fn sample(&self, point: f32x4) -> f32 {
+                        (*self).seed(0).sample(point)
                     }
                 }
 
                 impl Sample<3, f32x4> for Seeded<$ty> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(pos, self.seed)
+                    fn sample(&self, point: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(point, self.seed)
                     }
                 }
 
                 impl Sample<3, f32x4> for Seeded<&$ty> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(pos, self.seed)
+                    fn sample(&self, point: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(point, self.seed)
                     }
                 }
             }
@@ -371,85 +371,85 @@ macro_rules! cellular {
 
             impl Sample<2> for $ty {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                fn sample(&self, point: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(point, 0, DEFAULT_JITTER_2D)
                 }
             }
 
             impl Sample<3> for $ty {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                fn sample(&self, point: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(point, 0, DEFAULT_JITTER_3D)
                 }
             }
 
             impl Sample<2> for Jitter<$ty> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(pos, 0, self.jitter)
+                fn sample(&self, point: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(point, 0, self.jitter)
                 }
             }
 
             impl Sample<3> for Jitter<$ty> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(pos, 0, self.jitter)
+                fn sample(&self, point: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(point, 0, self.jitter)
                 }
             }
 
             impl Sample<2> for Seeded<$ty> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                fn sample(&self, point: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(point, 0, DEFAULT_JITTER_2D)
                 }
             }
 
             impl Sample<3> for Seeded<$ty> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                fn sample(&self, point: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(point, 0, DEFAULT_JITTER_3D)
                 }
             }
 
             impl Sample<2> for Seeded<Jitter<$ty>> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
+                fn sample(&self, point: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(point, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
                 }
             }
 
             impl Sample<3> for Seeded<Jitter<$ty>> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
+                fn sample(&self, point: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(point, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
                 }
             }
 
             impl Sample<2> for Seeded<&$ty> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                fn sample(&self, point: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(point, 0, DEFAULT_JITTER_2D)
                 }
             }
 
             impl Sample<3> for Seeded<&$ty> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                fn sample(&self, point: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(point, 0, DEFAULT_JITTER_3D)
                 }
             }
 
             impl Sample<2> for Seeded<&Jitter<$ty>> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
+                fn sample(&self, point: [f32; 2]) -> f32 {
+                    crate::scalar::$mod::gen2(point, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
                 }
             }
 
             impl Sample<3> for Seeded<&Jitter<$ty>> {
                 #[inline(always)]
-                fn sample(&self, pos: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
+                fn sample(&self, point: [f32; 3]) -> f32 {
+                    crate::scalar::$mod::gen3(point, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
                 }
             }
 
@@ -459,85 +459,85 @@ macro_rules! cellular {
 
                 impl Sample<2, f32x2> for $ty {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                    fn sample(&self, point: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(point, 0, DEFAULT_JITTER_2D)
                     }
                 }
 
                 impl Sample<3, f32x4> for $ty {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                    fn sample(&self, point: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(point, 0, DEFAULT_JITTER_3D)
                     }
                 }
 
                 impl Sample<2, f32x2> for Jitter<$ty> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(pos, 0, self.jitter * DEFAULT_JITTER_2D)
+                    fn sample(&self, point: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(point, 0, self.jitter * DEFAULT_JITTER_2D)
                     }
                 }
 
                 impl Sample<3, f32x4> for Jitter<$ty> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(pos, 0, self.jitter * DEFAULT_JITTER_3D)
+                    fn sample(&self, point: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(point, 0, self.jitter * DEFAULT_JITTER_3D)
                     }
                 }
 
                 impl Sample<2, f32x2> for Seeded<$ty> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                    fn sample(&self, point: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(point, 0, DEFAULT_JITTER_2D)
                     }
                 }
 
                 impl Sample<3, f32x4> for Seeded<$ty> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                    fn sample(&self, point: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(point, 0, DEFAULT_JITTER_3D)
                     }
                 }
 
                 impl Sample<2, f32x2> for Seeded<Jitter<$ty>> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
+                    fn sample(&self, point: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(point, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
                     }
                 }
 
                 impl Sample<3, f32x4> for Seeded<Jitter<$ty>> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
+                    fn sample(&self, point: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(point, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
                     }
                 }
 
                 impl Sample<2, f32x2> for Seeded<&$ty> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(pos, 0, DEFAULT_JITTER_2D)
+                    fn sample(&self, point: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(point, 0, DEFAULT_JITTER_2D)
                     }
                 }
 
                 impl Sample<3, f32x4> for Seeded<&$ty> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(pos, 0, DEFAULT_JITTER_3D)
+                    fn sample(&self, point: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(point, 0, DEFAULT_JITTER_3D)
                     }
                 }
 
                 impl Sample<2, f32x2> for Seeded<&Jitter<$ty>> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
+                    fn sample(&self, point: f32x2) -> f32 {
+                        crate::simd::$mod::gen2(point, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
                     }
                 }
 
                 impl Sample<3, f32x4> for Seeded<&Jitter<$ty>> {
                     #[inline(always)]
-                    fn sample(&self, pos: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
+                    fn sample(&self, point: f32x4) -> f32 {
+                        crate::simd::$mod::gen3(point, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
                     }
                 }
             }

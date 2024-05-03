@@ -1,17 +1,17 @@
 #[cfg(feature = "nightly-simd")]
 use crate::private_prelude::*;
 
-pub trait Sample<const DIM: usize, Pos = [f32; DIM]> {
-    fn sample(&self, pos: Pos) -> f32;
+pub trait Sample<const DIM: usize, Point = [f32; DIM]> {
+    fn sample(&self, point: Point) -> f32;
 }
 
-impl<const DIM: usize, Pos, Noise> Sample<DIM, Pos> for &Noise
+impl<const DIM: usize, Point, Noise> Sample<DIM, Point> for &Noise
 where
-    Noise: Sample<DIM, Pos>,
+    Noise: Sample<DIM, Point>,
 {
     #[inline(always)]
-    fn sample(&self, pos: Pos) -> f32 {
-        Noise::sample(self, pos)
+    fn sample(&self, point: Point) -> f32 {
+        Noise::sample(self, point)
     }
 }
 
@@ -34,7 +34,7 @@ macro_rules! helper_trait {
 		)]
 		$(#[$attr])*
 		pub trait $trait {
-			fn $fn(&self, pos: impl Into<$ty>) -> f32;
+			fn $fn(&self, point: impl Into<$ty>) -> f32;
 		}
 
 		$(#[$attr])*
@@ -43,8 +43,8 @@ macro_rules! helper_trait {
 			Noise: Sample<$dim, $ty>,
 		{
 			#[inline(always)]
-			fn $fn(&self, pos: impl Into<$ty>) -> f32 {
-				Noise::sample(self, pos.into())
+			fn $fn(&self, point: impl Into<$ty>) -> f32 {
+				Noise::sample(self, point.into())
 			}
 		}
 	};

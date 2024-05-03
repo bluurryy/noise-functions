@@ -31,8 +31,8 @@ mod scalar_improve {
     where
         Noise: Sample<3>,
     {
-        fn sample(&self, pos: [f32; 3]) -> f32 {
-            self.0.sample(improve3(pos))
+        fn sample(&self, point: [f32; 3]) -> f32 {
+            self.0.sample(improve3(point))
         }
     }
 
@@ -40,8 +40,8 @@ mod scalar_improve {
     where
         Noise: Sample<3>,
     {
-        fn sample(&self, pos: [f32; 3]) -> f32 {
-            self.0.sample(improve3_xy(pos))
+        fn sample(&self, point: [f32; 3]) -> f32 {
+            self.0.sample(improve3_xy(point))
         }
     }
 
@@ -49,8 +49,8 @@ mod scalar_improve {
     where
         Noise: Sample<3>,
     {
-        fn sample(&self, pos: [f32; 3]) -> f32 {
-            self.0.sample(improve3_xz(pos))
+        fn sample(&self, point: [f32; 3]) -> f32 {
+            self.0.sample(improve3_xz(point))
         }
     }
 
@@ -95,8 +95,8 @@ mod simd_improve {
     where
         Noise: Sample<3, f32x4>,
     {
-        fn sample(&self, pos: f32x4) -> f32 {
-            self.0.sample(improve3(pos))
+        fn sample(&self, point: f32x4) -> f32 {
+            self.0.sample(improve3(point))
         }
     }
 
@@ -104,8 +104,8 @@ mod simd_improve {
     where
         Noise: Sample<3, f32x4>,
     {
-        fn sample(&self, pos: f32x4) -> f32 {
-            self.0.sample(improve3_xy(pos))
+        fn sample(&self, point: f32x4) -> f32 {
+            self.0.sample(improve3_xy(point))
         }
     }
 
@@ -113,28 +113,28 @@ mod simd_improve {
     where
         Noise: Sample<3, f32x4>,
     {
-        fn sample(&self, pos: f32x4) -> f32 {
-            self.0.sample(improve3_xz(pos))
+        fn sample(&self, point: f32x4) -> f32 {
+            self.0.sample(improve3_xz(point))
         }
     }
 
     #[inline]
-    pub fn improve3(pos: f32x4) -> f32x4 {
+    pub fn improve3(point: f32x4) -> f32x4 {
         const R3: f32 = 2.0 / 3.0;
-        let r: f32 = (pos[0] + pos[1] + pos[2]) * R3; // Rotation, not skew
-        splat(r) - pos
+        let r: f32 = (point[0] + point[1] + point[2]) * R3; // Rotation, not skew
+        splat(r) - point
     }
 
     #[inline]
-    pub fn improve3_xy(pos: f32x4) -> f32x4 {
-        let &[x, y, z, _] = pos.as_array();
+    pub fn improve3_xy(point: f32x4) -> f32x4 {
+        let &[x, y, z, _] = point.as_array();
         let [x, y, z] = super::scalar_improve::improve3_xy([x, y, z]);
         f32x4::from_array([x, y, z, z])
     }
 
     #[inline]
-    pub fn improve3_xz(pos: f32x4) -> f32x4 {
-        let &[x, y, z, _] = pos.as_array();
+    pub fn improve3_xz(point: f32x4) -> f32x4 {
+        let &[x, y, z, _] = point.as_array();
         let [x, y, z] = super::scalar_improve::improve3_xz([x, y, z]);
         f32x4::from_array([x, y, z, z])
     }

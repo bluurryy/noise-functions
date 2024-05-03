@@ -1,8 +1,8 @@
 use crate::private_prelude::*;
 
 #[inline]
-pub fn gen2(pos: [f32; 2], seed: i32) -> f32 {
-    gen2_not_improved(improve2(pos), seed)
+pub fn gen2(point: [f32; 2], seed: i32) -> f32 {
+    gen2_not_improved(improve2(point), seed)
 }
 
 #[inline]

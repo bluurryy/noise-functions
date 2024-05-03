@@ -126,14 +126,14 @@ pub struct Config {
 }
 
 impl Sample<2> for Config {
-    fn sample(&self, pos: [f32; 2]) -> f32 {
-        self.sampler2().sample(pos)
+    fn sample(&self, point: [f32; 2]) -> f32 {
+        self.sampler2().sample(point)
     }
 }
 
 impl Sample<3> for Config {
-    fn sample(&self, pos: [f32; 3]) -> f32 {
-        self.sampler3().sample(pos)
+    fn sample(&self, point: [f32; 3]) -> f32 {
+        self.sampler3().sample(point)
     }
 }
 

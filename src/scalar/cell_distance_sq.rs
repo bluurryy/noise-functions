@@ -1,13 +1,13 @@
 use crate::private_prelude::*;
 
 #[inline]
-pub fn gen2(pos: [f32; 2], seed: i32, jitter: f32) -> f32 {
-    gen2_distance_squared(pos, seed, jitter) - 1.0
+pub fn gen2(point: [f32; 2], seed: i32, jitter: f32) -> f32 {
+    gen2_distance_squared(point, seed, jitter) - 1.0
 }
 
 #[inline]
-pub fn gen3(pos: [f32; 3], seed: i32, jitter: f32) -> f32 {
-    gen3_distance_squared(pos, seed, jitter) - 1.0
+pub fn gen3(point: [f32; 3], seed: i32, jitter: f32) -> f32 {
+    gen3_distance_squared(point, seed, jitter) - 1.0
 }
 
 #[inline(always)]

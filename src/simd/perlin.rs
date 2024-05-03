@@ -1,9 +1,9 @@
 use crate::private_prelude::*;
 
 #[inline]
-pub(crate) fn gen2(pos: f32x2, seed: i32) -> f32 {
-    let v0 = floor_to_int(pos);
-    let d0 = pos - v0.cast::<f32>();
+pub(crate) fn gen2(point: f32x2, seed: i32) -> f32 {
+    let v0 = floor_to_int(point);
+    let d0 = point - v0.cast::<f32>();
     let d1 = d0 - splat(1.0);
     let vs = interp_quintic(d0);
     let v0 = v0 * PRIME_XY;
@@ -16,7 +16,7 @@ pub(crate) fn gen2(pos: f32x2, seed: i32) -> f32 {
 }
 
 #[inline]
-pub fn gen3(pos: f32x4, seed: i32) -> f32 {
+pub fn gen3(point: f32x4, seed: i32) -> f32 {
     #[inline(always)]
     fn create_hash(mut hash: i32x4) -> Index3x4<64> {
         hash *= i32x4::splat(0x27d4eb2d);
@@ -24,8 +24,8 @@ pub fn gen3(pos: f32x4, seed: i32) -> f32 {
         Index3x4::new(hash)
     }
 
-    let mut v0 = floor_to_int(pos);
-    let d0 = pos - v0.cast::<f32>();
+    let mut v0 = floor_to_int(point);
+    let d0 = point - v0.cast::<f32>();
     let d1 = d0 - f32x4::splat(1.0);
     let vs = interp_quintic(d0);
     v0 *= PRIME_XYZ;

@@ -36,19 +36,19 @@ fn main() {
     noise_to_png("ridged", OpenSimplex2.ridged(3, 0.5, 2.0));
     noise_to_png("ping_pong", OpenSimplex2.ping_pong(3, 0.5, 2.0, 2.0));
 
-    let warped = NoiseFn(|pos: [f32; 2]| {
-        let warp_x = OpenSimplex2s.seed(1).sample(pos);
-        let warp_y = OpenSimplex2s.seed(2).sample(pos);
-        let warped = [pos[0] + warp_x, pos[1] + warp_y];
+    let warped = NoiseFn(|point: [f32; 2]| {
+        let warp_x = OpenSimplex2s.seed(1).sample(point);
+        let warp_y = OpenSimplex2s.seed(2).sample(point);
+        let warped = [point[0] + warp_x, point[1] + warp_y];
         OpenSimplex2s.sample(warped)
     });
 
     noise_to_png("warped", warped);
 
-    let warped_fbm = NoiseFn(|pos: [f32; 2], seed: i32| {
-        let warp_x = OpenSimplex2s.seed(seed + 100).sample(pos);
-        let warp_y = OpenSimplex2s.seed(seed + 200).sample(pos);
-        let warped = [pos[0] + warp_x, pos[1] + warp_y];
+    let warped_fbm = NoiseFn(|point: [f32; 2], seed: i32| {
+        let warp_x = OpenSimplex2s.seed(seed + 100).sample(point);
+        let warp_y = OpenSimplex2s.seed(seed + 200).sample(point);
+        let warped = [point[0] + warp_x, point[1] + warp_y];
         OpenSimplex2s.sample(warped)
     })
     .fbm(3, 0.5, 1.5);

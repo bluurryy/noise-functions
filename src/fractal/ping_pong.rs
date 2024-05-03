@@ -32,7 +32,7 @@ where
     for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
 {
     #[inline]
-    fn sample(&self, pos: [f32; DIM]) -> f32 {
+    fn sample(&self, point: [f32; DIM]) -> f32 {
         let &PingPong {
             ref noise,
             octaves,
@@ -43,7 +43,7 @@ where
             ..
         } = self;
 
-        ping_pong(noise, octaves, gain, lacunarity, fractal_bounding, strength, 0, pos)
+        ping_pong(noise, octaves, gain, lacunarity, fractal_bounding, strength, 0, point)
     }
 }
 
@@ -52,7 +52,7 @@ where
     for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
 {
     #[inline]
-    fn sample(&self, pos: [f32; DIM]) -> f32 {
+    fn sample(&self, point: [f32; DIM]) -> f32 {
         let &Seeded {
             noise:
                 PingPong {
@@ -67,7 +67,7 @@ where
             seed,
         } = self;
 
-        ping_pong(noise, octaves, gain, lacunarity, fractal_bounding, strength, seed, pos)
+        ping_pong(noise, octaves, gain, lacunarity, fractal_bounding, strength, seed, point)
     }
 }
 
@@ -76,7 +76,7 @@ where
     for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
 {
     #[inline]
-    fn sample(&self, pos: [f32; DIM]) -> f32 {
+    fn sample(&self, point: [f32; DIM]) -> f32 {
         let &Weighted {
             fractal: PingPong {
                 ref noise,
@@ -89,7 +89,7 @@ where
             strength: weighted_strength,
         } = self;
 
-        weighted_ping_pong(noise, octaves, gain, lacunarity, fractal_bounding, strength, weighted_strength, 0, pos)
+        weighted_ping_pong(noise, octaves, gain, lacunarity, fractal_bounding, strength, weighted_strength, 0, point)
     }
 }
 
@@ -98,7 +98,7 @@ where
     for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
 {
     #[inline]
-    fn sample(&self, pos: [f32; DIM]) -> f32 {
+    fn sample(&self, point: [f32; DIM]) -> f32 {
         let &Seeded {
             noise:
                 Weighted {
@@ -116,7 +116,7 @@ where
             seed,
         } = self;
 
-        weighted_ping_pong(noise, octaves, gain, lacunarity, fractal_bounding, strength, weighted_strength, seed, pos)
+        weighted_ping_pong(noise, octaves, gain, lacunarity, fractal_bounding, strength, weighted_strength, seed, point)
     }
 }
 
@@ -127,7 +127,7 @@ where
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
-    fn sample(&self, pos: Simd<f32, LANES>) -> f32 {
+    fn sample(&self, point: Simd<f32, LANES>) -> f32 {
         let &PingPong {
             ref noise,
             octaves,
@@ -138,7 +138,7 @@ where
             ..
         } = self;
 
-        ping_pong_a(noise, octaves, gain, lacunarity, fractal_bounding, strength, 0, pos)
+        ping_pong_a(noise, octaves, gain, lacunarity, fractal_bounding, strength, 0, point)
     }
 }
 
@@ -149,7 +149,7 @@ where
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
-    fn sample(&self, pos: Simd<f32, LANES>) -> f32 {
+    fn sample(&self, point: Simd<f32, LANES>) -> f32 {
         let &Seeded {
             noise: PingPong {
                 ref noise,
@@ -162,7 +162,7 @@ where
             seed,
         } = self;
 
-        ping_pong_a(noise, octaves, gain, lacunarity, fractal_bounding, strength, seed, pos)
+        ping_pong_a(noise, octaves, gain, lacunarity, fractal_bounding, strength, seed, point)
     }
 }
 
@@ -173,7 +173,7 @@ where
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
-    fn sample(&self, pos: Simd<f32, LANES>) -> f32 {
+    fn sample(&self, point: Simd<f32, LANES>) -> f32 {
         let &Weighted {
             fractal: PingPong {
                 ref noise,
@@ -186,7 +186,7 @@ where
             strength: weighted_strength,
         } = self;
 
-        weighted_ping_pong_a(noise, octaves, gain, lacunarity, fractal_bounding, strength, weighted_strength, 0, pos)
+        weighted_ping_pong_a(noise, octaves, gain, lacunarity, fractal_bounding, strength, weighted_strength, 0, point)
     }
 }
 
@@ -197,7 +197,7 @@ where
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
-    fn sample(&self, pos: Simd<f32, LANES>) -> f32 {
+    fn sample(&self, point: Simd<f32, LANES>) -> f32 {
         let &Seeded {
             noise:
                 Weighted {
@@ -215,7 +215,7 @@ where
             seed,
         } = self;
 
-        weighted_ping_pong_a(noise, octaves, gain, lacunarity, fractal_bounding, strength, weighted_strength, seed, pos)
+        weighted_ping_pong_a(noise, octaves, gain, lacunarity, fractal_bounding, strength, weighted_strength, seed, point)
     }
 }
 
@@ -230,7 +230,7 @@ fn do_ping_pong(t: f32) -> f32 {
 }
 
 #[inline(always)]
-fn ping_pong<Noise, const DIM: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, strength: f32, mut seed: i32, mut pos: [f32; DIM]) -> f32
+fn ping_pong<Noise, const DIM: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, strength: f32, mut seed: i32, mut point: [f32; DIM]) -> f32
 where
     for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
 {
@@ -238,12 +238,12 @@ where
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = do_ping_pong((Seeded { noise, seed }.sample(pos) + 1.0) * strength);
+        let noise = do_ping_pong((Seeded { noise, seed }.sample(point) + 1.0) * strength);
         seed = seed.wrapping_add(1);
         sum += (noise - 0.5) * 2.0 * amp;
         amp *= noise;
 
-        for x in &mut pos {
+        for x in &mut point {
             *x *= lacunarity;
         }
 
@@ -255,7 +255,7 @@ where
 
 #[cfg(feature = "nightly-simd")]
 #[inline(always)]
-fn ping_pong_a<Noise, const DIM: usize, const LANES: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, strength: f32, mut seed: i32, mut pos: Simd<f32, LANES>) -> f32
+fn ping_pong_a<Noise, const DIM: usize, const LANES: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, strength: f32, mut seed: i32, mut point: Simd<f32, LANES>) -> f32
 where
     for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
@@ -264,12 +264,12 @@ where
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = do_ping_pong((Seeded { noise, seed }.sample(pos) + 1.0) * strength);
+        let noise = do_ping_pong((Seeded { noise, seed }.sample(point) + 1.0) * strength);
         seed = seed.wrapping_add(1);
         sum += (noise - 0.5) * 2.0 * amp;
         amp *= noise;
 
-        pos *= splat(lacunarity);
+        point *= splat(lacunarity);
         amp *= gain;
     }
 
@@ -277,7 +277,7 @@ where
 }
 
 #[inline(always)]
-fn weighted_ping_pong<Noise, const DIM: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, strength: f32, weighted_strength: f32, mut seed: i32, mut pos: [f32; DIM]) -> f32
+fn weighted_ping_pong<Noise, const DIM: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, strength: f32, weighted_strength: f32, mut seed: i32, mut point: [f32; DIM]) -> f32
 where
     for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
 {
@@ -285,12 +285,12 @@ where
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = do_ping_pong((Seeded { noise, seed }.sample(pos) + 1.0) * strength);
+        let noise = do_ping_pong((Seeded { noise, seed }.sample(point) + 1.0) * strength);
         seed = seed.wrapping_add(1);
         sum += (noise - 0.5) * 2.0 * amp;
         amp *= lerp(1.0, noise, weighted_strength);
 
-        for x in &mut pos {
+        for x in &mut point {
             *x *= lacunarity;
         }
 
@@ -311,7 +311,7 @@ fn weighted_ping_pong_a<Noise, const DIM: usize, const LANES: usize>(
     strength: f32,
     weighted_strength: f32,
     mut seed: i32,
-    mut pos: Simd<f32, LANES>,
+    mut point: Simd<f32, LANES>,
 ) -> f32
 where
     for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
@@ -321,12 +321,12 @@ where
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = do_ping_pong((Seeded { noise, seed }.sample(pos) + 1.0) * strength);
+        let noise = do_ping_pong((Seeded { noise, seed }.sample(point) + 1.0) * strength);
         seed = seed.wrapping_add(1);
         sum += (noise - 0.5) * 2.0 * amp;
         amp *= lerp(1.0, noise, weighted_strength);
 
-        pos *= splat(lacunarity);
+        point *= splat(lacunarity);
         amp *= gain;
     }
 

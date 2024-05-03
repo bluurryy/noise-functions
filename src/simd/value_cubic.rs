@@ -1,9 +1,9 @@
 use crate::private_prelude::*;
 
 #[inline]
-pub(crate) fn gen2(pos: f32x2, seed: i32) -> f32 {
-    let v1 = floor_to_int(pos);
-    let s = pos - v1.cast();
+pub(crate) fn gen2(point: f32x2, seed: i32) -> f32 {
+    let v1 = floor_to_int(point);
+    let s = point - v1.cast();
     let v1 = v1 * PRIME_XY;
     let v0 = v1 - PRIME_XY;
     let v2 = v1 + PRIME_XY;
@@ -19,9 +19,9 @@ pub(crate) fn gen2(pos: f32x2, seed: i32) -> f32 {
 }
 
 #[inline]
-pub fn gen3(pos: f32x4, seed: i32) -> f32 {
-    let v1 = floor_to_int(pos);
-    let s = pos - v1.cast();
+pub fn gen3(point: f32x4, seed: i32) -> f32 {
+    let v1 = floor_to_int(point);
+    let s = point - v1.cast();
     let v1 = v1 * PRIME_XYZ;
     let v0 = v1 - PRIME_XYZ;
     let v2 = v1 + PRIME_XYZ;

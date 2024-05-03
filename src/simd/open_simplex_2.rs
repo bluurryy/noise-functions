@@ -4,17 +4,17 @@ use crate::{
 };
 
 #[inline]
-pub(crate) fn gen2(pos: f32x2, seed: i32) -> f32 {
-    gen2_not_improved(improve2(pos), seed)
+pub(crate) fn gen2(point: f32x2, seed: i32) -> f32 {
+    gen2_not_improved(improve2(point), seed)
 }
 
 #[inline]
-pub fn gen2_not_improved(pos: f32x2, seed: i32) -> f32 {
+pub fn gen2_not_improved(point: f32x2, seed: i32) -> f32 {
     const SQRT3: f32 = 1.7320508075688772935274463415059;
     const G2: f32 = (3.0 - SQRT3) / 6.0;
 
-    let i = floor_to_int(pos);
-    let vi = pos - i.cast();
+    let i = floor_to_int(point);
+    let vi = point - i.cast();
 
     let t = (vi[0] + vi[1]) * G2;
     let v0 = vi - splat(t);
@@ -65,17 +65,17 @@ pub fn gen2_not_improved(pos: f32x2, seed: i32) -> f32 {
 }
 
 #[inline]
-pub fn improve2(pos: f32x2) -> f32x2 {
+pub fn improve2(point: f32x2) -> f32x2 {
     const SQRT3: f32 = 1.7320508075688772935274463415059;
     const F2: f32 = 0.5 * (SQRT3 - 1.0);
-    let t: f32 = (pos[0] + pos[1]) * F2;
-    pos + splat(t)
+    let t: f32 = (point[0] + point[1]) * F2;
+    point + splat(t)
 }
 
 #[inline]
-pub fn gen3(pos: f32x4, mut seed: i32) -> f32 {
-    let i = round_to_int(pos);
-    let mut v0 = pos - i.cast();
+pub fn gen3(point: f32x4, mut seed: i32) -> f32 {
+    let i = round_to_int(point);
+    let mut v0 = point - i.cast();
     let mut nsign = (splat(-1.0) - v0).cast::<i32>() | splat(1);
     let mut a0 = nsign.cast() * -v0;
     let mut i = i * PRIME_XYZ;
