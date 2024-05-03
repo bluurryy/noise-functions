@@ -11,7 +11,7 @@ Check out the [live demo](https://bluurryy.github.io/noise-functions-demo/)!
 
 The implementation of these noise functions are from FastNoiseLite ([github](https://github.com/Auburn/FastNoiseLite)/[crate](https://docs.rs/fastnoise-lite/latest/fastnoise_lite/)).
 
-### Base noise functions
+### Base noises
 ![](/example-images/cell_distance_sq.jpg "Cell Distance Squared")
 ![](/example-images/cell_distance.jpg "Cell Distance")
 ![](/example-images/cell_value.jpg "Cell Value")
@@ -21,9 +21,12 @@ The implementation of these noise functions are from FastNoiseLite ([github](htt
 ![](/example-images/value.jpg "Value")
 ![](/example-images/value_cubic.jpg "Value Cubic")
 
-### Examples of combined noises
+### Fractal noises
 ![](/example-images/fbm.jpg "Fbm (OpenSimplex2)")
 ![](/example-images/ridged.jpg "Ridged (OpenSimplex2)")
+![](/example-images/ping_pong.jpg "Ping Pong (OpenSimplex2)")
+
+### Domain warped noises
 ![](/example-images/warped.jpg "Domain Warped (OpenSimplex2s)")
 ![](/example-images/warped_fbm.jpg "Domain Warped Fbm (OpenSimplex2s)")
 
