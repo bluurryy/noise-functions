@@ -12,7 +12,6 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide), doc(cfg_hide(no_global_oom_handling, feature = "nightly-const-fn-float")))]
 
 use noise_functions::{
-    fractal::*,
     open_simplex::{Improve3, Improve3Xy, Improve3Xz},
     *,
 };
@@ -155,108 +154,54 @@ macro_rules! make {
 
 macro_rules! make_fbm {
     ($self:ident, $noise:expr) => {
-        Box::new(Frequency {
-            frequency: $self.frequency,
-            noise: Seeded {
-                seed: $self.seed,
-                noise: Fbm {
-                    noise: $noise,
-                    octaves: $self.octaves,
-                    gain: $self.gain,
-                    lacunarity: $self.lacunarity,
-                    fractal_bounding: fractal_bounding($self.octaves, $self.gain),
-                }
-                .weighted($self.weighted_strength),
-            },
-        })
+        Box::new(
+            $noise
+                .fbm($self.octaves, $self.gain, $self.lacunarity)
+                .weighted($self.weighted_strength)
+                .seed($self.seed)
+                .frequency($self.frequency),
+        )
     };
     ($self:ident, $noise:expr, $improve:ident) => {
-        Box::new(Frequency {
-            frequency: $self.frequency,
-            noise: $improve(Seeded {
-                seed: $self.seed,
-                noise: Fbm {
-                    noise: $noise,
-                    octaves: $self.octaves,
-                    gain: $self.gain,
-                    lacunarity: $self.lacunarity,
-                    fractal_bounding: fractal_bounding($self.octaves, $self.gain),
-                }
-                .weighted($self.weighted_strength),
-            }),
-        })
+        Box::new($improve($noise.fbm($self.octaves, $self.gain, $self.lacunarity).weighted($self.weighted_strength).seed($self.seed)).frequency($self.frequency))
     };
 }
 
 macro_rules! make_ridged {
     ($self:ident, $noise:expr) => {
-        Box::new(Frequency {
-            frequency: $self.frequency,
-            noise: Seeded {
-                seed: $self.seed,
-                noise: Ridged {
-                    noise: $noise,
-                    octaves: $self.octaves,
-                    gain: $self.gain,
-                    lacunarity: $self.lacunarity,
-                    fractal_bounding: fractal_bounding($self.octaves, $self.gain),
-                }
-                .weighted($self.weighted_strength),
-            },
-        })
+        Box::new(
+            $noise
+                .ridged($self.octaves, $self.gain, $self.lacunarity)
+                .weighted($self.weighted_strength)
+                .seed($self.seed)
+                .frequency($self.frequency),
+        )
     };
     ($self:ident, $noise:expr, $improve:ident) => {
-        Box::new(Frequency {
-            frequency: $self.frequency,
-            noise: $improve(Seeded {
-                seed: $self.seed,
-                noise: Ridged {
-                    noise: $noise,
-                    octaves: $self.octaves,
-                    gain: $self.gain,
-                    lacunarity: $self.lacunarity,
-                    fractal_bounding: fractal_bounding($self.octaves, $self.gain),
-                }
-                .weighted($self.weighted_strength),
-            }),
-        })
+        Box::new($improve($noise.ridged($self.octaves, $self.gain, $self.lacunarity).weighted($self.weighted_strength).seed($self.seed)).frequency($self.frequency))
     };
 }
 
 macro_rules! make_ping_pong {
     ($self:ident, $noise:expr) => {
-        Box::new(Frequency {
-            frequency: $self.frequency,
-            noise: Seeded {
-                seed: $self.seed,
-                noise: PingPong {
-                    noise: $noise,
-                    octaves: $self.octaves,
-                    gain: $self.gain,
-                    lacunarity: $self.lacunarity,
-                    fractal_bounding: fractal_bounding($self.octaves, $self.gain),
-                    strength: $self.ping_pong_strength,
-                }
-                .weighted($self.weighted_strength),
-            },
-        })
+        Box::new(
+            $noise
+                .ping_pong($self.octaves, $self.gain, $self.lacunarity, $self.ping_pong_strength)
+                .weighted($self.weighted_strength)
+                .seed($self.seed)
+                .frequency($self.frequency),
+        )
     };
     ($self:ident, $noise:expr, $improve:ident) => {
-        Box::new(Frequency {
-            frequency: $self.frequency,
-            noise: $improve(Seeded {
-                seed: $self.seed,
-                noise: PingPong {
-                    noise: $noise,
-                    octaves: $self.octaves,
-                    gain: $self.gain,
-                    lacunarity: $self.lacunarity,
-                    fractal_bounding: fractal_bounding($self.octaves, $self.gain),
-                    strength: $self.ping_pong_strength,
-                }
-                .weighted($self.weighted_strength),
-            }),
-        })
+        Box::new(
+            $improve(
+                $noise
+                    .ping_pong($self.octaves, $self.gain, $self.lacunarity, $self.ping_pong_strength)
+                    .weighted($self.weighted_strength)
+                    .seed($self.seed),
+            )
+            .frequency($self.frequency),
+        )
     };
 }
 
