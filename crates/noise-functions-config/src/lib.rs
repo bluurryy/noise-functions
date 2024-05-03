@@ -11,7 +11,7 @@
 #![cfg_attr(feature = "nightly-simd", feature(portable_simd))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide), doc(cfg_hide(no_global_oom_handling, feature = "nightly-const-fn-float")))]
 
-use noise_functions::*;
+use noise_functions::prelude::*;
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::*;

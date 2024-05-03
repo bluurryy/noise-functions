@@ -78,15 +78,21 @@ mod seeded;
 mod simd;
 mod util;
 
-pub use cellular::{CellDistance, CellDistanceSq, CellValue};
 pub use frequency::Frequency;
 pub use noise_fn::NoiseFn;
-pub use open_simplex_2::{OpenSimplex2, OpenSimplex2s};
 pub use sample::{Sample, Sample2, Sample3};
 pub use seeded::Seeded;
 
 #[cfg(feature = "nightly-simd")]
 pub use sample::{Sample2a, Sample3a};
+
+/// Includes all items of this crate.
+pub mod prelude {
+    pub use crate::cellular::*;
+    pub use crate::fractal::*;
+    pub use crate::open_simplex_2::*;
+    pub use crate::*;
+}
 
 mod private_prelude {
     pub(crate) use crate::fractal::*;
@@ -94,6 +100,12 @@ mod private_prelude {
     pub(crate) use crate::math::*;
     pub(crate) use crate::util::*;
     pub(crate) use crate::*;
+
+    #[cfg(test)]
+    pub(crate) use crate::open_simplex_2::*;
+
+    #[cfg(test)]
+    pub(crate) use crate::cellular::*;
 
     #[cfg(feature = "nightly-simd")]
     pub(crate) use crate::simd::{PRIME_XY, PRIME_XYZ};
