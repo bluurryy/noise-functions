@@ -346,7 +346,17 @@ macro_rules! open_simplex {
             }
         }
 
-        basic_noise!($mod::$ty);
+        basic_noise! {
+            /// 2/3 Dimensional OpenSimplex2 noise.
+            ///
+            /// When sampling in 3 Dimensions you should choose one of the `Improve*` wrappers ([`Improve3`], [`Improve3Xy`], [`Improve3Xz`])
+            /// to improve the orientation of the noise. This wrapper should be put at the end as it can't be seeded or used in fractals.
+            ///
+            /// [`Improve3`]: crate::open_simplex::Improve3
+            /// [`Improve3Xy`]: crate::open_simplex::Improve3Xy
+            /// [`Improve3Xz`]: crate::open_simplex::Improve3Xz
+            $mod::$ty
+        }
     };
 }
 
