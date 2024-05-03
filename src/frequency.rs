@@ -2,7 +2,7 @@ use crate::private_prelude::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Frequency<Noise> {
-    pub base: Noise,
+    pub noise: Noise,
     pub frequency: f32,
 }
 
@@ -17,7 +17,7 @@ where
             *x *= frequency;
         }
 
-        self.base.sample(pos)
+        self.noise.sample(pos)
     }
 }
 
@@ -29,6 +29,6 @@ where
 {
     fn sample(&self, mut pos: Simd<f32, LANES>) -> f32 {
         pos *= splat(self.frequency);
-        self.base.sample(pos)
+        self.noise.sample(pos)
     }
 }

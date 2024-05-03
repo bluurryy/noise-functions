@@ -139,28 +139,28 @@ impl Sample<3> for Config {
 }
 
 macro_rules! make {
-    ($self:ident, $base:expr) => {
+    ($self:ident, $noise:expr) => {
         Box::new(Frequency {
             frequency: $self.frequency,
-            base: Seeded { seed: $self.seed, base: $base },
+            noise: Seeded { seed: $self.seed, noise: $noise },
         })
     };
-    ($self:ident, $base:expr, $improve:ident) => {
+    ($self:ident, $noise:expr, $improve:ident) => {
         Box::new(Frequency {
             frequency: $self.frequency,
-            base: $improve(Seeded { seed: $self.seed, base: $base }),
+            noise: $improve(Seeded { seed: $self.seed, noise: $noise }),
         })
     };
 }
 
 macro_rules! make_fbm {
-    ($self:ident, $base:expr) => {
+    ($self:ident, $noise:expr) => {
         Box::new(Frequency {
             frequency: $self.frequency,
-            base: Seeded {
+            noise: Seeded {
                 seed: $self.seed,
-                base: Fbm {
-                    base: $base,
+                noise: Fbm {
+                    noise: $noise,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,
@@ -170,13 +170,13 @@ macro_rules! make_fbm {
             },
         })
     };
-    ($self:ident, $base:expr, $improve:ident) => {
+    ($self:ident, $noise:expr, $improve:ident) => {
         Box::new(Frequency {
             frequency: $self.frequency,
-            base: $improve(Seeded {
+            noise: $improve(Seeded {
                 seed: $self.seed,
-                base: Fbm {
-                    base: $base,
+                noise: Fbm {
+                    noise: $noise,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,
@@ -189,13 +189,13 @@ macro_rules! make_fbm {
 }
 
 macro_rules! make_ridged {
-    ($self:ident, $base:expr) => {
+    ($self:ident, $noise:expr) => {
         Box::new(Frequency {
             frequency: $self.frequency,
-            base: Seeded {
+            noise: Seeded {
                 seed: $self.seed,
-                base: Ridged {
-                    base: $base,
+                noise: Ridged {
+                    noise: $noise,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,
@@ -205,13 +205,13 @@ macro_rules! make_ridged {
             },
         })
     };
-    ($self:ident, $base:expr, $improve:ident) => {
+    ($self:ident, $noise:expr, $improve:ident) => {
         Box::new(Frequency {
             frequency: $self.frequency,
-            base: $improve(Seeded {
+            noise: $improve(Seeded {
                 seed: $self.seed,
-                base: Ridged {
-                    base: $base,
+                noise: Ridged {
+                    noise: $noise,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,
@@ -224,13 +224,13 @@ macro_rules! make_ridged {
 }
 
 macro_rules! make_ping_pong {
-    ($self:ident, $base:expr) => {
+    ($self:ident, $noise:expr) => {
         Box::new(Frequency {
             frequency: $self.frequency,
-            base: Seeded {
+            noise: Seeded {
                 seed: $self.seed,
-                base: PingPong {
-                    base: $base,
+                noise: PingPong {
+                    noise: $noise,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,
@@ -241,13 +241,13 @@ macro_rules! make_ping_pong {
             },
         })
     };
-    ($self:ident, $base:expr, $improve:ident) => {
+    ($self:ident, $noise:expr, $improve:ident) => {
         Box::new(Frequency {
             frequency: $self.frequency,
-            base: $improve(Seeded {
+            noise: $improve(Seeded {
                 seed: $self.seed,
-                base: PingPong {
-                    base: $base,
+                noise: PingPong {
+                    noise: $noise,
                     octaves: $self.octaves,
                     gain: $self.gain,
                     lacunarity: $self.lacunarity,

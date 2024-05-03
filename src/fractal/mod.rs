@@ -19,6 +19,6 @@ pub struct Weighted<Fractal> {
 impl<Fractal> Weighted<Fractal> {
     #[inline(always)]
     pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
-        Frequency { base: self, frequency }
+        Frequency { noise: self, frequency }
     }
 }

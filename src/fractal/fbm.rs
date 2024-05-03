@@ -2,7 +2,7 @@ use crate::private_prelude::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Fbm<Noise> {
-    pub base: Noise,
+    pub noise: Noise,
     pub octaves: u32,
     pub gain: f32,
     pub lacunarity: f32,
@@ -12,12 +12,12 @@ pub struct Fbm<Noise> {
 impl<Noise> Fbm<Noise> {
     #[inline(always)]
     pub const fn seed(self, seed: i32) -> Seeded<Self> {
-        Seeded { base: self, seed }
+        Seeded { noise: self, seed }
     }
 
     #[inline(always)]
     pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
-        Frequency { base: self, frequency }
+        Frequency { noise: self, frequency }
     }
 
     #[inline(always)]
@@ -33,13 +33,13 @@ where
     #[inline]
     fn sample(&self, pos: [f32; DIM]) -> f32 {
         let &Fbm {
-            ref base,
+            ref noise,
             octaves,
             gain,
             lacunarity,
             fractal_bounding,
         } = self;
-        fbm(base, octaves, gain, lacunarity, fractal_bounding, 0, pos)
+        fbm(noise, octaves, gain, lacunarity, fractal_bounding, 0, pos)
     }
 }
 
@@ -50,8 +50,8 @@ where
     #[inline]
     fn sample(&self, pos: [f32; DIM]) -> f32 {
         let &Seeded {
-            base: Fbm {
-                ref base,
+            noise: Fbm {
+                ref noise,
                 octaves,
                 gain,
                 lacunarity,
@@ -59,7 +59,7 @@ where
             },
             seed,
         } = self;
-        fbm(base, octaves, gain, lacunarity, fractal_bounding, seed, pos)
+        fbm(noise, octaves, gain, lacunarity, fractal_bounding, seed, pos)
     }
 }
 
@@ -71,7 +71,7 @@ where
     fn sample(&self, pos: [f32; DIM]) -> f32 {
         let &Weighted {
             fractal: Fbm {
-                ref base,
+                ref noise,
                 octaves,
                 gain,
                 lacunarity,
@@ -80,7 +80,7 @@ where
             strength: weighted_strength,
         } = self;
 
-        weighted_fbm(base, octaves, gain, lacunarity, fractal_bounding, weighted_strength, 0, pos)
+        weighted_fbm(noise, octaves, gain, lacunarity, fractal_bounding, weighted_strength, 0, pos)
     }
 }
 
@@ -91,11 +91,11 @@ where
     #[inline]
     fn sample(&self, pos: [f32; DIM]) -> f32 {
         let &Seeded {
-            base:
+            noise:
                 Weighted {
                     fractal:
                         Fbm {
-                            ref base,
+                            ref noise,
                             octaves,
                             gain,
                             lacunarity,
@@ -105,7 +105,7 @@ where
                 },
             seed,
         } = self;
-        weighted_fbm(base, octaves, gain, lacunarity, fractal_bounding, weighted_strength, seed, pos)
+        weighted_fbm(noise, octaves, gain, lacunarity, fractal_bounding, weighted_strength, seed, pos)
     }
 }
 
@@ -118,13 +118,13 @@ where
     #[inline]
     fn sample(&self, pos: Simd<f32, LANES>) -> f32 {
         let &Fbm {
-            ref base,
+            ref noise,
             octaves,
             gain,
             lacunarity,
             fractal_bounding,
         } = self;
-        fbm_a(base, octaves, gain, lacunarity, fractal_bounding, 0, pos)
+        fbm_a(noise, octaves, gain, lacunarity, fractal_bounding, 0, pos)
     }
 }
 
@@ -137,8 +137,8 @@ where
     #[inline]
     fn sample(&self, pos: Simd<f32, LANES>) -> f32 {
         let &Seeded {
-            base: Fbm {
-                ref base,
+            noise: Fbm {
+                ref noise,
                 octaves,
                 gain,
                 lacunarity,
@@ -146,7 +146,7 @@ where
             },
             seed,
         } = self;
-        fbm_a(base, octaves, gain, lacunarity, fractal_bounding, seed, pos)
+        fbm_a(noise, octaves, gain, lacunarity, fractal_bounding, seed, pos)
     }
 }
 
@@ -160,7 +160,7 @@ where
     fn sample(&self, pos: Simd<f32, LANES>) -> f32 {
         let &Weighted {
             fractal: Fbm {
-                ref base,
+                ref noise,
                 octaves,
                 gain,
                 lacunarity,
@@ -169,7 +169,7 @@ where
             strength: weighted_strength,
         } = self;
 
-        weighted_fbm_a(base, octaves, gain, lacunarity, fractal_bounding, weighted_strength, 0, pos)
+        weighted_fbm_a(noise, octaves, gain, lacunarity, fractal_bounding, weighted_strength, 0, pos)
     }
 }
 
@@ -182,11 +182,11 @@ where
     #[inline]
     fn sample(&self, pos: Simd<f32, LANES>) -> f32 {
         let &Seeded {
-            base:
+            noise:
                 Weighted {
                     fractal:
                         Fbm {
-                            ref base,
+                            ref noise,
                             octaves,
                             gain,
                             lacunarity,
@@ -197,12 +197,12 @@ where
             seed,
         } = self;
 
-        weighted_fbm_a(base, octaves, gain, lacunarity, fractal_bounding, weighted_strength, seed, pos)
+        weighted_fbm_a(noise, octaves, gain, lacunarity, fractal_bounding, weighted_strength, seed, pos)
     }
 }
 
 #[inline(always)]
-fn fbm<Noise, const DIM: usize>(base: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, mut seed: i32, mut pos: [f32; DIM]) -> f32
+fn fbm<Noise, const DIM: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, mut seed: i32, mut pos: [f32; DIM]) -> f32
 where
     for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
 {
@@ -210,7 +210,7 @@ where
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = Seeded { base, seed }.sample(pos);
+        let noise = Seeded { noise, seed }.sample(pos);
         seed = seed.wrapping_add(1);
         sum += noise * amp;
 
@@ -226,7 +226,7 @@ where
 
 #[cfg(feature = "nightly-simd")]
 #[inline(always)]
-fn fbm_a<Noise, const DIM: usize, const LANES: usize>(base: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, mut seed: i32, mut pos: Simd<f32, LANES>) -> f32
+fn fbm_a<Noise, const DIM: usize, const LANES: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, mut seed: i32, mut pos: Simd<f32, LANES>) -> f32
 where
     for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
@@ -235,7 +235,7 @@ where
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = Seeded { base, seed }.sample(pos);
+        let noise = Seeded { noise, seed }.sample(pos);
         seed = seed.wrapping_add(1);
         sum += noise * amp;
 
@@ -247,7 +247,7 @@ where
 }
 
 #[inline(always)]
-fn weighted_fbm<Noise, const DIM: usize>(base: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, weighted_strength: f32, mut seed: i32, mut pos: [f32; DIM]) -> f32
+fn weighted_fbm<Noise, const DIM: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, weighted_strength: f32, mut seed: i32, mut pos: [f32; DIM]) -> f32
 where
     for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
 {
@@ -255,7 +255,7 @@ where
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = Seeded { base, seed }.sample(pos);
+        let noise = Seeded { noise, seed }.sample(pos);
         seed = seed.wrapping_add(1);
         sum += noise * amp;
         amp *= lerp(1.0, fast_min(noise + 1.0, 2.0) * 0.5, weighted_strength);
@@ -272,7 +272,7 @@ where
 
 #[cfg(feature = "nightly-simd")]
 #[inline(always)]
-fn weighted_fbm_a<Noise, const DIM: usize, const LANES: usize>(base: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, weighted_strength: f32, mut seed: i32, mut pos: Simd<f32, LANES>) -> f32
+fn weighted_fbm_a<Noise, const DIM: usize, const LANES: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, weighted_strength: f32, mut seed: i32, mut pos: Simd<f32, LANES>) -> f32
 where
     for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
@@ -281,7 +281,7 @@ where
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = Seeded { base, seed }.sample(pos);
+        let noise = Seeded { noise, seed }.sample(pos);
         seed = seed.wrapping_add(1);
         sum += noise * amp;
         amp *= lerp(1.0, fast_min(noise + 1.0, 2.0) * 0.5, weighted_strength);

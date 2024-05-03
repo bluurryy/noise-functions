@@ -113,19 +113,19 @@ macro_rules! impl_modifiers {
     () => {
         #[inline(always)]
         pub const fn seed(self, seed: i32) -> Seeded<Self> {
-            Seeded { base: self, seed }
+            Seeded { noise: self, seed }
         }
 
         #[inline(always)]
         pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
-            Frequency { base: self, frequency }
+            Frequency { noise: self, frequency }
         }
 
         cfg_const_feature_float! {
             #[inline(always)]
             pub fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> Fbm<Self> {
                 Fbm {
-                    base: self,
+                    noise: self,
                     octaves,
                     gain,
                     lacunarity,
@@ -138,7 +138,7 @@ macro_rules! impl_modifiers {
             #[inline(always)]
             pub fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> Ridged<Self> {
                 Ridged {
-                    base: self,
+                    noise: self,
                     octaves,
                     gain,
                     lacunarity,
@@ -151,7 +151,7 @@ macro_rules! impl_modifiers {
             #[inline(always)]
             pub fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> PingPong<Self> {
                 PingPong {
-                    base: self,
+                    noise: self,
                     octaves,
                     gain,
                     lacunarity,
@@ -363,7 +363,7 @@ macro_rules! cellular {
             impl $ty {
                 /// Multiplies jitter by the provided value.
                 pub const fn jitter(self, jitter: f32) -> Jitter<Self> {
-                    Jitter { base: self, jitter }
+                    Jitter { noise: self, jitter }
                 }
 
                 impl_modifiers!();
@@ -414,14 +414,14 @@ macro_rules! cellular {
             impl Sample<2> for Seeded<Jitter<$ty>> {
                 #[inline(always)]
                 fn sample(&self, pos: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(pos, self.seed, self.base.jitter * DEFAULT_JITTER_2D)
+                    crate::scalar::$mod::gen2(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
                 }
             }
 
             impl Sample<3> for Seeded<Jitter<$ty>> {
                 #[inline(always)]
                 fn sample(&self, pos: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(pos, self.seed, self.base.jitter * DEFAULT_JITTER_3D)
+                    crate::scalar::$mod::gen3(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
                 }
             }
 
@@ -442,14 +442,14 @@ macro_rules! cellular {
             impl Sample<2> for Seeded<&Jitter<$ty>> {
                 #[inline(always)]
                 fn sample(&self, pos: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(pos, self.seed, self.base.jitter * DEFAULT_JITTER_2D)
+                    crate::scalar::$mod::gen2(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
                 }
             }
 
             impl Sample<3> for Seeded<&Jitter<$ty>> {
                 #[inline(always)]
                 fn sample(&self, pos: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(pos, self.seed, self.base.jitter * DEFAULT_JITTER_3D)
+                    crate::scalar::$mod::gen3(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
                 }
             }
 
@@ -502,14 +502,14 @@ macro_rules! cellular {
                 impl Sample<2, f32x2> for Seeded<Jitter<$ty>> {
                     #[inline(always)]
                     fn sample(&self, pos: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(pos, self.seed, self.base.jitter * DEFAULT_JITTER_2D)
+                        crate::simd::$mod::gen2(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
                     }
                 }
 
                 impl Sample<3, f32x4> for Seeded<Jitter<$ty>> {
                     #[inline(always)]
                     fn sample(&self, pos: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(pos, self.seed, self.base.jitter * DEFAULT_JITTER_3D)
+                        crate::simd::$mod::gen3(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
                     }
                 }
 
@@ -530,14 +530,14 @@ macro_rules! cellular {
                 impl Sample<2, f32x2> for Seeded<&Jitter<$ty>> {
                     #[inline(always)]
                     fn sample(&self, pos: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(pos, self.seed, self.base.jitter * DEFAULT_JITTER_2D)
+                        crate::simd::$mod::gen2(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_2D)
                     }
                 }
 
                 impl Sample<3, f32x4> for Seeded<&Jitter<$ty>> {
                     #[inline(always)]
                     fn sample(&self, pos: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(pos, self.seed, self.base.jitter * DEFAULT_JITTER_3D)
+                        crate::simd::$mod::gen3(pos, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
                     }
                 }
             }

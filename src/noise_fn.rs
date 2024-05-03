@@ -41,8 +41,8 @@ where
     F: Fn(Pos, i32) -> f32,
 {
     fn sample(&self, pos: Pos) -> f32 {
-        let &Seeded { ref base, seed } = self;
-        base.0(pos, seed)
+        let &Seeded { ref noise, seed } = self;
+        noise.0(pos, seed)
     }
 }
 
@@ -51,7 +51,7 @@ where
     F: Fn(Pos, i32) -> f32,
 {
     fn sample(&self, pos: Pos) -> f32 {
-        let &Seeded { base, seed } = self;
-        base.0(pos, seed)
+        let &Seeded { noise, seed } = self;
+        noise.0(pos, seed)
     }
 }
