@@ -7,73 +7,72 @@ pub(crate) use table4::*;
 #[cfg(feature = "nightly-simd")]
 use crate::private_prelude::*;
 
-#[allow(unused_macros)]
 macro_rules! const_assert {
-	($($tt:tt)*) => {
-		const _: () = assert!($($tt)*);
-	};
+    ($($tt:tt)*) => {
+        const _: () = assert!($($tt)*);
+    };
 }
-
-#[cfg(feature = "nightly-simd")]
-const_assert!(
-    core::mem::size_of::<f32x2>() == 8 && core::mem::align_of::<f32x2>() <= 8,
-    "We assume this for the lookup code. Please let me know if this assertion ever fails."
-);
-
-#[cfg(feature = "nightly-simd")]
-const_assert!(
-    core::mem::size_of::<f32x4>() == 16 && core::mem::align_of::<f32x4>() <= 16,
-    "We assume this for the lookup code. Please let me know if this assertion ever fails."
-);
 
 const_assert!(i32::BITS <= usize::BITS, "We cast i32 to usize for indexing.");
 
-#[cfg(not(feature = "nightly-simd"))]
-#[repr(transparent)]
-pub(crate) struct Entry<const N: usize>([f32; N]);
-
 #[cfg(feature = "nightly-simd")]
-#[repr(transparent)]
-pub(crate) struct Entry<const N: usize>(pub Simd<f32, N>)
-where
-    LaneCount<N>: SupportedLaneCount;
+mod entry {
+    use super::*;
 
-#[cfg(not(feature = "nightly-simd"))]
-impl<const N: usize> Entry<N> {
-    pub fn as_array(&self) -> &[f32; N] {
-        &self.0
+    const_assert!(
+        core::mem::size_of::<f32x2>() == 8 && core::mem::align_of::<f32x2>() <= 8,
+        "We assume this for the lookup code. Please let me know if this assertion ever fails."
+    );
+
+    const_assert!(
+        core::mem::size_of::<f32x4>() == 16 && core::mem::align_of::<f32x4>() <= 16,
+        "We assume this for the lookup code. Please let me know if this assertion ever fails."
+    );
+
+    #[repr(transparent)]
+    pub(crate) struct Entry<const N: usize>(pub Simd<f32, N>)
+    where
+        LaneCount<N>: SupportedLaneCount;
+
+    impl<const N: usize> Entry<N>
+    where
+        LaneCount<N>: SupportedLaneCount,
+    {
+        pub(crate) fn as_array(&self) -> &[f32; N] {
+            self.0.as_array()
+        }
+    }
+
+    pub(crate) const fn entry2(x: f32, y: f32) -> Entry<2> {
+        Entry(f32x2::from_array([x, y]))
+    }
+
+    pub(crate) const fn entry3(x: f32, y: f32, z: f32) -> Entry<4> {
+        Entry(f32x4::from_array([x, y, z, 0.0]))
     }
 }
 
-#[cfg(feature = "nightly-simd")]
-impl<const N: usize> Entry<N>
-where
-    LaneCount<N>: SupportedLaneCount,
-{
-    pub fn as_array(&self) -> &[f32; N] {
-        self.0.as_array()
+#[cfg(not(feature = "nightly-simd"))]
+mod entry {
+    #[repr(transparent)]
+    pub(crate) struct Entry<const N: usize>([f32; N]);
+
+    impl<const N: usize> Entry<N> {
+        pub(crate) fn as_array(&self) -> &[f32; N] {
+            &self.0
+        }
+    }
+
+    pub(crate) const fn entry2(x: f32, y: f32) -> Entry<2> {
+        Entry([x, y])
+    }
+
+    pub(crate) const fn entry3(x: f32, y: f32, z: f32) -> Entry<4> {
+        Entry([x, y, z, 0.0])
     }
 }
 
-#[cfg(not(feature = "nightly-simd"))]
-const fn entry2(x: f32, y: f32) -> Entry<2> {
-    Entry([x, y])
-}
-
-#[cfg(feature = "nightly-simd")]
-const fn entry2(x: f32, y: f32) -> Entry<2> {
-    Entry(f32x2::from_array([x, y]))
-}
-
-#[cfg(not(feature = "nightly-simd"))]
-const fn entry3(x: f32, y: f32, z: f32) -> Entry<4> {
-    Entry([x, y, z, 0.0])
-}
-
-#[cfg(feature = "nightly-simd")]
-const fn entry3(x: f32, y: f32, z: f32) -> Entry<4> {
-    Entry(f32x4::from_array([x, y, z, 0.0]))
-}
+pub(crate) use entry::{entry2, entry3, Entry};
 
 pub(crate) const RAND_VECS_2D: Table2<256> = Table2::new([
     entry2(-0.2700222198, -0.9628540911),

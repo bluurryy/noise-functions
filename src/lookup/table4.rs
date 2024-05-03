@@ -2,31 +2,36 @@ use core::ops::Index;
 
 use crate::private_prelude::*;
 
-/// 4 lanes of [`Index4<N>`]
-#[repr(transparent)]
 #[cfg(feature = "nightly-simd")]
-#[derive(Clone, Copy)]
-pub(crate) struct Index3x4<const TABLE_SIZE: usize>(i32x4);
+mod index3x4 {
+    use super::*;
 
-#[cfg(feature = "nightly-simd")]
-impl<const TABLE_SIZE: usize> Index3x4<TABLE_SIZE> {
-    #[allow(dead_code)]
-    #[inline(always)]
-    pub fn new(hash: i32x4) -> Self {
-        Self(hash & i32x4::splat(Index3::<TABLE_SIZE>::MASK))
+    /// 4 lanes of [`Index4<N>`]
+    #[repr(transparent)]
+    #[derive(Clone, Copy)]
+    pub(crate) struct Index3x4<const TABLE_SIZE: usize>(i32x4);
+
+    impl<const TABLE_SIZE: usize> Index3x4<TABLE_SIZE> {
+        #[allow(dead_code)]
+        #[inline(always)]
+        pub fn new(hash: i32x4) -> Self {
+            Self(hash & i32x4::splat(Index3::<TABLE_SIZE>::MASK))
+        }
+    }
+
+    impl<const TABLE_SIZE: usize> Index<usize> for Index3x4<TABLE_SIZE> {
+        type Output = Index3<TABLE_SIZE>;
+
+        fn index(&self, i: usize) -> &Self::Output {
+            // SAFETY: Index3x4 ensures every element of satisfies Index3's invariants,
+            //         Index3 and i32 have the same repr
+            unsafe { &*(&self.0.as_array()[i] as *const i32).cast::<Index3<TABLE_SIZE>>() }
+        }
     }
 }
 
 #[cfg(feature = "nightly-simd")]
-impl<const TABLE_SIZE: usize> Index<usize> for Index3x4<TABLE_SIZE> {
-    type Output = Index3<TABLE_SIZE>;
-
-    fn index(&self, i: usize) -> &Self::Output {
-        // SAFETY: Index3x4 ensures every element of satisfies Index3's invariants,
-        //         Index3 and i32 have the same repr
-        unsafe { &*(&self.0.as_array()[i] as *const i32).cast::<Index3<TABLE_SIZE>>() }
-    }
-}
+pub(crate) use index3x4::Index3x4;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
