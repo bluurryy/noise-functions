@@ -11,17 +11,21 @@ repository = "https://github.com/bluurryy/noise-functions"
 readme = "README.md"
 exclude = ["justfile"]
 
-[dependencies]
-noise-functions = { path = "../..", version = "0.1.2", default-features = false }
-
 [features]
 default = ["std"]
 
-### Uses floating point functions from the standard library.
+## Uses floating point functions from the standard library.
 std = ["noise-functions/std"]
 
-### Required for `no_std`.
+## Required for `no_std`.
 libm = ["noise-functions/libm"]
 
-### Adds support for sampling with simd types.
+## Adds support for sampling with simd types.
 nightly-simd = ["noise-functions/nightly-simd"]
+
+[dependencies]
+noise-functions = { path = "../..", version = "0.1.2", default-features = false }
+document-features = { version = "0.2.8", optional = true }
+
+[package.metadata.docs.rs]
+all-features = true

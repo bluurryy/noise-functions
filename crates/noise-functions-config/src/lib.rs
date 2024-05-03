@@ -1,4 +1,10 @@
 //! Configurable noise generator struct for the [`noise-functions`](https://docs.rs/noise-functions) crate.
+//!
+//! ## Feature flags
+#![cfg_attr(
+    feature = "document-features",
+    cfg_attr(doc, doc = ::document_features::document_features!())
+)]
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "nightly-simd", feature(portable_simd))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide), doc(cfg_hide(no_global_oom_handling, feature = "nightly-const-fn-float")))]

@@ -6,7 +6,7 @@ default:
   cargo clippy --tests --all --all-features
 
 doc *args:
-  cargo rustdoc {{args}} --features nightly-simd -- --cfg docsrs
+  cargo rustdoc {{args}} --all-features -- --cfg docsrs
 
 all: default
   just doc
