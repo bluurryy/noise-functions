@@ -195,9 +195,9 @@ macro_rules! improve_wrapper {
     ) => {
         $(#[$attr])*
         #[derive(Debug, Clone, Copy)]
-        pub struct $name<Noise>(pub Noise);
+        pub struct $name<OpenSimplexNoise>(pub OpenSimplexNoise);
 
-        impl<Noise> $name<Noise> {
+        impl<OpenSimplexNoise> $name<OpenSimplexNoise> {
             impl_modifiers!();
         }
     };
@@ -211,7 +211,7 @@ macro_rules! base {
         $(#[$attr])*
         ///
         /// When sampling in 3 Dimensions you can improve the visual isotropy in a the respective planes via [`improve_xy`] or [`improve_xz`].
-        /// 
+        ///
         /// [`improve_xy`]: Self::improve_xy
         /// [`improve_xz`]: Self::improve_xz
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
