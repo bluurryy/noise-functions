@@ -210,12 +210,10 @@ macro_rules! base {
     ) => {
         $(#[$attr])*
         ///
-        /// When sampling in 3 Dimensions you should choose one of the `Improve*` wrappers ([`Improve3`], [`Improve3Xy`], [`Improve3Xz`])
-        /// to improve the orientation of the noise. This wrapper should be put at the end as it can't be seeded or used in fractals.
-        ///
-        /// [`Improve3`]: crate::open_simplex::Improve3
-        /// [`Improve3Xy`]: crate::open_simplex::Improve3Xy
-        /// [`Improve3Xz`]: crate::open_simplex::Improve3Xz
+        /// When sampling in 3 Dimensions you can improve the visual isotropy in a the respective planes via [`improve_xy`] or [`improve_xz`].
+        /// 
+        /// [`improve_xy`]: Self::improve_xy
+        /// [`improve_xz`]: Self::improve_xz
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
         pub struct $noise;
 
