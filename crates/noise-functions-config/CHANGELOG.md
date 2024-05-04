@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.1 (2024-05-04)
 - **added:** `Config::sampler(_a)` with `AnySample(A)`
 - **fixed:** `no_std`
 
