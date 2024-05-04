@@ -9,6 +9,7 @@ all: default
   just doc
   just test
   cargo ('+' + (open Cargo.toml).package.rust-version) check
+  cspell lint --gitignore "**" --exclude "*.asm"
   cargo semver-checks
 
 test:
