@@ -9,7 +9,7 @@ Fast and lightweight noise algorithm implementations.
 
 Check out the [live demo](https://bluurryy.github.io/noise-functions-demo/)!
 
-The implementation of these noise functions are from FastNoiseLite ([github](https://github.com/Auburn/FastNoiseLite)/[crate](https://docs.rs/fastnoise-lite/latest/fastnoise_lite/)).
+The implementation of these noise functions are from [FastNoiseLite](https://github.com/Auburn/FastNoiseLite).
 
 ### Base noises
 ![](/example-images/cell_distance_sq.jpg "Cell Distance Squared")
