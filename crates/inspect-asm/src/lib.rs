@@ -1,6 +1,6 @@
 #![feature(portable_simd)]
 
-use noise_functions::prelude::*;
+use noise_functions::*;
 use std::simd::prelude::*;
 
 macro_rules! noises {

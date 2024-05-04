@@ -1,5 +1,5 @@
 use image::{ImageBuffer, Rgb};
-use noise_functions::prelude::*;
+use noise_functions::*;
 
 const SIZE: usize = 128;
 const WIDTH: usize = SIZE;
