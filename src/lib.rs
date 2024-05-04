@@ -2,7 +2,10 @@
 //! Fast and lightweight noise algorithm implementations.
 //!
 //! Check out the [live demo](https://bluurryy.github.io/noise-functions-demo/)!
+//! 
+//! The implementation of these noise functions are from FastNoiseLite ([github](https://github.com/Auburn/FastNoiseLite)/[crate](https://docs.rs/fastnoise-lite/latest/fastnoise_lite/)).
 //!
+//! ## Examples
 //! ```
 //! use noise_functions::{ Perlin, CellDistance, OpenSimplex2s, Sample2, NoiseFn };
 //!
@@ -23,10 +26,10 @@
 //! // perlin noise with adjusted frequency
 //! let value = Perlin.frequency(3.0).sample2(point);
 //!
-//! // cell distance (voronoi) noise
+//! // cell distance (voronoi/worley) noise
 //! let value = CellDistance.sample2(point);
 //!
-//! // cell distance (voronoi) noise with jitter multiplier
+//! // cell distance (voronoi/worley) noise with jitter multiplier
 //! let value = CellDistance.jitter(0.5).sample2(point);
 //!
 //! // domain warped OpenSimplex2s noise
@@ -38,9 +41,15 @@
 //! };
 //!
 //! let value = warped_noise(point);
-//! ```
 //!
-//! The implementation of these noise functions are from FastNoiseLite ([github](https://github.com/Auburn/FastNoiseLite)/[crate](https://docs.rs/fastnoise-lite/latest/fastnoise_lite/)).
+//! let point = [1.0, 2.0, 3.0];
+//!
+//! // 3d OpenSimplex2s noise
+//! let value = OpenSimplex2s.sample3(point);
+//!
+//! // 3d OpenSimplex2s noise with improved isotropy in the xy plane
+//! let value = OpenSimplex2s.improve_xy().sample3(point);
+//! ```
 //!
 //! ## Feature flags
 #![cfg_attr(
