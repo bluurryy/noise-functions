@@ -1,6 +1,6 @@
 [package]
 name = "noise-functions"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Fast and lightweight noise functions."
@@ -10,7 +10,7 @@ documentation = "https://docs.rs/noise-functions"
 repository = "https://github.com/bluurryy/noise-functions"
 readme = "README.md"
 rust-version = "1.64.0"
-exclude = ["inspect-asm", "example-images", "justfile"]
+exclude = ["inspect-asm", "example-images", "justfile", ".github", "cspell.json"]
 
 [features]
 default = ["std"]
