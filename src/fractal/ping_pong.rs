@@ -221,7 +221,7 @@ where
 
 #[inline(always)]
 fn do_ping_pong(t: f32) -> f32 {
-    let t = t - (t * 0.5).trunc() * 2.0;
+    let t = t - trunc(t * 0.5) * 2.0;
     if t < 1.0 {
         t
     } else {

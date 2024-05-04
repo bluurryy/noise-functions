@@ -3,7 +3,7 @@ set shell := ["nu", "-c"]
 default:
   cargo fmt --all
   cargo clippy --tests --all
-  cargo clippy --tests --features nightly-simd
+  cargo clippy --no-default-features --features libm
 
 all: default
   just doc

@@ -34,6 +34,7 @@
         "struct",
         "structs",
         "trunc",
+        "truncf",
         "VECS",
         "voronoi",
         "worley",

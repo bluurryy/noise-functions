@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- **fixed:** `no_std`
+
 ## 0.2.0 (2024-05-04)
 - **breaking:** removed `*Weighted` structs, `Weighted` becomes a modifier struct
 - **breaking:** rename `base` to `noise`
