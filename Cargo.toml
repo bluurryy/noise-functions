@@ -24,7 +24,7 @@ libm = ["dep:libm"]
 ## Adds support for sampling with simd types.
 nightly-simd = []
 
-## Makes `fbm(_weighted)` and `ridged(_weighted)` `const fn`s.
+## Makes `fbm`, `ridged`, `ping_pong` and `fractal_bounding` `const fn`s.
 nightly-const-fn-float = []
 
 [dependencies]
