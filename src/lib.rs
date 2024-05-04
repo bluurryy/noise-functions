@@ -7,7 +7,7 @@
 //!
 //! ## Examples
 //! ```
-//! use noise_functions::{ Perlin, CellDistance, OpenSimplex2s, Sample2, NoiseFn };
+//! use noise_functions::{ Perlin, CellDistance, OpenSimplex2s, Sample2, Sample3, NoiseFn };
 //!
 //! let point = [1.0, 2.0];
 //!
