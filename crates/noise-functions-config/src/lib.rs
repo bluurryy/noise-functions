@@ -64,7 +64,7 @@ macro_rules! simple_enum {
 	};
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct EnumFromStrError;
 
 impl core::fmt::Display for EnumFromStrError {
