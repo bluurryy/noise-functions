@@ -30,7 +30,7 @@ The implementation of these noise functions are from FastNoiseLite ([github](htt
 ![](/example-images/warped.jpg "Domain Warped (OpenSimplex2s)")
 ![](/example-images/warped_fbm.jpg "Domain Warped Fbm (OpenSimplex2s)")
 
-## Why not [`noise`](https://lib.rs/crates/noise)?
+## Why not [`noise`](https://lib.rs/crates/noise) or [`libnoise`](https://lib.rs/crates/libnoise)?
 With `noise`, constructing a noise struct like `Perlin` creates a permutation table at runtime. So to use the noise efficiently, you need to keep that instance of `Perlin` around.
 
 With `noise-functions`, `Perlin` does not carry any state. So there is no overhead to calling a function like this in a tight loop:
