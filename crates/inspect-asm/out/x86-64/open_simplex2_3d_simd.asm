@@ -1,21 +1,30 @@
 inspect_asm::open_simplex2_3d_simd:
-	movaps xmm5, xmmword ptr [rdi]
+	movaps xmm0, xmmword ptr [rdi]
+	movaps xmm1, xmm0
+	shufps xmm1, xmm0, 85
+	addss xmm1, xmm0
+	movaps xmm5, xmm0
+	unpckhpd xmm5, xmm0
+	addss xmm5, xmm1
+	mulss xmm5, dword ptr [rip + .LCPI16_0]
+	shufps xmm5, xmm5, 0
+	subps xmm5, xmm0
 	xorps xmm0, xmm0
 	cmpleps xmm0, xmm5
 	movaps xmm1, xmm0
-	andnps xmm1, xmmword ptr [rip + .LCPI16_0]
-	andps xmm0, xmmword ptr [rip + .LCPI16_1]
+	andnps xmm1, xmmword ptr [rip + .LCPI16_1]
+	andps xmm0, xmmword ptr [rip + .LCPI16_2]
 	orps xmm0, xmm1
 	addps xmm0, xmm5
 	cvttps2dq xmm0, xmm0
 	cvtdq2ps xmm1, xmm0
 	subps xmm5, xmm1
-	movaps xmm1, xmmword ptr [rip + .LCPI16_2]
+	movaps xmm1, xmmword ptr [rip + .LCPI16_3]
 	subps xmm1, xmm5
 	movaps xmm3, xmm1
 	shufps xmm3, xmm1, 255
 	cvttss2si edx, xmm3
-	movss xmm2, dword ptr [rip + .LCPI16_3]
+	movss xmm2, dword ptr [rip + .LCPI16_4]
 	ucomiss xmm3, xmm2
 	mov ecx, 2147483647
 	cmova edx, ecx
@@ -47,21 +56,21 @@ inspect_asm::open_simplex2_3d_simd:
 	movd xmm1, edx
 	punpckldq xmm2, xmm1
 	punpcklqdq xmm2, xmm4
-	movdqa xmm4, xmmword ptr [rip + .LCPI16_4]
+	movdqa xmm4, xmmword ptr [rip + .LCPI16_5]
 	por xmm4, xmm2
 	cvtdq2ps xmm1, xmm4
-	movaps xmm7, xmmword ptr [rip + .LCPI16_5]
+	movaps xmm7, xmmword ptr [rip + .LCPI16_6]
 	xorps xmm7, xmm5
 	mulps xmm7, xmm1
 	pshufd xmm3, xmm0, 245
-	pmuludq xmm0, xmmword ptr [rip + .LCPI16_6]
-	pmuludq xmm3, xmmword ptr [rip + .LCPI16_7]
+	pmuludq xmm0, xmmword ptr [rip + .LCPI16_7]
+	pmuludq xmm3, xmmword ptr [rip + .LCPI16_8]
 	pshufd xmm6, xmm0, 232
 	pshufd xmm0, xmm3, 232
 	punpckldq xmm6, xmm0
 	movaps xmm0, xmm5
 	mulss xmm0, xmm5
-	movss xmm3, dword ptr [rip + .LCPI16_8]
+	movss xmm3, dword ptr [rip + .LCPI16_9]
 	subss xmm3, xmm0
 	movaps xmm9, xmm5
 	shufps xmm9, xmm5, 85
@@ -101,7 +110,7 @@ inspect_asm::open_simplex2_3d_simd:
 	xorps xmm0, xmm0
 	addss xmm0, xmm8
 .LBB_2:
-	movss xmm8, dword ptr [rip + .LCPI16_9]
+	movss xmm8, dword ptr [rip + .LCPI16_10]
 	addss xmm8, xmm3
 	movaps xmm11, xmm7
 	shufps xmm11, xmm7, 85
@@ -201,10 +210,10 @@ inspect_asm::open_simplex2_3d_simd:
 	mulss xmm5, xmm8
 	addss xmm0, xmm5
 .LBB_10:
-	movaps xmm5, xmmword ptr [rip + .LCPI16_1]
+	movaps xmm5, xmmword ptr [rip + .LCPI16_2]
 	subps xmm5, xmm7
 	mulps xmm1, xmm5
-	movss xmm10, dword ptr [rip + .LCPI16_10]
+	movss xmm10, dword ptr [rip + .LCPI16_11]
 	subss xmm10, xmm5
 	movaps xmm7, xmm5
 	shufps xmm7, xmm5, 85
@@ -215,7 +224,7 @@ inspect_asm::open_simplex2_3d_simd:
 	subss xmm10, xmm11
 	addss xmm3, xmm10
 	psrld xmm2, 1
-	pand xmm2, xmmword ptr [rip + .LCPI16_6]
+	pand xmm2, xmmword ptr [rip + .LCPI16_7]
 	paddd xmm2, xmm6
 	pxor xmm6, xmm6
 	ucomiss xmm3, xmm9
@@ -246,7 +255,7 @@ inspect_asm::open_simplex2_3d_simd:
 	addss xmm0, xmm10
 .LBB_12:
 	psubd xmm6, xmm4
-	addss xmm3, dword ptr [rip + .LCPI16_9]
+	addss xmm3, dword ptr [rip + .LCPI16_10]
 	ucomiss xmm5, xmm7
 	jb .LBB_15
 	ucomiss xmm5, xmm8
@@ -343,5 +352,5 @@ inspect_asm::open_simplex2_3d_simd:
 	mulss xmm1, xmm3
 	addss xmm0, xmm1
 .LBB_21:
-	mulss xmm0, dword ptr [rip + .LCPI16_11]
+	mulss xmm0, dword ptr [rip + .LCPI16_12]
 	ret

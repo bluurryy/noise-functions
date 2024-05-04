@@ -1,131 +1,140 @@
 inspect_asm::open_simplex2_3d:
 	push rbx
-	movss xmm4, dword ptr [rdi]
-	xorps xmm1, xmm1
-	cmpnless xmm1, xmm4
-	movss xmm0, dword ptr [rip + .LCPI14_0]
-	andps xmm0, xmm1
-	movss xmm2, dword ptr [rip + .LCPI14_1]
-	andnps xmm1, xmm2
-	orps xmm1, xmm0
-	addss xmm1, xmm4
-	cvttss2si edx, xmm1
-	movss xmm0, dword ptr [rip + .LCPI14_2]
-	ucomiss xmm1, xmm0
-	mov r8d, 2147483647
-	cmova edx, r8d
+	movss xmm0, dword ptr [rdi]
+	movsd xmm1, qword ptr [rdi + 4]
+	movaps xmm2, xmm0
+	addss xmm2, xmm1
+	movaps xmm4, xmm1
+	shufps xmm4, xmm1, 85
+	addss xmm4, xmm2
+	mulss xmm4, dword ptr [rip + .LCPI14_0]
+	movaps xmm5, xmm4
+	subss xmm5, xmm0
+	shufps xmm4, xmm4, 0
+	xorps xmm2, xmm2
+	cmpnless xmm2, xmm5
+	movss xmm0, dword ptr [rip + .LCPI14_1]
+	andps xmm0, xmm2
+	movss xmm3, dword ptr [rip + .LCPI14_2]
+	andnps xmm2, xmm3
+	orps xmm2, xmm0
+	addss xmm2, xmm5
+	cvttss2si edx, xmm2
+	movss xmm0, dword ptr [rip + .LCPI14_3]
+	ucomiss xmm2, xmm0
+	mov edi, 2147483647
+	cmova edx, edi
 	xor esi, esi
-	ucomiss xmm1, xmm1
+	ucomiss xmm2, xmm2
 	cmovp edx, esi
+	subps xmm4, xmm1
 	xorps xmm1, xmm1
-	cvtsi2ss xmm1, edx
-	subss xmm4, xmm1
-	movss xmm1, dword ptr [rip + .LCPI14_3]
-	subss xmm1, xmm4
+	cmpnleps xmm1, xmm4
+	movaps xmm2, xmm1
+	andnps xmm2, xmmword ptr [rip + .LCPI14_4]
+	andps xmm1, xmmword ptr [rip + .LCPI14_5]
+	orps xmm1, xmm2
+	addps xmm1, xmm4
+	movaps xmm2, xmm1
+	shufps xmm2, xmm1, 255
+	cvttss2si eax, xmm2
+	ucomiss xmm2, xmm0
+	cmova eax, edi
+	ucomiss xmm2, xmm2
+	cmovp eax, esi
+	movaps xmm2, xmm1
+	unpckhpd xmm2, xmm1
+	cvttss2si ecx, xmm2
+	ucomiss xmm2, xmm0
+	cmova ecx, edi
+	ucomiss xmm2, xmm2
+	cmovp ecx, esi
+	cvttss2si r9d, xmm1
+	ucomiss xmm1, xmm0
+	cmova r9d, edi
+	movd xmm3, eax
+	movd xmm2, ecx
+	ucomiss xmm1, xmm1
+	punpckldq xmm2, xmm3
+	cmovp r9d, esi
+	shufps xmm1, xmm1, 85
+	cvttss2si r10d, xmm1
+	ucomiss xmm1, xmm0
+	movd xmm3, r9d
+	cmova r10d, edi
+	ucomiss xmm1, xmm1
+	cmovp r10d, esi
+	movd xmm1, r10d
+	cvtsi2ss xmm6, edx
+	punpckldq xmm3, xmm1
+	subss xmm5, xmm6
+	movss xmm1, dword ptr [rip + .LCPI14_6]
+	subss xmm1, xmm5
 	cvttss2si eax, xmm1
 	ucomiss xmm1, xmm0
-	cmova eax, r8d
+	punpcklqdq xmm3, xmm2
+	cmova eax, edi
+	cvtdq2ps xmm2, xmm3
+	subps xmm4, xmm2
 	ucomiss xmm1, xmm1
 	cmovp eax, esi
 	mov ecx, eax
 	or ecx, 1
-	movsd xmm5, qword ptr [rdi + 4]
-	xorps xmm1, xmm1
-	cmpnleps xmm1, xmm5
-	movaps xmm2, xmm1
-	andnps xmm2, xmmword ptr [rip + .LCPI14_5]
-	andps xmm1, xmmword ptr [rip + .LCPI14_6]
-	orps xmm1, xmm2
-	addps xmm1, xmm5
+	movaps xmm1, xmmword ptr [rip + .LCPI14_7]
+	subps xmm1, xmm4
 	movaps xmm2, xmm1
 	shufps xmm2, xmm1, 255
-	cvttss2si r10d, xmm2
+	cvttss2si r8d, xmm2
 	ucomiss xmm2, xmm0
-	cmova r10d, r8d
+	cmova r8d, edi
 	ucomiss xmm2, xmm2
-	cmovp r10d, esi
+	cmovp r8d, esi
 	movaps xmm2, xmm1
 	unpckhpd xmm2, xmm1
 	cvttss2si r11d, xmm2
 	ucomiss xmm2, xmm0
-	cmova r11d, r8d
+	cmova r11d, edi
 	ucomiss xmm2, xmm2
 	cmovp r11d, esi
-	cvttss2si edi, xmm1
+	cvttss2si ebx, xmm1
 	ucomiss xmm1, xmm0
-	cmova edi, r8d
+	cmova ebx, edi
+	movd xmm2, r8d
 	ucomiss xmm1, xmm1
-	cmovp edi, esi
-	shufps xmm1, xmm1, 85
-	cvttss2si r9d, xmm1
-	ucomiss xmm1, xmm0
-	movd xmm2, r10d
-	cmova r9d, r8d
 	movd xmm3, r11d
-	punpckldq xmm3, xmm2
-	ucomiss xmm1, xmm1
-	movd xmm1, edi
-	cmovp r9d, esi
-	movd xmm2, r9d
-	punpckldq xmm1, xmm2
-	punpcklqdq xmm1, xmm3
-	cvtdq2ps xmm1, xmm1
-	subps xmm5, xmm1
-	movaps xmm2, xmmword ptr [rip + .LCPI14_7]
-	subps xmm2, xmm5
-	movaps xmm1, xmm2
-	shufps xmm1, xmm2, 255
-	cvttss2si r10d, xmm1
-	ucomiss xmm1, xmm0
-	cmova r10d, r8d
-	ucomiss xmm1, xmm1
-	cmovp r10d, esi
-	movaps xmm1, xmm2
-	unpckhpd xmm1, xmm2
-	cvttss2si r11d, xmm1
-	ucomiss xmm1, xmm0
-	cmova r11d, r8d
-	ucomiss xmm1, xmm1
-	cmovp r11d, esi
-	cvttss2si ebx, xmm2
-	ucomiss xmm2, xmm0
-	cmova ebx, r8d
-	movd xmm3, r10d
-	ucomiss xmm2, xmm2
-	movd xmm7, r11d
 	cmovp ebx, esi
-	shufps xmm2, xmm2, 85
-	cvttss2si r10d, xmm2
-	ucomiss xmm2, xmm0
-	cmova r10d, r8d
+	shufps xmm1, xmm1, 85
+	cvttss2si r8d, xmm1
+	ucomiss xmm1, xmm0
+	cmova r8d, edi
 	xorps xmm0, xmm0
+	punpckldq xmm3, xmm2
+	movd xmm6, ebx
+	ucomiss xmm1, xmm1
+	cmovp r8d, esi
+	movd xmm1, r8d
+	punpckldq xmm6, xmm1
+	punpcklqdq xmm6, xmm3
 	xorps xmm1, xmm1
 	cvtsi2ss xmm1, ecx
-	movaps xmm8, xmmword ptr [rip + .LCPI14_4]
-	movaps xmm9, xmm4
-	xorps xmm9, xmm8
-	mulss xmm9, xmm1
-	punpckldq xmm7, xmm3
-	ucomiss xmm2, xmm2
-	cmovp r10d, esi
-	movd xmm6, ebx
-	movd xmm2, r10d
-	punpckldq xmm6, xmm2
-	punpcklqdq xmm6, xmm7
 	movdqa xmm7, xmmword ptr [rip + .LCPI14_8]
 	por xmm7, xmm6
+	movaps xmm8, xmmword ptr [rip + .LCPI14_9]
+	movaps xmm9, xmm5
+	xorps xmm9, xmm8
+	mulss xmm9, xmm1
 	cvtdq2ps xmm2, xmm7
-	xorps xmm8, xmm5
+	xorps xmm8, xmm4
 	mulps xmm8, xmm2
 	imul r8d, edx, 501125321
-	imul edi, edi, 1136930381
-	imul esi, r9d, 1720413743
-	movaps xmm10, xmm4
-	mulss xmm10, xmm4
-	movss xmm3, dword ptr [rip + .LCPI14_9]
-	subss xmm3, xmm10
+	imul edi, r9d, 1136930381
+	imul esi, r10d, 1720413743
 	movaps xmm10, xmm5
-	mulps xmm10, xmm5
+	mulss xmm10, xmm5
+	movss xmm3, dword ptr [rip + .LCPI14_10]
+	subss xmm3, xmm10
+	movaps xmm10, xmm4
+	mulps xmm10, xmm4
 	movaps xmm11, xmm10
 	shufps xmm11, xmm10, 85
 	addss xmm11, xmm10
@@ -136,8 +145,8 @@ inspect_asm::open_simplex2_3d:
 	mulss xmm0, xmm3
 	mulss xmm0, xmm0
 	mov edx, edi
-	xor edx, r8d
 	xor edx, esi
+	xor edx, r8d
 	imul edx, edx, 668265261
 	mov r9d, edx
 	shr r9d, 15
@@ -145,9 +154,9 @@ inspect_asm::open_simplex2_3d:
 	and r9d, 252
 	lea rdx, [rip + .L__unnamed__0]
 	movss xmm10, dword ptr [rdx + 4*r9]
-	mulss xmm10, xmm4
+	mulss xmm10, xmm5
 	movsd xmm11, qword ptr [rdx + 4*r9 + 4]
-	mulps xmm11, xmm5
+	mulps xmm11, xmm4
 	addss xmm10, xmm11
 	shufps xmm11, xmm11, 85
 	addss xmm11, xmm10
@@ -155,7 +164,7 @@ inspect_asm::open_simplex2_3d:
 	xorps xmm0, xmm0
 	addss xmm0, xmm11
 .LBB_2:
-	movss xmm10, dword ptr [rip + .LCPI14_10]
+	movss xmm10, dword ptr [rip + .LCPI14_11]
 	addss xmm10, xmm3
 	ucomiss xmm9, xmm8
 	movaps xmm11, xmm8
@@ -165,14 +174,14 @@ inspect_asm::open_simplex2_3d:
 	jb .LBB_4
 	ucomiss xmm9, xmm11
 	jb .LBB_4
-	addss xmm4, xmm1
+	addss xmm5, xmm1
 	movaps xmm12, xmm1
 	addss xmm12, xmm1
-	mulss xmm12, xmm4
+	mulss xmm12, xmm5
 	imul r9d, ecx, -501125321
 	add r9d, r8d
-	movaps xmm11, xmm5
-	shufps xmm11, xmm5, 85
+	movaps xmm11, xmm4
+	shufps xmm11, xmm4, 85
 	mov r10d, edi
 	mov r11d, esi
 	subss xmm10, xmm12
@@ -185,18 +194,18 @@ inspect_asm::open_simplex2_3d:
 	jbe .LBB_6
 	ucomiss xmm8, xmm11
 	jb .LBB_6
-	movaps xmm13, xmm5
+	movaps xmm13, xmm4
 	addss xmm13, xmm2
 	movaps xmm12, xmm2
 	addss xmm12, xmm2
 	mulss xmm12, xmm13
 	imul r10d, edx, -1136930381
 	add r10d, edi
-	shufps xmm5, xmm5, 85
-	movaps xmm11, xmm5
+	shufps xmm4, xmm4, 85
+	movaps xmm11, xmm4
 	mov r9d, r8d
 	mov r11d, esi
-	movaps xmm5, xmm13
+	movaps xmm4, xmm13
 	subss xmm10, xmm12
 	xorps xmm12, xmm12
 	ucomiss xmm10, xmm12
@@ -205,7 +214,7 @@ inspect_asm::open_simplex2_3d:
 .LBB_6:
 	movaps xmm12, xmm2
 	shufps xmm12, xmm2, 85
-	movaps xmm11, xmm5
+	movaps xmm11, xmm4
 	addps xmm11, xmm2
 	shufps xmm11, xmm11, 85
 	addss xmm12, xmm12
@@ -230,21 +239,21 @@ inspect_asm::open_simplex2_3d:
 	xor r10d, r9d
 	and r10d, 252
 	lea r9, [rip + .L__unnamed__0]
-	mulss xmm4, dword ptr [r9 + 4*r10]
-	mulss xmm5, dword ptr [r9 + 4*r10 + 4]
+	mulss xmm5, dword ptr [r9 + 4*r10]
+	mulss xmm4, dword ptr [r9 + 4*r10 + 4]
 	mulss xmm11, dword ptr [r9 + 4*r10 + 8]
-	addss xmm5, xmm4
-	addss xmm11, xmm5
+	addss xmm4, xmm5
+	addss xmm11, xmm4
 	mulss xmm11, xmm10
 	addss xmm0, xmm11
 .LBB_10:
-	movss xmm5, dword ptr [rip + .LCPI14_1]
+	movss xmm5, dword ptr [rip + .LCPI14_2]
 	subss xmm5, xmm9
-	movaps xmm4, xmmword ptr [rip + .LCPI14_5]
+	movaps xmm4, xmmword ptr [rip + .LCPI14_4]
 	subps xmm4, xmm8
 	mulss xmm1, xmm5
 	mulps xmm2, xmm4
-	movss xmm9, dword ptr [rip + .LCPI14_11]
+	movss xmm9, dword ptr [rip + .LCPI14_12]
 	subss xmm9, xmm5
 	movaps xmm8, xmm4
 	shufps xmm8, xmm4, 85
@@ -269,9 +278,9 @@ inspect_asm::open_simplex2_3d:
 	movaps xmm6, xmm3
 	mulss xmm6, xmm3
 	mulss xmm6, xmm6
-	mov esi, eax
+	mov esi, edi
 	xor esi, r8d
-	xor esi, edi
+	xor esi, eax
 	not esi
 	imul esi, esi, 668265261
 	mov r9d, esi
@@ -289,7 +298,7 @@ inspect_asm::open_simplex2_3d:
 	mulss xmm10, xmm6
 	addss xmm0, xmm10
 .LBB_12:
-	addss xmm3, dword ptr [rip + .LCPI14_10]
+	addss xmm3, dword ptr [rip + .LCPI14_11]
 	ucomiss xmm5, xmm4
 	jb .LBB_15
 	ucomiss xmm5, xmm8
@@ -367,6 +376,6 @@ inspect_asm::open_simplex2_3d:
 	mulss xmm2, xmm3
 	addss xmm0, xmm2
 .LBB_21:
-	mulss xmm0, dword ptr [rip + .LCPI14_12]
+	mulss xmm0, dword ptr [rip + .LCPI14_13]
 	pop rbx
 	ret
