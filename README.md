@@ -30,9 +30,7 @@ The implementation of these noise functions are from FastNoiseLite ([github](htt
 ![](/example-images/warped.jpg "Domain Warped (OpenSimplex2s)")
 ![](/example-images/warped_fbm.jpg "Domain Warped Fbm (OpenSimplex2s)")
 
-## Alternatives
-
-### Why not [`noise`](https://lib.rs/crates/noise)?
+## Why not [`noise`](https://lib.rs/crates/noise)?
 With `noise`, constructing a noise struct like `Perlin` creates a permutation table at runtime. So to use the noise efficiently, you need to keep that instance of `Perlin` around.
 
 With `noise-functions`, `Perlin` does not carry any state. So there is no overhead to calling a function like this in a tight loop:
@@ -46,7 +44,7 @@ fn my_noise(point: Vec2) -> f32 {
 
 **Difference:** `noise` uses `f64` instead of `f32`.
 
-### Why not [`fastnoise-lite`](https://lib.rs/crates/fastnoise-lite)?
+## Why not [`fastnoise-lite`](https://lib.rs/crates/fastnoise-lite)?
 `fastnoise-lite` provides its noise generation via a big struct that you are to mutate to get the noise you want. If you already know what noise you want this api is inconvenient and inefficient. There is the [`noise-functions-config`](https://lib.rs/crates/noise-functions-config) crate that provides a similar api if you need it.
 
 **Pros:** `fastnoise-lite` provides more cellular noise variations and has domain warping built into the config struct.
