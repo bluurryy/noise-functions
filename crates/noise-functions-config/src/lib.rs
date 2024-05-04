@@ -141,37 +141,19 @@ macro_rules! make {
 
 macro_rules! make_fbm {
     ($self:ident, $noise:expr) => {
-        Box::new(
-            $noise
-                .fbm($self.octaves, $self.gain, $self.lacunarity)
-                .weighted($self.weighted_strength)
-                .seed($self.seed)
-                .frequency($self.frequency),
-        )
+        make!($self, $noise.fbm($self.octaves, $self.gain, $self.lacunarity).weighted($self.weighted_strength))
     };
 }
 
 macro_rules! make_ridged {
     ($self:ident, $noise:expr) => {
-        Box::new(
-            $noise
-                .ridged($self.octaves, $self.gain, $self.lacunarity)
-                .weighted($self.weighted_strength)
-                .seed($self.seed)
-                .frequency($self.frequency),
-        )
+        make!($self, $noise.ridged($self.octaves, $self.gain, $self.lacunarity).weighted($self.weighted_strength))
     };
 }
 
 macro_rules! make_ping_pong {
     ($self:ident, $noise:expr) => {
-        Box::new(
-            $noise
-                .ping_pong($self.octaves, $self.gain, $self.lacunarity, $self.ping_pong_strength)
-                .weighted($self.weighted_strength)
-                .seed($self.seed)
-                .frequency($self.frequency),
-        )
+        make!($self, $noise.ping_pong($self.octaves, $self.gain, $self.lacunarity, $self.ping_pong_strength).weighted($self.weighted_strength))
     };
 }
 
