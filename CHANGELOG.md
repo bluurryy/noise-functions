@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 (2024-05-04)
 - **breaking:** removed `*Weighted` structs, `Weighted` becomes a modifier struct
 - **breaking:** rename `base` to `noise`
 - **breaking:** `Fbm`, `Ridged`, `PingPong`, `Weighted` and `fractal_bounding` is no longer in the crate root but in the `fractal` module
