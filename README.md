@@ -33,7 +33,8 @@ The implementation of these noise functions are from FastNoiseLite ([github](htt
 ## Why not [`noise`](https://lib.rs/crates/noise) or [`libnoise`](https://lib.rs/crates/libnoise)?
 With `noise`, constructing a noise struct like `Perlin` creates a permutation table at runtime. So to use the noise efficiently, you need to keep that instance of `Perlin` around.
 
-With `noise-functions`, `Perlin` does not carry any state. So there is no overhead to calling a function like this in a tight loop:
+With `noise-functions`, `Perlin` and friends don't carry any state. This makes noise algorithms easier to use efficiently. 
+For example, you can use the noise algorithms without having to carry around state, without sacrificing performance:
 ```rust
 fn my_noise(point: Vec2) -> f32 {
     Perlin.fbm(3, 0.5, 2.0).seed(42).frequency(3.0).sample2(point)
