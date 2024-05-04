@@ -9,6 +9,7 @@
         "combinators",
         "coor",
         "docsrs",
+        "dtolnay",
         "fastnoise",
         "hasha",
         "interp",
@@ -18,6 +19,7 @@
         "libm",
         "libnoise",
         "miri",
+        "MIRIFLAGS",
         "neighbours",
         "nsign",
         "nushell",
@@ -34,7 +36,8 @@
         "VECS",
         "voronoi",
         "worley",
-        "xmyi"
+        "xmyi",
+        "Zmiri"
     ],
     "ignoreWords": [],
     "import": []

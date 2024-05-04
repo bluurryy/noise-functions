@@ -1,0 +1,52 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo fmt --all -- --check
+  clippy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toolchain: ["1.64.0", "stable", "nightly"]
+        features: ["--no-default-features --features libm", ""]
+        tests: [""]
+        include:
+          - toolchain: "nightly"
+            features: "--all-features"
+            tests: "--tests"
+        exclude:
+          - toolchain: "nightly"
+            tests: ""
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: ${{matrix.toolchain}}
+        components: clippy
+    - run: cargo clippy --all ${{matrix.tests}}      
+    - run: cargo clippy --all ${{matrix.tests}} ${{matrix.features}}
+  test:
+    runs-on: ubuntu-latest
+    env:
+      MIRIFLAGS: "-Zmiri-strict-provenance" 
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@nightly
+      with:
+        components: miri
+    - run: cargo test --all-features
+    - run: cargo miri test --all-features
+    
