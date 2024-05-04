@@ -43,7 +43,7 @@ name = "generate-example-images"
 version = "0.1.0"
 dependencies = [
  "image",
- "noise-functions",
+ "noise-functions 0.2.0",
 ]
 
 [[package]]
@@ -63,7 +63,7 @@ dependencies = [
 name = "inspect-asm"
 version = "0.0.0"
 dependencies = [
- "noise-functions",
+ "noise-functions 0.2.0",
 ]
 
 [[package]]
@@ -89,11 +89,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "noise-functions"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a1f305ad00fe35abd6007f394ee7feb7d17fafa226c326937623184faf38bb9e"
+dependencies = [
+ "libm",
+]
+
+[[package]]
 name = "noise-functions-config"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "document-features",
- "noise-functions",
+ "noise-functions 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -124,7 +133,7 @@ checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
 name = "test-no_std"
 version = "0.0.0"
 dependencies = [
- "noise-functions",
+ "noise-functions 0.2.0",
 ]
 
 [[package]]

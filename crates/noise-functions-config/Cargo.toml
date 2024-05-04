@@ -1,6 +1,6 @@
 [package]
 name = "noise-functions-config"
-version = "0.3.1"
+version = "0.4.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Configurable noise generator for `noise-functions`."
@@ -24,7 +24,7 @@ libm = ["noise-functions/libm"]
 nightly-simd = ["noise-functions/nightly-simd"]
 
 [dependencies]
-noise-functions = { path = "../..", version = "0.2.0", default-features = false }
+noise-functions = { version = "0.2.0", default-features = false }
 document-features = { version = "0.2.8", optional = true }
 
 [package.metadata.docs.rs]
