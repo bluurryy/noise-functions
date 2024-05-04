@@ -4,6 +4,7 @@ default:
   cargo fmt --all
   cargo clippy --tests --all
   cargo clippy --no-default-features --features libm
+  cargo clippy --no-default-features --features libm -p noise-functions-config
 
 all: default
   just doc

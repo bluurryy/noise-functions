@@ -11,6 +11,10 @@
 #![cfg_attr(feature = "nightly-simd", feature(portable_simd))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide), doc(cfg_hide(no_global_oom_handling, feature = "nightly-const-fn-float")))]
 
+extern crate alloc;
+
+use alloc::boxed::Box;
+
 use noise_functions::*;
 
 #[cfg(feature = "nightly-simd")]

@@ -2,6 +2,7 @@
 
 ## Unreleased
 - **added:** `Config::sampler(_a)` with `AnySample(A)`
+- **fixed:** `no_std`
 
 ## 0.4.0 (2024-05-04)
 - **breaking:** update to `noise-functions` version 0.2.0
