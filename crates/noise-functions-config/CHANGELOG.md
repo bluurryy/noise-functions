@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- **added:** `Config::sampler(_a)` with `AnySample(A)`
+
 ## 0.4.0 (2024-05-04)
 - **breaking:** update to `noise-functions` version 0.2.0
 - **breaking:** removed `Improve::Default`, `None` now behaves like `Default`

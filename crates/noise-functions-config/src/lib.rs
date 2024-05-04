@@ -257,7 +257,25 @@ macro_rules! sampler {
     };
 }
 
+pub trait AnySample: Sample<2> + Sample<3> {}
+impl<T> AnySample for T where T: Sample<2> + Sample<3> {}
+
+#[cfg(feature = "nightly-simd")]
+pub trait AnySampleA: Sample<2> + Sample<3> + Sample<2, f32x2> + Sample<3, f32x4> {}
+
+#[cfg(feature = "nightly-simd")]
+impl<T> AnySampleA for T where T: Sample<2> + Sample<3> + Sample<2, f32x2> + Sample<3, f32x4> {}
+
 impl Config {
+    pub fn sampler(&self) -> Box<dyn AnySample> {
+        sampler!(self)
+    }
+
+    #[cfg(feature = "nightly-simd")]
+    pub fn sampler_a(&self) -> Box<dyn AnySampleA> {
+        sampler!(self)
+    }
+
     pub fn sampler2(&self) -> Box<dyn Sample<2>> {
         sampler!(self)
     }
