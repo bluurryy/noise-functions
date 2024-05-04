@@ -135,10 +135,7 @@ impl Sample<3> for Config {
 
 macro_rules! make {
     ($self:ident, $noise:expr) => {
-        Box::new(Frequency {
-            frequency: $self.frequency,
-            noise: Seeded { seed: $self.seed, noise: $noise },
-        })
+        Box::new($noise.seed($self.seed).frequency($self.frequency))
     };
 }
 
