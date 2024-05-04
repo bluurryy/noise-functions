@@ -194,7 +194,7 @@ macro_rules! improve_wrapper {
         $name:ident
     ) => {
         $(#[$attr])*
-        #[derive(Debug, Clone, Copy)]
+        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
         pub struct $name<OpenSimplexNoise>(pub OpenSimplexNoise);
 
         impl<OpenSimplexNoise> $name<OpenSimplexNoise> {
@@ -214,7 +214,7 @@ macro_rules! base {
         ///
         /// [`improve_xy`]: Self::improve_xy
         /// [`improve_xz`]: Self::improve_xz
-        #[derive(Debug, Clone, Copy)]
+        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
         pub struct $noise;
 
         impl $noise {

@@ -1,7 +1,7 @@
 use crate::private_prelude::*;
 
 /// Wraps a noise with a seed.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Seeded<Noise> {
     pub noise: Noise,
     pub seed: i32,

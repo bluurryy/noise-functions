@@ -3,7 +3,7 @@ use crate::private_prelude::*;
 /// Wraps a cellular noise to multiply its cell jitter.
 ///
 /// This applies for [`CellValue`], [`CellDistance`] or [`CellDistanceSq`].
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Jitter<CellularNoise> {
     pub noise: CellularNoise,
     pub jitter: f32,
@@ -19,7 +19,7 @@ macro_rules! cellular {
         $noise:ident in $noise_mod:ident
     ) => {
         $(#[$attr])*
-        #[derive(Debug, Clone, Copy)]
+        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
         pub struct $noise;
 
         impl $noise {

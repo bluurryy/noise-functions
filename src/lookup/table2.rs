@@ -3,7 +3,7 @@ use core::ops::Index;
 use crate::private_prelude::*;
 
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct Index2<const TABLE_SIZE: usize>(i32);
 
 impl<const TABLE_SIZE: usize> Index2<TABLE_SIZE> {

@@ -1,6 +1,6 @@
 use crate::private_prelude::*;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PingPong<Noise> {
     pub noise: Noise,
     pub octaves: u32,
