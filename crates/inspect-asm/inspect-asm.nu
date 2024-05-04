@@ -61,7 +61,7 @@ def asm-save [name: string, target: string, extra_args: list<string>] {
   let out_dir = ($file_path | path dirname)
 
   let result = do {
-    ^cargo asm --package inspect-asm --simplify $name 0 ...$extra_args
+    ^cargo asm --package inspect-asm --features nightly-simd --simplify $name 0 ...$extra_args
   } | complete
 
   if $result.exit_code != 0 {
