@@ -80,7 +80,7 @@ checksum = "b4ce301924b7887e9d637144fdade93f9dfff9b60981d4ac161db09720d39aa5"
 
 [[package]]
 name = "noise-functions"
-version = "0.1.3"
+version = "0.2.0"
 dependencies = [
  "document-features",
  "fastnoise-lite",
