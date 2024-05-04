@@ -4,4 +4,7 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-noise-functions = { path = "../..", features = ["nightly-simd"] }
+noise-functions = { path = "../.." }
+
+[features]
+nightly-simd = ["noise-functions/nightly-simd"]

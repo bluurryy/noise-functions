@@ -1,6 +1,8 @@
-#![feature(portable_simd)]
+#![cfg_attr(feature = "nightly-simd", feature(portable_simd))]
 
 use noise_functions::*;
+
+#[cfg(feature = "nightly-simd")]
 use std::simd::prelude::*;
 
 macro_rules! noises {
@@ -16,10 +18,12 @@ macro_rules! noises {
 				$noise.sample(point)
 			}
 
+			#[cfg(feature = "nightly-simd")]
 			pub fn $d2_simd(point: f32x2) -> f32 {
 				$noise.sample(point)
 			}
 
+			#[cfg(feature = "nightly-simd")]
 			pub fn $d3_simd(point: f32x4) -> f32 {
 				$noise.sample(point)
 			}

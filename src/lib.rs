@@ -108,9 +108,11 @@ mod private_prelude {
     pub(crate) use crate::*;
 
     #[cfg(test)]
+    #[cfg(feature = "nightly-simd")]
     pub(crate) use crate::open_simplex_2::*;
 
     #[cfg(test)]
+    #[cfg(feature = "nightly-simd")]
     pub(crate) use crate::cellular::*;
 
     #[cfg(feature = "nightly-simd")]

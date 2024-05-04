@@ -16,11 +16,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: cargo fmt --all -- --check
+  check-msrv:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        features: ["", "--no-default-features --features libm"]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@1.64.0
+    - run: cargo check ${{matrix.tests}}      
+    - run: cargo check ${{matrix.tests}} ${{matrix.features}}
+    - run: cargo check -p noise-functions-config ${{matrix.tests}}      
+    - run: cargo check -p noise-functions-config ${{matrix.tests}} ${{matrix.features}}
   clippy:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        toolchain: ["1.64.0", "stable", "nightly"]
+        toolchain: ["stable", "nightly"]
         features: ["--no-default-features --features libm", ""]
         tests: [""]
         include:
@@ -36,7 +48,7 @@ jobs:
       with:
         toolchain: ${{matrix.toolchain}}
         components: clippy
-    - run: cargo clippy --all ${{matrix.tests}}      
+    - run: cargo clippy --all ${{matrix.tests}}
     - run: cargo clippy --all ${{matrix.tests}} ${{matrix.features}}
   test:
     runs-on: ubuntu-latest

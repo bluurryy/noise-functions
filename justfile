@@ -8,9 +8,14 @@ default:
 all: default
   just doc
   just test
+  cargo +stable clippy --all
   cargo ('+' + (open Cargo.toml).package.rust-version) check
+  cargo ('+' + (open Cargo.toml).package.rust-version) check -p noise-functions-config
   cspell lint --gitignore "**" --exclude "*.asm"
+  
+publish:
   cargo semver-checks
+  cargo publish
 
 test:
   cargo test --features nightly-simd
