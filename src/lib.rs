@@ -236,7 +236,7 @@ pub(crate) use cfg_const_feature_float;
 macro_rules! basic_noise {
     ($(#[$attr:meta])* $noise:ident in $noise_mod:ident) => {
         $(#[$attr])*
-        #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+        #[derive(Debug, Clone, Copy)]
         pub struct $noise;
 
         impl $noise {

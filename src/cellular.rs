@@ -19,7 +19,7 @@ macro_rules! cellular {
         $noise:ident in $noise_mod:ident
     ) => {
         $(#[$attr])*
-        #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+        #[derive(Debug, Clone, Copy)]
         pub struct $noise;
 
         impl $noise {
