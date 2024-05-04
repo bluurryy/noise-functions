@@ -233,116 +233,105 @@ pub(crate) use cfg_const;
 pub(crate) use cfg_const_feature;
 pub(crate) use cfg_const_feature_float;
 
-macro_rules! noise {
-    ($(#[$attr:meta])* $ty:ident) => {
+macro_rules! basic_noise {
+    ($(#[$attr:meta])* $noise:ident in $noise_mod:ident) => {
         $(#[$attr])*
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-        pub struct $ty;
-    };
-}
+        pub struct $noise;
 
-macro_rules! basic_noise {
-    ($(#[$attr:meta])* $mod:ident::$ty:ident) => {
-        mod $mod {
-            use super::*;
+        impl $noise {
+            impl_modifiers!();
+        }
 
-            noise!($(#[$attr])* $ty);
-
-            impl $ty {
-                impl_modifiers!();
-            }
-
-            impl Sample<2> for $ty {
-                #[inline(always)]
-                fn sample(&self, point: [f32; 2]) -> f32 {
-                    (*self).seed(0).sample(point)
-                }
-            }
-
-            impl Sample<2> for Seeded<$ty> {
-                #[inline(always)]
-                fn sample(&self, point: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(point, self.seed)
-                }
-            }
-
-            impl Sample<2> for Seeded<&$ty> {
-                #[inline(always)]
-                fn sample(&self, point: [f32; 2]) -> f32 {
-                    crate::scalar::$mod::gen2(point, self.seed)
-                }
-            }
-
-            impl Sample<3> for $ty {
-                #[inline(always)]
-                fn sample(&self, point: [f32; 3]) -> f32 {
-                    (*self).seed(0).sample(point)
-                }
-            }
-
-            impl Sample<3> for Seeded<$ty> {
-                #[inline(always)]
-                fn sample(&self, point: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(point, self.seed)
-                }
-            }
-
-            impl Sample<3> for Seeded<&$ty> {
-                #[inline(always)]
-                fn sample(&self, point: [f32; 3]) -> f32 {
-                    crate::scalar::$mod::gen3(point, self.seed)
-                }
-            }
-
-            #[cfg(feature = "nightly-simd")]
-            pub mod simd {
-                use super::*;
-
-                impl Sample<2, f32x2> for $ty {
-                    #[inline(always)]
-                    fn sample(&self, point: f32x2) -> f32 {
-                        (*self).seed(0).sample(point)
-                    }
-                }
-
-                impl Sample<2, f32x2> for Seeded<$ty> {
-                    #[inline(always)]
-                    fn sample(&self, point: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(point, self.seed)
-                    }
-                }
-
-                impl Sample<2, f32x2> for Seeded<&$ty> {
-                    #[inline(always)]
-                    fn sample(&self, point: f32x2) -> f32 {
-                        crate::simd::$mod::gen2(point, self.seed)
-                    }
-                }
-
-                impl Sample<3, f32x4> for $ty {
-                    #[inline(always)]
-                    fn sample(&self, point: f32x4) -> f32 {
-                        (*self).seed(0).sample(point)
-                    }
-                }
-
-                impl Sample<3, f32x4> for Seeded<$ty> {
-                    #[inline(always)]
-                    fn sample(&self, point: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(point, self.seed)
-                    }
-                }
-
-                impl Sample<3, f32x4> for Seeded<&$ty> {
-                    #[inline(always)]
-                    fn sample(&self, point: f32x4) -> f32 {
-                        crate::simd::$mod::gen3(point, self.seed)
-                    }
-                }
+        impl Sample<2> for $noise {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 2]) -> f32 {
+                crate::scalar::$noise_mod::gen2(point, 0)
             }
         }
 
-        pub use $mod::$ty;
+        impl Sample<2> for Seeded<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 2]) -> f32 {
+                crate::scalar::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        impl Sample<2> for Seeded<&$noise> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 2]) -> f32 {
+                crate::scalar::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        impl Sample<3> for $noise {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 3]) -> f32 {
+                crate::scalar::$noise_mod::gen3(point, 0)
+            }
+        }
+
+        impl Sample<3> for Seeded<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 3]) -> f32 {
+                crate::scalar::$noise_mod::gen3(point, self.seed)
+            }
+        }
+
+        impl Sample<3> for Seeded<&$noise> {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 3]) -> f32 {
+                crate::scalar::$noise_mod::gen3(point, self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<2, f32x2> for $noise {
+            #[inline(always)]
+            fn sample(&self, point: f32x2) -> f32 {
+                crate::simd::$noise_mod::gen2(point, 0)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<2, f32x2> for Seeded<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: f32x2) -> f32 {
+                crate::simd::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<2, f32x2> for Seeded<&$noise> {
+            #[inline(always)]
+            fn sample(&self, point: f32x2) -> f32 {
+                crate::simd::$noise_mod::gen2(point, self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<3, f32x4> for $noise {
+            #[inline(always)]
+            fn sample(&self, point: f32x4) -> f32 {
+                crate::simd::$noise_mod::gen3(point, 0)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<3, f32x4> for Seeded<$noise> {
+            #[inline(always)]
+            fn sample(&self, point: f32x4) -> f32 {
+                crate::simd::$noise_mod::gen3(point, self.seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl Sample<3, f32x4> for Seeded<&$noise> {
+            #[inline(always)]
+            fn sample(&self, point: f32x4) -> f32 {
+                crate::simd::$noise_mod::gen3(point, self.seed)
+            }
+        }
     };
 }
 
@@ -350,15 +339,15 @@ pub(crate) use basic_noise;
 
 basic_noise! {
     /// 2/3 dimensional Perlin noise
-    perlin::Perlin
+    Perlin in perlin
 }
 basic_noise! {
     /// 2/3 dimensional Value noise
-    value::Value
+    Value in value
 }
 basic_noise! {
     /// 2/3 dimensional Cubic Value noise
-    value_cubic::ValueCubic
+    ValueCubic in value_cubic
 }
 
 #[cfg(test)]

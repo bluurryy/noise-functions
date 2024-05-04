@@ -10,6 +10,7 @@ pub use crate::util::fractal_bounding;
 
 use crate::private_prelude::*;
 
+/// Wraps a fractal noise to
 #[derive(Debug, Clone, Copy)]
 pub struct Weighted<Fractal> {
     pub fractal: Fractal,
