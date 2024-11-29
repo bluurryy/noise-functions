@@ -29,24 +29,24 @@ inspect_asm::perlin_2d:
 	paddd xmm0, xmm4
 	cvtdq2ps xmm2, xmm0
 	subps xmm1, xmm2
+	movaps xmm4, xmm1
+	mulss xmm4, xmm1
+	mulss xmm4, xmm1
 	movss xmm2, dword ptr [rip + .LCPI21_1]
 	movaps xmm3, xmm1
 	mulss xmm3, xmm2
-	movss xmm4, dword ptr [rip + .LCPI21_2]
-	addss xmm3, xmm4
+	movss xmm5, dword ptr [rip + .LCPI21_2]
+	addss xmm3, xmm5
 	mulss xmm3, xmm1
-	addss xmm3, dword ptr [rip + .LCPI21_3]
-	movlhps xmm2, xmm1
-	shufps xmm2, xmm1, 226
-	mulps xmm2, xmm1
-	unpcklps xmm4, xmm4
-	addps xmm4, xmm2
-	mulps xmm2, xmm1
-	shufps xmm4, xmm2, 1
-	shufps xmm4, xmm2, 226
-	movaps xmm2, xmm1
-	movss xmm2, xmm3
-	mulps xmm2, xmm4
+	movss xmm6, dword ptr [rip + .LCPI21_3]
+	addss xmm3, xmm6
+	mulss xmm3, xmm4
+	movaps xmm4, xmm1
+	shufps xmm4, xmm1, 85
+	mulss xmm2, xmm4
+	addss xmm2, xmm5
+	mulss xmm2, xmm4
+	addss xmm2, xmm6
 	movd eax, xmm0
 	imul esi, eax, 501125321
 	pshufd xmm0, xmm0, 85
@@ -62,31 +62,29 @@ inspect_asm::perlin_2d:
 	xor r8d, eax
 	and r8d, 254
 	lea rax, [rip + .L__unnamed__0]
-	movss xmm0, dword ptr [rax + 4*r8]
-	movaps xmm5, xmm1
-	movss xmm5, xmm0
-	mulps xmm5, xmm1
+	movss xmm5, dword ptr [rax + 4*r8]
 	movaps xmm0, xmm1
-	shufps xmm0, xmm1, 85
-	movss xmm3, dword ptr [rax + 4*r8 + 4]
-	mulss xmm3, xmm0
-	addss xmm3, xmm5
-	mulps xmm5, xmm1
+	movss xmm0, xmm5
+	mulps xmm0, xmm1
+	movss xmm5, dword ptr [rax + 4*r8 + 4]
+	mulss xmm5, xmm4
 	xor edi, ecx
 	imul r8d, edi, 668265261
 	mov edi, r8d
 	shr edi, 15
 	xor edi, r8d
 	and edi, 254
-	mulss xmm0, dword ptr [rax + 4*rdi + 4]
+	movss xmm8, dword ptr [rax + 4*rdi + 4]
+	mulss xmm8, xmm4
+	addss xmm5, xmm0
 	xor esi, edx
 	imul r8d, esi, 668265261
 	mov esi, r8d
 	shr esi, 15
 	xor esi, r8d
 	and esi, 254
-	movss xmm6, dword ptr [rax + 4*rsi]
-	mulss xmm6, xmm1
+	movss xmm7, dword ptr [rax + 4*rsi]
+	mulss xmm7, xmm1
 	xor edx, ecx
 	imul ecx, edx, 668265261
 	mov edx, ecx
@@ -94,29 +92,28 @@ inspect_asm::perlin_2d:
 	xor edx, ecx
 	and edx, 254
 	addps xmm1, xmmword ptr [rip + .LCPI21_4]
-	movss xmm4, dword ptr [rax + 4*rdi]
-	mulss xmm4, xmm1
-	addss xmm4, xmm0
-	subss xmm4, xmm3
-	movaps xmm0, xmmword ptr [rip + .LCPI21_5]
-	addps xmm0, xmm2
-	mulps xmm0, xmm5
-	movsd xmm5, qword ptr [rax + 4*rdx]
-	mulps xmm5, xmm1
+	movss xmm6, dword ptr [rax + 4*rdi]
+	mulss xmm6, xmm1
+	addss xmm6, xmm8
+	subss xmm6, xmm5
+	mulss xmm6, xmm3
+	movsd xmm8, qword ptr [rax + 4*rdx]
+	mulps xmm8, xmm1
 	shufps xmm1, xmm1, 85
 	mulss xmm1, dword ptr [rax + 4*rsi + 4]
-	addss xmm1, xmm6
-	movaps xmm6, xmm5
-	shufps xmm6, xmm5, 85
+	addss xmm1, xmm7
+	movaps xmm7, xmm8
+	shufps xmm7, xmm8, 85
+	addss xmm7, xmm8
+	subss xmm7, xmm1
+	mulss xmm7, xmm3
+	addss xmm7, xmm1
 	addss xmm6, xmm5
-	subss xmm6, xmm1
-	mulss xmm6, xmm2
-	addss xmm6, xmm1
-	mulss xmm4, xmm2
-	addss xmm4, xmm3
-	subss xmm6, xmm4
+	subss xmm7, xmm6
 	shufps xmm0, xmm0, 85
-	mulss xmm0, xmm6
-	addss xmm0, xmm4
-	mulss xmm0, dword ptr [rip + .LCPI21_6]
+	mulss xmm0, xmm4
+	mulss xmm0, xmm2
+	mulss xmm0, xmm7
+	addss xmm0, xmm6
+	mulss xmm0, dword ptr [rip + .LCPI21_5]
 	ret

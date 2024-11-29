@@ -119,7 +119,7 @@ inspect_asm::open_simplex2s_2d_simd:
 	jbe .LBB_1
 	ucomiss xmm4, dword ptr [rip + .LCPI19_11]
 	jbe .LBB_12
-	movaps xmm4, xmmword ptr [rip + .LCPI19_12]
+	movsd xmm4, qword ptr [rip + .LCPI19_15]
 	addps xmm4, xmm1
 	movaps xmm7, xmm4
 	mulps xmm7, xmm4
@@ -138,7 +138,7 @@ inspect_asm::open_simplex2s_2d_simd:
 	xorps xmm7, xmm7
 	ucomiss xmm7, xmm4
 	jbe .LBB_2
-	movaps xmm4, xmmword ptr [rip + .LCPI19_8]
+	movsd xmm4, qword ptr [rip + .LCPI19_16]
 	addps xmm4, xmm1
 	movaps xmm8, xmm4
 	mulps xmm8, xmm4
@@ -153,7 +153,7 @@ inspect_asm::open_simplex2s_2d_simd:
 	lea edi, [rcx - 501125321]
 	jmp .LBB_4
 .LBB_12:
-	movaps xmm4, xmmword ptr [rip + .LCPI19_9]
+	movsd xmm4, qword ptr [rip + .LCPI19_17]
 	addps xmm4, xmm1
 	movaps xmm7, xmm4
 	mulps xmm7, xmm4
@@ -199,7 +199,7 @@ inspect_asm::open_simplex2s_2d_simd:
 	xor eax, edi
 	jmp .LBB_21
 .LBB_2:
-	movaps xmm4, xmmword ptr [rip + .LCPI19_7]
+	movsd xmm4, qword ptr [rip + .LCPI19_18]
 	addps xmm4, xmm1
 	movaps xmm8, xmm4
 	mulps xmm8, xmm4

@@ -6,17 +6,17 @@ inspect_asm::value_cubic_2d_simd:
 	paddd xmm0, xmm2
 	cvtdq2ps xmm2, xmm0
 	subps xmm1, xmm2
-	movdqa xmm4, xmmword ptr [rip + .LCPI27_0]
+	movq xmm4, qword ptr [rip + .LCPI27_8]
 	pshufd xmm7, xmm0, 245
 	pmuludq xmm0, xmm4
 	pshufd xmm6, xmm0, 232
 	pmuludq xmm7, xmmword ptr [rip + .LCPI27_1]
 	pshufd xmm2, xmm7, 232
 	punpckldq xmm6, xmm2
-	movdqa xmm8, xmmword ptr [rip + .LCPI27_2]
+	movq xmm8, qword ptr [rip + .LCPI27_9]
 	paddd xmm8, xmm6
 	paddd xmm4, xmm6
-	movdqa xmm9, xmmword ptr [rip + .LCPI27_3]
+	movq xmm9, qword ptr [rip + .LCPI27_10]
 	paddd xmm9, xmm6
 	pshufd xmm2, xmm8, 85
 	pxor xmm2, xmm9
@@ -196,8 +196,8 @@ inspect_asm::value_cubic_2d_simd:
 	shufps xmm9, xmm6, 226
 	movaps xmm6, xmm14
 	subps xmm6, xmm2
-	shufps xmm6, xmm14, 1
-	shufps xmm6, xmm14, 226
+	shufps xmm6, xmm14, 197
+	shufps xmm6, xmm14, 2
 	mulps xmm9, xmm5
 	mulps xmm6, xmm5
 	movaps xmm10, xmm5

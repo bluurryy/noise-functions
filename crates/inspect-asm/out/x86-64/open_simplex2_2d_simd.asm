@@ -64,7 +64,7 @@ inspect_asm::open_simplex2_2d_simd:
 	addps xmm0, xmm1
 	mulss xmm5, xmm5
 	mulss xmm5, xmm5
-	movdqa xmm6, xmmword ptr [rip + .LCPI15_2]
+	movq xmm6, qword ptr [rip + .LCPI15_11]
 	paddd xmm6, xmm4
 	pshufd xmm7, xmm6, 85
 	pxor xmm7, xmm6

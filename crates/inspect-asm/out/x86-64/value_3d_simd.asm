@@ -14,11 +14,11 @@ inspect_asm::cell_value_3d_simd:
 	orps xmm0, xmm2
 	addps xmm0, xmm1
 	cvttps2dq xmm2, xmm0
-	movd r9d, xmm2
-	lea r10d, [r9 - 1]
-	inc r9d
+	movd ecx, xmm2
+	lea r10d, [rcx - 1]
+	inc ecx
 	xorps xmm0, xmm0
-	cmp r10d, r9d
+	cmp r10d, ecx
 	jle .LBB_1
 .LBB_20:
 	pop rbx
@@ -31,100 +31,92 @@ inspect_asm::cell_value_3d_simd:
 .LBB_1:
 	pshufd xmm3, xmm2, 85
 	movd eax, xmm3
-	lea r13d, [rax - 1]
+	lea r15d, [rax - 1]
 	lea esi, [rax + 1]
-	cmp r13d, esi
+	cmp r15d, esi
 	jle .LBB_4
 .LBB_2:
 	xor eax, eax
-	cmp r10d, r9d
-	setl cl
+	cmp r10d, ecx
+	setl dl
 	jge .LBB_20
-	mov al, cl
+	mov al, dl
 	add r10d, eax
-	cmp r10d, r9d
+	cmp r10d, ecx
 	jle .LBB_2
 	jmp .LBB_20
 .LBB_4:
 	pshufd xmm2, xmm2, 238
-	movd ecx, xmm2
-	lea edx, [rcx - 1]
-	lea r8d, [rcx + 1]
-	mov dword ptr [rsp - 12], edx
-	cmp edx, r8d
+	movd edx, xmm2
+	lea edi, [rdx - 1]
+	lea r8d, [rdx + 1]
+	mov dword ptr [rsp - 12], edi
+	cmp edi, r8d
 	jle .LBB_5
 .LBB_15:
-	xor eax, eax
-	cmp r10d, r9d
-	setl cl
-	mov edx, r13d
+	mov eax, r15d
 .LBB_16:
-	xor edi, edi
-	cmp edx, esi
-	setl r8b
+	xor edx, edx
+	cmp eax, esi
+	setl dil
 	jge .LBB_18
-	mov dil, r8b
-	add edx, edi
-	cmp edx, esi
+	mov dl, dil
+	add eax, edx
+	cmp eax, esi
 	jle .LBB_16
 .LBB_18:
-	cmp r10d, r9d
+	xor eax, eax
+	cmp r10d, ecx
+	setl dl
 	jge .LBB_20
-	mov al, cl
+	mov al, dl
 	add r10d, eax
-	cmp r10d, r9d
+	cmp r10d, ecx
 	jle .LBB_15
 	jmp .LBB_20
 .LBB_5:
-	imul edx, r10d, 501125321
-	mov dword ptr [rsp - 32], edx
+	imul r9d, r10d, 501125321
 	imul eax, eax, 1136930381
 	add eax, -1136930381
-	mov dword ptr [rsp - 28], eax
-	imul eax, ecx, 1720413743
-	add eax, -1720413743
-	mov dword ptr [rsp - 16], eax
-	movss xmm2, dword ptr [rip + .LCPI12_2]
+	mov dword ptr [rsp - 24], eax
+	imul r11d, edx, 1720413743
+	add r11d, -1720413743
 	xor ebx, ebx
+	movss xmm2, dword ptr [rip + .LCPI12_2]
 	lea r14, [rip + .L__unnamed__0]
 	movaps xmm0, xmmword ptr [rip + .LCPI12_3]
-	mov qword ptr [rsp - 8], r9
-	mov dword ptr [rsp - 24], r13d
+	mov qword ptr [rsp - 8], rcx
+	mov dword ptr [rsp - 20], r15d
 .LBB_6:
+	mov dword ptr [rsp - 16], r10d
 	xorps xmm3, xmm3
 	cvtsi2ss xmm3, r10d
-	mov dword ptr [rsp - 20], r10d
-	cmp r10d, r9d
-	setl byte ptr [rsp - 33]
-	mov ebp, dword ptr [rsp - 28]
+	mov ecx, dword ptr [rsp - 24]
 .LBB_7:
-	xor r10d, r10d
-	cmp r13d, esi
-	setl dl
-	mov r15d, ebp
-	xor r15d, dword ptr [rsp - 32]
+	mov ebp, ecx
+	xor ebp, r9d
 	xorps xmm4, xmm4
-	cvtsi2ss xmm4, r13d
+	cvtsi2ss xmm4, r15d
 	movlhps xmm4, xmm3
 	shufps xmm4, xmm3, 226
-	mov r11d, dword ptr [rsp - 16]
+	mov r13d, r11d
 	mov edi, dword ptr [rsp - 12]
 .LBB_8:
 	movaps xmm5, xmm2
-	xor ecx, ecx
+	xor edx, edx
 	cmp edi, r8d
 	setl al
-	mov r12d, r15d
-	xor r12d, r11d
+	mov r12d, ebp
+	xor r12d, r13d
 	imul r12d, r12d, 668265261
 	xorps xmm2, xmm2
 	cvtsi2ss xmm2, edi
-	mov r9d, r12d
-	and r9d, 1020
+	mov r10d, r12d
+	and r10d, 1020
 	movaps xmm6, xmm4
 	shufps xmm6, xmm2, 4
 	subps xmm6, xmm1
-	movaps xmm2, xmmword ptr [r14 + 4*r9]
+	movaps xmm2, xmmword ptr [r14 + 4*r10]
 	mulps xmm2, xmm0
 	addps xmm2, xmm6
 	mulps xmm2, xmm2
@@ -138,31 +130,33 @@ inspect_asm::cell_value_3d_simd:
 	minss xmm2, xmm5
 	cmp edi, r8d
 	jge .LBB_10
-	mov cl, al
-	add edi, ecx
-	add r11d, 1720413743
+	mov dl, al
+	add edi, edx
+	add r13d, 1720413743
 	cmp edi, r8d
 	jle .LBB_8
 .LBB_10:
-	cmp r13d, esi
+	xor eax, eax
+	cmp r15d, esi
+	setl dl
 	jge .LBB_12
-	mov r10b, dl
-	add r13d, r10d
-	add ebp, 1136930381
-	cmp r13d, esi
+	mov al, dl
+	add r15d, eax
+	add ecx, 1136930381
+	cmp r15d, esi
 	jle .LBB_7
 .LBB_12:
-	mov r9, qword ptr [rsp - 8]
-	mov r10d, dword ptr [rsp - 20]
-	cmp r10d, r9d
-	mov r13d, dword ptr [rsp - 24]
-	jge .LBB_14
 	xor eax, eax
-	movzx ecx, byte ptr [rsp - 33]
-	mov al, cl
+	mov rcx, qword ptr [rsp - 8]
+	mov r10d, dword ptr [rsp - 16]
+	cmp r10d, ecx
+	setl dl
+	mov r15d, dword ptr [rsp - 20]
+	jge .LBB_14
+	mov al, dl
 	add r10d, eax
-	add dword ptr [rsp - 32], 501125321
-	cmp r10d, r9d
+	add r9d, 501125321
+	cmp r10d, ecx
 	jle .LBB_6
 .LBB_14:
 	xorps xmm0, xmm0

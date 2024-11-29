@@ -15,14 +15,14 @@ inspect_asm::cell_value_3d:
 	andnps xmm2, xmm4
 	orps xmm2, xmm3
 	addss xmm2, xmm1
-	cvttss2si r9d, xmm2
+	cvttss2si r8d, xmm2
 	movss xmm5, dword ptr [rip + .LCPI10_2]
 	ucomiss xmm2, xmm5
 	mov eax, 2147483647
-	cmova r9d, eax
+	cmova r8d, eax
 	xor edx, edx
 	ucomiss xmm2, xmm2
-	cmovp r9d, edx
+	cmovp r8d, edx
 	movss xmm2, dword ptr [rdi + 4]
 	xorps xmm6, xmm6
 	cmpnless xmm6, xmm2
@@ -49,9 +49,9 @@ inspect_asm::cell_value_3d:
 	ucomiss xmm6, xmm6
 	cmovp edi, edx
 	xorps xmm0, xmm0
-	lea r10d, [r9 - 1]
-	inc r9d
-	cmp r10d, r9d
+	lea r10d, [r8 - 1]
+	inc r8d
+	cmp r10d, r8d
 	jle .LBB_1
 .LBB_20:
 	pop rbx
@@ -62,99 +62,93 @@ inspect_asm::cell_value_3d:
 	pop rbp
 	ret
 .LBB_1:
-	lea r13d, [rcx - 1]
+	lea r15d, [rcx - 1]
 	inc ecx
-	cmp r13d, ecx
+	cmp r15d, ecx
 	jle .LBB_4
 .LBB_2:
 	xor eax, eax
-	cmp r10d, r9d
+	cmp r10d, r8d
 	setl cl
 	jge .LBB_20
 	mov al, cl
 	add r10d, eax
-	cmp r10d, r9d
+	cmp r10d, r8d
 	jle .LBB_2
 	jmp .LBB_20
 .LBB_4:
-	lea r8d, [rdi - 1]
+	lea esi, [rdi - 1]
 	inc edi
-	cmp r8d, edi
+	cmp esi, edi
 	jle .LBB_5
 .LBB_15:
-	xor eax, eax
-	cmp r10d, r9d
-	setl dl
-	mov esi, r13d
+	mov eax, r15d
 .LBB_16:
-	xor edi, edi
-	cmp esi, ecx
-	setl r8b
+	xor edx, edx
+	cmp eax, ecx
+	setl sil
 	jge .LBB_18
-	mov dil, r8b
-	add esi, edi
-	cmp esi, ecx
+	mov dl, sil
+	add eax, edx
+	cmp eax, ecx
 	jle .LBB_16
 .LBB_18:
-	cmp r10d, r9d
+	xor eax, eax
+	cmp r10d, r8d
+	setl dl
 	jge .LBB_20
 	mov al, dl
 	add r10d, eax
-	cmp r10d, r9d
+	cmp r10d, r8d
 	jle .LBB_15
 	jmp .LBB_20
 .LBB_5:
-	imul eax, r10d, 501125321
-	mov dword ptr [rsp - 28], eax
-	imul eax, r13d, 1136930381
+	imul r9d, r10d, 501125321
+	imul eax, r15d, 1136930381
 	mov dword ptr [rsp - 24], eax
-	imul eax, r8d, 1720413743
+	imul eax, esi, 1720413743
 	mov dword ptr [rsp - 12], eax
+	xor r11d, r11d
 	movss xmm5, dword ptr [rip + .LCPI10_3]
-	xor ebx, ebx
 	lea r14, [rip + .L__unnamed__0]
 	movss xmm0, dword ptr [rip + .LCPI10_4]
 	movaps xmm4, xmmword ptr [rip + .LCPI10_5]
-	mov qword ptr [rsp - 8], r9
-	mov dword ptr [rsp - 20], r13d
+	mov qword ptr [rsp - 8], r8
+	mov dword ptr [rsp - 20], r15d
 .LBB_6:
-	cmp r10d, r9d
 	mov dword ptr [rsp - 16], r10d
 	xorps xmm6, xmm6
 	cvtsi2ss xmm6, r10d
-	setl byte ptr [rsp - 30]
 	subss xmm6, xmm1
-	mov r15d, dword ptr [rsp - 24]
+	mov ebp, dword ptr [rsp - 24]
 .LBB_7:
-	xor r10d, r10d
-	cmp r13d, ecx
-	setl byte ptr [rsp - 29]
-	mov r12d, r15d
+	mov r12d, ebp
 	xorps xmm7, xmm7
-	cvtsi2ss xmm7, r13d
-	xor r12d, dword ptr [rsp - 28]
+	cvtsi2ss xmm7, r15d
+	xor r12d, r9d
 	subss xmm7, xmm2
-	mov r11d, dword ptr [rsp - 12]
-	mov esi, r8d
+	mov r13d, dword ptr [rsp - 12]
+	mov ebx, esi
+	mov r8d, esi
 .LBB_8:
 	movaps xmm8, xmm5
-	xor edx, edx
+	xor esi, esi
 	cmp r8d, edi
 	setl al
-	mov ebp, r12d
-	xor ebp, r11d
-	imul ebp, ebp, 668265261
-	mov r9d, ebp
-	and r9d, 1020
-	movss xmm9, dword ptr [r14 + 4*r9 + 4]
+	mov edx, r12d
+	xor edx, r13d
+	imul edx, edx, 668265261
+	mov r10d, edx
+	and r10d, 1020
+	movss xmm9, dword ptr [r14 + 4*r10 + 4]
 	mulss xmm9, xmm0
 	xorps xmm5, xmm5
 	cvtsi2ss xmm5, r8d
 	addss xmm9, xmm7
 	subss xmm5, xmm3
 	mulss xmm9, xmm9
-	movss xmm10, dword ptr [r14 + 4*r9 + 8]
-	movss xmm11, dword ptr [r14 + 4*r9]
+	movss xmm10, dword ptr [r14 + 4*r10 + 8]
+	movss xmm11, dword ptr [r14 + 4*r10]
 	unpcklps xmm11, xmm10
 	mulps xmm11, xmm4
 	movlhps xmm5, xmm6
@@ -165,40 +159,41 @@ inspect_asm::cell_value_3d:
 	shufps xmm5, xmm5, 85
 	addss xmm5, xmm9
 	ucomiss xmm8, xmm5
-	cmova ebx, ebp
+	cmova r11d, edx
 	minss xmm5, xmm8
 	cmp r8d, edi
 	jge .LBB_10
-	mov dl, al
-	add r8d, edx
-	add r11d, 1720413743
+	mov sil, al
+	add r8d, esi
+	add r13d, 1720413743
 	cmp r8d, edi
 	jle .LBB_8
 .LBB_10:
-	cmp r13d, ecx
-	mov r8d, esi
+	xor eax, eax
+	cmp r15d, ecx
+	setl dl
+	mov esi, ebx
 	jge .LBB_12
-	movzx eax, byte ptr [rsp - 29]
-	mov r10b, al
-	add r13d, r10d
-	add r15d, 1136930381
-	cmp r13d, ecx
+	mov al, dl
+	add r15d, eax
+	add ebp, 1136930381
+	cmp r15d, ecx
 	jle .LBB_7
 .LBB_12:
-	mov r9, qword ptr [rsp - 8]
-	mov r10d, dword ptr [rsp - 16]
-	cmp r10d, r9d
-	mov r13d, dword ptr [rsp - 20]
-	jge .LBB_14
 	xor eax, eax
-	movzx edx, byte ptr [rsp - 30]
+	mov r8, qword ptr [rsp - 8]
+	mov r10d, dword ptr [rsp - 16]
+	cmp r10d, r8d
+	setl dl
+	mov r15d, dword ptr [rsp - 20]
+	jge .LBB_14
 	mov al, dl
 	add r10d, eax
-	add dword ptr [rsp - 28], 501125321
-	cmp r10d, r9d
+	add r9d, 501125321
+	cmp r10d, r8d
 	jle .LBB_6
 .LBB_14:
 	xorps xmm0, xmm0
-	cvtsi2ss xmm0, ebx
+	cvtsi2ss xmm0, r11d
 	mulss xmm0, dword ptr [rip + .LCPI10_6]
 	jmp .LBB_20

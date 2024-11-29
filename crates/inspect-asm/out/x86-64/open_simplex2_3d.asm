@@ -178,17 +178,17 @@ inspect_asm::open_simplex2_3d:
 	movaps xmm12, xmm1
 	addss xmm12, xmm1
 	mulss xmm12, xmm5
-	imul r9d, ecx, -501125321
-	add r9d, r8d
+	imul r10d, ecx, -501125321
+	add r10d, r8d
 	movaps xmm11, xmm4
 	shufps xmm11, xmm4, 85
-	mov r10d, edi
 	mov r11d, esi
+	mov r9d, edi
 	subss xmm10, xmm12
 	xorps xmm12, xmm12
 	ucomiss xmm10, xmm12
-	ja .LBB_9
-	jmp .LBB_10
+	ja .LBB_10
+	jmp .LBB_11
 .LBB_4:
 	ucomiss xmm8, xmm9
 	jbe .LBB_6
@@ -199,18 +199,13 @@ inspect_asm::open_simplex2_3d:
 	movaps xmm12, xmm2
 	addss xmm12, xmm2
 	mulss xmm12, xmm13
-	imul r10d, edx, -1136930381
-	add r10d, edi
+	imul r9d, edx, -1136930381
+	add r9d, edi
 	shufps xmm4, xmm4, 85
 	movaps xmm11, xmm4
-	mov r9d, r8d
-	mov r11d, esi
 	movaps xmm4, xmm13
-	subss xmm10, xmm12
-	xorps xmm12, xmm12
-	ucomiss xmm10, xmm12
-	ja .LBB_9
-	jmp .LBB_10
+	mov r11d, esi
+	jmp .LBB_8
 .LBB_6:
 	movaps xmm12, xmm2
 	shufps xmm12, xmm2, 85
@@ -222,18 +217,19 @@ inspect_asm::open_simplex2_3d:
 	movd r9d, xmm7
 	imul r11d, r9d, -1720413743
 	add r11d, esi
-	mov r9d, r8d
-	mov r10d, edi
+	mov r9d, edi
+.LBB_8:
+	mov r10d, r8d
 	subss xmm10, xmm12
 	xorps xmm12, xmm12
 	ucomiss xmm10, xmm12
-	jbe .LBB_10
-.LBB_9:
+	jbe .LBB_11
+.LBB_10:
 	mulss xmm10, xmm10
 	mulss xmm10, xmm10
-	xor r10d, r9d
-	xor r10d, r11d
-	imul r9d, r10d, 668265261
+	xor r9d, r11d
+	xor r9d, r10d
+	imul r9d, r9d, 668265261
 	mov r10d, r9d
 	shr r10d, 15
 	xor r10d, r9d
@@ -246,7 +242,7 @@ inspect_asm::open_simplex2_3d:
 	addss xmm11, xmm4
 	mulss xmm11, xmm10
 	addss xmm0, xmm11
-.LBB_10:
+.LBB_11:
 	movss xmm5, dword ptr [rip + .LCPI14_2]
 	subss xmm5, xmm9
 	movaps xmm4, xmmword ptr [rip + .LCPI14_4]
@@ -274,7 +270,7 @@ inspect_asm::open_simplex2_3d:
 	and edi, 1720413743
 	add edi, esi
 	ucomiss xmm3, xmm12
-	jbe .LBB_12
+	jbe .LBB_13
 	movaps xmm6, xmm3
 	mulss xmm6, xmm3
 	mulss xmm6, xmm6
@@ -297,12 +293,12 @@ inspect_asm::open_simplex2_3d:
 	addss xmm10, xmm9
 	mulss xmm10, xmm6
 	addss xmm0, xmm10
-.LBB_12:
+.LBB_13:
 	addss xmm3, dword ptr [rip + .LCPI14_11]
 	ucomiss xmm5, xmm4
-	jb .LBB_15
+	jb .LBB_16
 	ucomiss xmm5, xmm8
-	jb .LBB_15
+	jb .LBB_16
 	imul edx, ecx, 501125321
 	neg ecx
 	xorps xmm4, xmm4
@@ -314,13 +310,13 @@ inspect_asm::open_simplex2_3d:
 	subss xmm3, xmm4
 	xorps xmm4, xmm4
 	ucomiss xmm3, xmm4
-	ja .LBB_20
-	jmp .LBB_21
-.LBB_15:
+	ja .LBB_21
+	jmp .LBB_22
+.LBB_16:
 	ucomiss xmm4, xmm5
-	jbe .LBB_18
+	jbe .LBB_19
 	ucomiss xmm4, xmm8
-	jb .LBB_18
+	jb .LBB_19
 	imul ecx, edx, 1136930381
 	neg edx
 	xorps xmm4, xmm4
@@ -334,9 +330,9 @@ inspect_asm::open_simplex2_3d:
 	subss xmm3, xmm4
 	xorps xmm4, xmm4
 	ucomiss xmm3, xmm4
-	ja .LBB_20
-	jmp .LBB_21
-.LBB_18:
+	ja .LBB_21
+	jmp .LBB_22
+.LBB_19:
 	movd ecx, xmm7
 	imul edx, ecx, 1720413743
 	neg ecx
@@ -354,13 +350,13 @@ inspect_asm::open_simplex2_3d:
 	subss xmm3, xmm4
 	xorps xmm4, xmm4
 	ucomiss xmm3, xmm4
-	jbe .LBB_21
-.LBB_20:
+	jbe .LBB_22
+.LBB_21:
 	mulss xmm3, xmm3
-	xor eax, r8d
-	xor eax, edi
-	not eax
-	imul eax, eax, 668265261
+	xor edi, r8d
+	xor edi, eax
+	not edi
+	imul eax, edi, 668265261
 	mov ecx, eax
 	shr ecx, 15
 	xor ecx, eax
@@ -375,7 +371,7 @@ inspect_asm::open_simplex2_3d:
 	addss xmm2, xmm1
 	mulss xmm2, xmm3
 	addss xmm0, xmm2
-.LBB_21:
+.LBB_22:
 	mulss xmm0, dword ptr [rip + .LCPI14_13]
 	pop rbx
 	ret
