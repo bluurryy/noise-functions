@@ -41,6 +41,14 @@ all-features = true
 fastnoise-lite = "1.1.1"
 rand = { version = "0.8.5", default-features = false, features = ["small_rng"] }
 
+[package.metadata.release]
+allow-branch = ["main"]
+pre-release-hook = ["just", "pre-release"]
+pre-release-commit-message = "release: version {{version}}"
+pre-release-replacements = [
+  { file = "CHANGELOG.md", search = "Unreleased", replace = "{{version}} ({{date}})" },
+]
+
 [workspace]
 members = [
   "crates/test-no_std",
