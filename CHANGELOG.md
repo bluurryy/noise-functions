@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+- **breaking:** removed `"nightly-const-fn-float"` feature; those functions are now always const
+- **breaking:** increased msrv to `1.82.0`
+
 ## 0.2.1 (2024-05-04)
 - **fixed:** `no_std`
 

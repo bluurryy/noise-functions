@@ -2,34 +2,30 @@ use core::ops::RangeInclusive;
 
 use crate::private_prelude::*;
 
-cfg_const_feature_float! {
-    /// Calculates the `fractal_bounding` property for [`Fbm`], [`Ridged`] and [`PingPong`].
-    ///
-    #[inline(always)]
-    pub fn fractal_bounding(octaves: u32, gain: f32) -> f32 {
-        let gain = fast_abs(gain);
-        let mut amp = gain;
-        let mut amp_fractal = 1.0;
-        let mut i = 0;
+/// Calculates the `fractal_bounding` property for [`Fbm`], [`Ridged`] and [`PingPong`].
+///
+#[inline(always)]
+pub const fn fractal_bounding(octaves: u32, gain: f32) -> f32 {
+    let gain = fast_abs(gain);
+    let mut amp = gain;
+    let mut amp_fractal = 1.0;
+    let mut i = 0;
 
-        while i < octaves {
-            amp_fractal += amp;
-            amp *= gain;
-            i += 1;
-        }
-
-        1.0 / amp_fractal
+    while i < octaves {
+        amp_fractal += amp;
+        amp *= gain;
+        i += 1;
     }
+
+    1.0 / amp_fractal
 }
 
-cfg_const_feature_float! {
-    #[inline(always)]
-    pub fn fast_abs(f: f32) -> f32 {
-        if f < 0.0 {
-            -f
-        } else {
-            f
-        }
+#[inline(always)]
+pub const fn fast_abs(f: f32) -> f32 {
+    if f < 0.0 {
+        -f
+    } else {
+        f
     }
 }
 

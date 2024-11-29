@@ -58,15 +58,11 @@
 )]
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "nightly-simd", feature(portable_simd))]
-#![cfg_attr(feature = "nightly-const-fn-float", feature(const_fn_floating_point_arithmetic))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide), doc(cfg_hide(no_global_oom_handling, feature = "nightly-const-fn-float")))]
 #![allow(clippy::excessive_precision, clippy::needless_late_init, clippy::too_many_arguments)]
 
 #[cfg(all(not(feature = "std"), not(feature = "libm")))]
 compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature must be enabled"#);
-
-#[cfg(feature = "alloc")]
-extern crate alloc;
 
 /// Cellular noise functions and combinators.
 pub mod cellular;
@@ -148,98 +144,43 @@ macro_rules! impl_modifiers {
             Frequency { noise: self, frequency }
         }
 
-        cfg_const_feature_float! {
-            #[inline(always)]
-            pub fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> Fbm<Self> {
-                Fbm {
-                    noise: self,
-                    octaves,
-                    gain,
-                    lacunarity,
-                    fractal_bounding: fractal_bounding(octaves, gain),
-                }
+        #[inline(always)]
+        pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> Fbm<Self> {
+            Fbm {
+                noise: self,
+                octaves,
+                gain,
+                lacunarity,
+                fractal_bounding: fractal_bounding(octaves, gain),
             }
         }
 
-        cfg_const_feature_float! {
-            #[inline(always)]
-            pub fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> Ridged<Self> {
-                Ridged {
-                    noise: self,
-                    octaves,
-                    gain,
-                    lacunarity,
-                    fractal_bounding: fractal_bounding(octaves, gain),
-                }
+        #[inline(always)]
+        pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> Ridged<Self> {
+            Ridged {
+                noise: self,
+                octaves,
+                gain,
+                lacunarity,
+                fractal_bounding: fractal_bounding(octaves, gain),
             }
         }
 
-        cfg_const_feature_float! {
-            #[inline(always)]
-            pub fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> PingPong<Self> {
-                PingPong {
-                    noise: self,
-                    octaves,
-                    gain,
-                    lacunarity,
-                    fractal_bounding: fractal_bounding(octaves, gain),
-                    strength,
-                }
+        #[inline(always)]
+        pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> PingPong<Self> {
+            PingPong {
+                noise: self,
+                octaves,
+                gain,
+                lacunarity,
+                fractal_bounding: fractal_bounding(octaves, gain),
+                strength,
             }
         }
     };
 }
 
 pub(crate) use impl_modifiers;
-
-macro_rules! cfg_const {
-	(
-		#[cfg_const($($tt:tt)*)]
-		$(#[$attr:meta])*
-		$vis:vis fn $ident:ident($($params:tt)*) $(-> $result:ty)? $body:block
-	) => {
-		#[cfg($($tt)*)]
-		$(#[$attr])*
-		$vis const fn $ident($($params)*) $(-> $result)? $body
-
-		#[cfg(not($($tt)*))]
-		$(#[$attr])*
-		$vis fn $ident($($params)*) $(-> $result)? $body
-	};
-}
-
-macro_rules! cfg_const_feature {
-	(
-		#[cfg_const_feature($feature:literal)]
-		$(#[$attr:meta])*
-		$vis:vis fn $ident:ident($($params:tt)*) $(-> $result:ty)? $body:block
-	) => {
-		$crate::cfg_const! {
-			#[cfg_const(feature = $feature)]
-			$(#[$attr])*
-			#[doc = concat!("*This function is `const` if the feature `", $feature, "` is enabled.*")]
-			$vis fn $ident($($params)*) $(-> $result)? $body
-		}
-	};
-}
-
-macro_rules! cfg_const_feature_float {
-	(
-
-		$(#[$attr:meta])*
-		$vis:vis fn $ident:ident($($params:tt)*) $(-> $result:ty)? $body:block
-	) => {
-		$crate::cfg_const_feature! {
-			#[cfg_const_feature("nightly-const-fn-float")]
-			$(#[$attr])*
-			$vis fn $ident($($params)*) $(-> $result)? $body
-		}
-	};
-}
-
-pub(crate) use cfg_const;
-pub(crate) use cfg_const_feature;
-pub(crate) use cfg_const_feature_float;
 
 macro_rules! basic_noise {
     ($(#[$attr:meta])* $noise:ident in $noise_mod:ident) => {
