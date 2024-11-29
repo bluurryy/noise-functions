@@ -1,25 +1,29 @@
 set shell := ["nu", "-c"]
 
 default:
-  cargo fmt --all
-  cargo clippy --tests --all
-  cargo clippy --no-default-features --features libm
-  cargo clippy --no-default-features --features libm -p noise-functions-config
+  @just --list
 
-all: default
+pre-release:
+  just check
   just doc
   just test
   cargo +stable clippy --all
   cargo ('+' + (open Cargo.toml).package.rust-version) check
   cargo ('+' + (open Cargo.toml).package.rust-version) check -p noise-functions-config
   cspell lint --gitignore "**" --exclude "*.asm"
-  
-publish:
   cargo semver-checks
-  cargo publish
 
+check:
+  cargo fmt --all
+  cargo clippy --tests --all
+  cargo clippy --no-default-features --features libm
+  cargo clippy --no-default-features --features libm -p noise-functions-config
+  
 test:
+  cargo test
+  cargo test --features libm
   cargo test --features nightly-simd
+  cargo test --features nightly-simd,libm
 
 doc *args:
   cargo rustdoc {{args}} --features nightly-simd,document-features -- --cfg docsrs
