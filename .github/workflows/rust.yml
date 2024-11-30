@@ -23,7 +23,7 @@ jobs:
         features: ["", "--no-default-features --features libm"]
     steps:
     - uses: actions/checkout@v4
-    - uses: dtolnay/rust-toolchain@1.64.0
+    - uses: dtolnay/rust-toolchain@1.82.0
     - run: cargo check ${{matrix.tests}}      
     - run: cargo check ${{matrix.tests}} ${{matrix.features}}
     - run: cargo check -p noise-functions-config ${{matrix.tests}}      
