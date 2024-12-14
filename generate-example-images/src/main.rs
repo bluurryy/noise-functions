@@ -23,12 +23,12 @@ fn noise_to_png(name: &str, s: impl Sample2) {
 }
 
 fn main() {
-    noise_to_png("cell_distance", CellDistance);
     noise_to_png("cell_distance_sq", CellDistanceSq);
+    noise_to_png("cell_distance", CellDistance);
     noise_to_png("cell_value", CellValue);
+    noise_to_png("perlin", Perlin);
     noise_to_png("open_simplex_2", OpenSimplex2);
     noise_to_png("open_simplex_2s", OpenSimplex2s);
-    noise_to_png("perlin", Perlin);
     noise_to_png("value", Value);
     noise_to_png("value_cubic", ValueCubic);
 
