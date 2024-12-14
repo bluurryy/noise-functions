@@ -37,13 +37,13 @@ fn my_noise(point: Vec2) -> f32 {
 ```
 The whole `Perlin.fbm(3, 0.5, 2.0).seed(42).frequency(3.0)` expression will be evaluated at compile time so there is no point in carrying around that noise struct or putting it into a `static`.
 
-[!NOTE]
-This library uses `f32` instead of `f64`.
+> [!NOTE]
+> This library uses `f32` instead of `f64`.
 
 ## Why not [`fastnoise-lite`](https://docs.rs/fastnoise-lite)?
 `fastnoise-lite` provides its noise generation via a big struct that you are to mutate to get the noise you want. If you already know what noise you want or you want to compose multiple noises in a custom way then this design is less efficient and less convenient. There is the [`noise-functions-config`](https://docs.rs/noise-functions-config) crate that provides a similar configurable struct (the [demo] is powered by it). It opts to return a trait object like `Box<dyn Sample<2>>` instead of branching on each sample call.
 
-[!NOTE]
-The implementation of all current noise functions are from [FastNoiseLite](https://github.com/Auburn/FastNoiseLite).
+> [!NOTE]
+> The implementation of the current noise functions are from [FastNoiseLite](https://github.com/Auburn/FastNoiseLite). The simd versions were created by me.
 
 [demo]: https://bluurryy.github.io/noise-functions-demo/
