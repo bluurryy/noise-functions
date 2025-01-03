@@ -1,5 +1,6 @@
-use crate::cellular::Jitter;
-use crate::*;
+use std::boxed::Box;
+
+use crate::{cellular::Jitter, *};
 
 #[allow(dead_code)]
 const fn can_sample2<S>()

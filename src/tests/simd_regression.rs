@@ -1,9 +1,8 @@
-use rand::rngs::SmallRng;
-use rand::{Rng, SeedableRng};
+use std::boxed::Box;
 
-use crate::private_prelude::*;
+use rand::{rngs::SmallRng, Rng, SeedableRng};
 
-use crate::tests::test_n;
+use crate::{private_prelude::*, tests::test_n};
 
 use super::test_seed;
 

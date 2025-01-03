@@ -1,9 +1,12 @@
+use std::boxed::Box;
+
+use fastnoise_lite::*;
+use rand::{rngs::SmallRng, Rng, SeedableRng};
+
 use crate::{
     private_prelude::*,
     tests::{test_n, test_seed},
 };
-use fastnoise_lite::*;
-use rand::{rngs::SmallRng, Rng, SeedableRng};
 
 trait SampleBoth: Sample<2> + Sample<3> {}
 impl<T> SampleBoth for T where T: Sample<2> + Sample<3> {}

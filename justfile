@@ -16,14 +16,17 @@ pre-release:
 check:
   cargo fmt --all
   cargo clippy --tests --all
-  cargo clippy --no-default-features --features libm
+  cargo clippy --tests --features nightly-simd
+  cargo clippy --tests --features nightly-simd,libm
+  cargo clippy --tests --no-default-features --features libm
+  cargo clippy --tests --no-default-features --features libm,nightly-simd
   cargo clippy --no-default-features --features libm -p noise-functions-config
   
 test:
   cargo test
-  cargo test --features libm
   cargo test --features nightly-simd
-  cargo test --features nightly-simd,libm
+  cargo test --no-default-features --features libm
+  cargo test --no-default-features --features libm,nightly-simd
 
 doc *args:
   cargo rustdoc {{args}} --features nightly-simd,document-features -- --cfg docsrs

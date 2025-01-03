@@ -52,14 +52,17 @@
 //! ```
 //!
 //! ## Feature flags
+#![no_std]
 #![cfg_attr(
     feature = "document-features",
     cfg_attr(doc, doc = ::document_features::document_features!())
 )]
-#![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "nightly-simd", feature(portable_simd))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide), doc(cfg_hide(no_global_oom_handling, feature = "nightly-const-fn-float")))]
 #![allow(clippy::excessive_precision, clippy::needless_late_init, clippy::too_many_arguments)]
+
+#[cfg(any(feature = "std", test))]
+extern crate std;
 
 #[cfg(all(not(feature = "std"), not(feature = "libm")))]
 compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature must be enabled"#);
