@@ -1,11 +1,13 @@
+use crate::floor;
+
 use super::{interp_hermite, lerp, noise, primes, value_coord2, value_coord3, value_coord4};
 
 noise!(Value gen2 gen3 gen4);
 
 #[inline]
 fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
-    let xs = x.floor();
-    let ys = y.floor();
+    let xs = floor(x);
+    let ys = floor(y);
 
     let x0 = (xs as i32).wrapping_mul(primes::X);
     let y0 = (ys as i32).wrapping_mul(primes::Y);
@@ -25,9 +27,9 @@ fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
 
 #[inline]
 fn gen3([x, y, z]: [f32; 3], seed: i32) -> f32 {
-    let xs = x.floor();
-    let ys = y.floor();
-    let zs = z.floor();
+    let xs = floor(x);
+    let ys = floor(y);
+    let zs = floor(z);
 
     let x0 = (xs as i32).wrapping_mul(primes::X);
     let y0 = (ys as i32).wrapping_mul(primes::Y);
@@ -58,10 +60,10 @@ fn gen3([x, y, z]: [f32; 3], seed: i32) -> f32 {
 
 #[inline]
 fn gen4([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
-    let xs = x.floor();
-    let ys = y.floor();
-    let zs = z.floor();
-    let ws = w.floor();
+    let xs = floor(x);
+    let ys = floor(y);
+    let zs = floor(z);
+    let ws = floor(w);
 
     let x0 = (xs as i32).wrapping_mul(primes::X);
     let y0 = (ys as i32).wrapping_mul(primes::Y);

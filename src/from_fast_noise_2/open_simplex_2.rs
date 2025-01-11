@@ -1,4 +1,4 @@
-use crate::fast_max;
+use crate::{fast_max, floor, mul_add};
 
 use super::{gradient_dot2, gradient_dot3, gradient_dot4, hash_primes2, hash_primes3, hash_primes4, noise, primes};
 
@@ -11,8 +11,8 @@ fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
     const G2: f32 = (3.0 - SQRT3) / 6.0;
 
     let f = F2 * (x + y);
-    let x0 = (x + f).floor();
-    let y0 = (y + f).floor();
+    let x0 = floor(x + f);
+    let y0 = floor(y + f);
 
     let i = (x0 as i32).wrapping_mul(primes::X);
     let j = (y0 as i32).wrapping_mul(primes::Y);
@@ -63,9 +63,9 @@ fn gen3([x, y, z]: [f32; 3], seed: i32) -> f32 {
     let y = y + s;
     let z = z + s;
 
-    let x0 = x.floor();
-    let y0 = y.floor();
-    let z0 = z.floor();
+    let x0 = floor(x);
+    let y0 = floor(y);
+    let z0 = floor(z);
     let xi = x - x0;
     let yi = y - y0;
     let zi = z - z0;
@@ -163,10 +163,10 @@ fn gen4([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
     let z = z + s;
     let w = w + s;
 
-    let x0 = x.floor();
-    let y0 = y.floor();
-    let z0 = z.floor();
-    let w0 = w.floor();
+    let x0 = floor(x);
+    let y0 = floor(y);
+    let z0 = floor(z);
+    let w0 = floor(w);
     let xi = x - x0;
     let yi = y - y0;
     let zi = z - z0;
@@ -315,5 +315,5 @@ fn gen4([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
         w4,
     );
 
-    27.0 * n0.mul_add(t0, n1.mul_add(t1, n2.mul_add(t2, n3.mul_add(t3, n4 * t4))))
+    27.0 * mul_add(n0, t0, mul_add(n1, t1, mul_add(n2, t2, mul_add(n3, t3, n4 * t4))))
 }

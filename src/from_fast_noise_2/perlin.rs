@@ -1,11 +1,13 @@
+use crate::floor;
+
 use super::{gradient_dot2, gradient_dot3, gradient_dot4, hash_primes2, hash_primes3, hash_primes4, interp_quintic, lerp, noise, primes};
 
 noise!(Perlin gen2 gen3 gen4);
 
 #[inline]
 fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
-    let xs = x.floor();
-    let ys = y.floor();
+    let xs = floor(x);
+    let ys = floor(y);
 
     let x0 = (xs as i32).wrapping_mul(primes::X);
     let y0 = (ys as i32).wrapping_mul(primes::Y);
@@ -32,9 +34,9 @@ fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
 
 #[inline]
 fn gen3([x, y, z]: [f32; 3], seed: i32) -> f32 {
-    let xs = x.floor();
-    let ys = y.floor();
-    let zs = z.floor();
+    let xs = floor(x);
+    let ys = floor(y);
+    let zs = floor(z);
 
     let x0 = (xs as i32).wrapping_mul(primes::X);
     let y0 = (ys as i32).wrapping_mul(primes::Y);
@@ -74,10 +76,10 @@ fn gen3([x, y, z]: [f32; 3], seed: i32) -> f32 {
 
 #[inline]
 fn gen4([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
-    let xs = x.floor();
-    let ys = y.floor();
-    let zs = z.floor();
-    let ws = w.floor();
+    let xs = floor(x);
+    let ys = floor(y);
+    let zs = floor(z);
+    let ws = floor(w);
 
     let x0 = (xs as i32).wrapping_mul(primes::X);
     let y0 = (ys as i32).wrapping_mul(primes::Y);

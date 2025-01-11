@@ -1,4 +1,4 @@
-use crate::{impl_modifiers, Sample, Seeded};
+use crate::{cos, impl_modifiers, sin, Sample, Seeded};
 
 use core::f32::consts::TAU;
 
@@ -21,10 +21,10 @@ impl<Noise> Tileable<Noise> {
         let s = x * self.inv_height;
         let t = y * self.inv_width;
 
-        let nx = (s * TAU).cos() * self.height;
-        let ny = (t * TAU).cos() * self.width;
-        let nz = (s * TAU).sin() * self.height;
-        let nw = (t * TAU).sin() * self.width;
+        let nx = cos(s * TAU) * self.height;
+        let ny = cos(t * TAU) * self.width;
+        let nz = sin(s * TAU) * self.height;
+        let nw = sin(t * TAU) * self.width;
 
         [nx, ny, nz, nw]
     }
