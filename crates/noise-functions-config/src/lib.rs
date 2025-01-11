@@ -86,6 +86,7 @@ simple_enum! {
         CellDistanceSq,
         CellValue,
         OpenSimplex2,
+        OpenSimplex22,
         OpenSimplex2s,
         Perlin,
         Perlin2,
@@ -160,6 +161,7 @@ macro_rules! make_fractal2 {
             match $self.noise {
                 Noise::Perlin2 => $macro!($self, from_fast_noise_2::Perlin.tileable($self.tile_width, $self.tile_height)),
                 Noise::Value2 => $macro!($self, from_fast_noise_2::Value.tileable($self.tile_width, $self.tile_height)),
+                Noise::OpenSimplex22 => $macro!($self, from_fast_noise_2::OpenSimplex2.tileable($self.tile_width, $self.tile_height)),
                 _ => None,
             }
         } else {
@@ -182,6 +184,7 @@ macro_rules! make_fractal2 {
                 Noise::ValueCubic => $macro!($self, ValueCubic),
                 Noise::Value => $macro!($self, Value),
                 Noise::Value2 => $macro!($self, from_fast_noise_2::Value),
+                Noise::OpenSimplex22 => $macro!($self, from_fast_noise_2::OpenSimplex2),
             }
         }
     };
@@ -222,6 +225,7 @@ macro_rules! make_fractal3 {
                 Noise::ValueCubic => $macro!($self, ValueCubic),
                 Noise::Value => $macro!($self, Value),
                 Noise::Value2 => $macro!($self, from_fast_noise_2::Value),
+                Noise::OpenSimplex22 => $macro!($self, from_fast_noise_2::OpenSimplex2),
             }
         }
     };

@@ -29,9 +29,11 @@
 #![deny(arithmetic_overflow, clippy::arithmetic_side_effects)]
 #![expect(clippy::needless_pub_self)] // false positive for macro
 
+mod open_simplex_2;
 mod perlin;
 mod value;
 
+pub use open_simplex_2::OpenSimplex2;
 pub use perlin::Perlin;
 pub use value::Value;
 
