@@ -1,8 +1,8 @@
 use crate::{fast_max, floor, mul_add};
 
-use super::{gradient_dot2_fancy, gradient_dot3, hash_primes2, hash_primes3, noise, primes};
+use super::{gradient_dot2_fancy, gradient_dot3, hash_primes2, hash_primes3, noise23, primes};
 
-noise!(OpenSimplex2s gen2 gen3);
+noise23!(OpenSimplex2s);
 
 #[inline]
 fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {

@@ -1,8 +1,8 @@
 use crate::floor;
 
-use super::{gradient_dot2, gradient_dot3, gradient_dot4, hash_primes2, hash_primes3, hash_primes4, interp_quintic, lerp, noise, primes};
+use super::{gradient_dot2, gradient_dot3, gradient_dot4, hash_primes2, hash_primes3, hash_primes4, interp_quintic, lerp, noise234, primes};
 
-noise!(Perlin gen2 gen3 gen4);
+noise234!(Perlin);
 
 #[inline]
 fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
