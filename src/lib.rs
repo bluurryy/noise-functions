@@ -77,6 +77,8 @@ mod lookup;
 mod math;
 mod noise_fn;
 
+mod fallback;
+pub mod from_fast_noise_2;
 /// OpenSimplex2 noise functions and combinators.
 pub mod open_simplex_2;
 mod sample;
@@ -84,12 +86,14 @@ mod scalar;
 mod seeded;
 #[cfg(feature = "nightly-simd")]
 mod simd;
+mod tileable;
 mod util;
 
 #[doc(inline)]
 pub use cellular::{CellDistance, CellDistanceSq, CellValue};
 pub use frequency::Frequency;
 pub use noise_fn::NoiseFn;
+pub use tileable::Tileable;
 
 #[doc(inline)]
 pub use open_simplex_2::{OpenSimplex2, OpenSimplex2s};
@@ -138,45 +142,56 @@ const DEFAULT_JITTER_3D: f32 = 0.39614353;
 macro_rules! impl_modifiers {
     () => {
         #[inline(always)]
-        pub const fn seed(self, seed: i32) -> Seeded<Self> {
-            Seeded { noise: self, seed }
+        pub const fn seed(self, seed: i32) -> $crate::Seeded<Self> {
+            $crate::Seeded { noise: self, seed }
         }
 
         #[inline(always)]
-        pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
-            Frequency { noise: self, frequency }
+        pub const fn frequency(self, frequency: f32) -> $crate::Frequency<Self> {
+            $crate::Frequency { noise: self, frequency }
         }
 
         #[inline(always)]
-        pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> Fbm<Self> {
-            Fbm {
+        pub const fn tileable(self, width: f32, height: f32) -> $crate::Tileable<Self> {
+            $crate::Tileable {
                 noise: self,
-                octaves,
-                gain,
-                lacunarity,
-                fractal_bounding: fractal_bounding(octaves, gain),
+                width,
+                height,
+                inv_width: 1.0 / width,
+                inv_height: 1.0 / height,
             }
         }
 
         #[inline(always)]
-        pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> Ridged<Self> {
-            Ridged {
+        pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Fbm<Self> {
+            $crate::Fbm {
                 noise: self,
                 octaves,
                 gain,
                 lacunarity,
-                fractal_bounding: fractal_bounding(octaves, gain),
+                fractal_bounding: $crate::fractal_bounding(octaves, gain),
             }
         }
 
         #[inline(always)]
-        pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> PingPong<Self> {
-            PingPong {
+        pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Ridged<Self> {
+            $crate::Ridged {
                 noise: self,
                 octaves,
                 gain,
                 lacunarity,
-                fractal_bounding: fractal_bounding(octaves, gain),
+                fractal_bounding: $crate::fractal_bounding(octaves, gain),
+            }
+        }
+
+        #[inline(always)]
+        pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> $crate::PingPong<Self> {
+            $crate::PingPong {
+                noise: self,
+                octaves,
+                gain,
+                lacunarity,
+                fractal_bounding: $crate::fractal_bounding(octaves, gain),
                 strength,
             }
         }
@@ -300,6 +315,12 @@ basic_noise! {
 basic_noise! {
     /// 2/3 dimensional Cubic Value noise
     ValueCubic in value_cubic
+}
+
+#[inline(always)]
+#[cfg(feature = "nightly-simd")]
+fn array_4_take_3<T>(array: &[T; 4]) -> &[T; 3] {
+    array.as_slice().try_into().unwrap()
 }
 
 #[cfg(test)]
