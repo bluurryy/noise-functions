@@ -1,6 +1,6 @@
 use super::{gradient_dot2, gradient_dot3, gradient_dot4, hash_primes2, hash_primes3, hash_primes4, interp_quintic, lerp, noise, primes};
 
-noise!(Perlin);
+noise!(Perlin gen2 gen3 gen4);
 
 #[inline]
 fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {

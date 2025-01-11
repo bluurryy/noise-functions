@@ -2,7 +2,7 @@ use crate::fast_max;
 
 use super::{gradient_dot2, gradient_dot3, gradient_dot4, hash_primes2, hash_primes3, hash_primes4, noise, primes};
 
-noise!(OpenSimplex2);
+noise!(OpenSimplex2 gen2 gen3 gen4);
 
 #[inline]
 fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {

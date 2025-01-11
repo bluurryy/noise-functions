@@ -93,6 +93,7 @@ simple_enum! {
         NewPerlin,
         NewValue,
         NewOpenSimplex2,
+        NewOpenSimplex2s,
     }
 }
 
@@ -185,6 +186,7 @@ macro_rules! make_fractal2 {
                 Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
                 Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
                 Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
+                Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
             }
         }
     };
@@ -226,6 +228,7 @@ macro_rules! make_fractal3 {
                 Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
                 Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
                 Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
+                Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
             }
         }
     };

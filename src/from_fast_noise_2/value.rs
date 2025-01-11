@@ -1,6 +1,6 @@
 use super::{interp_hermite, lerp, noise, primes, value_coord2, value_coord3, value_coord4};
 
-noise!(Value);
+noise!(Value gen2 gen3 gen4);
 
 #[inline]
 fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
