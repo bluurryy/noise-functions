@@ -86,13 +86,13 @@ simple_enum! {
         CellDistanceSq,
         CellValue,
         OpenSimplex2,
-        OpenSimplex22,
         OpenSimplex2s,
         Perlin,
-        Perlin2,
         Value,
-        Value2,
         ValueCubic,
+        NewPerlin,
+        NewValue,
+        NewOpenSimplex2,
     }
 }
 
@@ -159,9 +159,9 @@ macro_rules! make_fractal2 {
     ($self:ident, $macro:ident) => {
         if $self.tileable {
             match $self.noise {
-                Noise::Perlin2 => $macro!($self, from_fast_noise_2::Perlin.tileable($self.tile_width, $self.tile_height)),
-                Noise::Value2 => $macro!($self, from_fast_noise_2::Value.tileable($self.tile_width, $self.tile_height)),
-                Noise::OpenSimplex22 => $macro!($self, from_fast_noise_2::OpenSimplex2.tileable($self.tile_width, $self.tile_height)),
+                Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin.tileable($self.tile_width, $self.tile_height)),
+                Noise::NewValue => $macro!($self, from_fast_noise_2::Value.tileable($self.tile_width, $self.tile_height)),
+                Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2.tileable($self.tile_width, $self.tile_height)),
                 _ => None,
             }
         } else {
@@ -180,11 +180,11 @@ macro_rules! make_fractal2 {
                     Improve::Xz => $macro!($self, OpenSimplex2s.improve_xz()),
                 },
                 Noise::Perlin => $macro!($self, Perlin),
-                Noise::Perlin2 => $macro!($self, from_fast_noise_2::Perlin),
                 Noise::ValueCubic => $macro!($self, ValueCubic),
                 Noise::Value => $macro!($self, Value),
-                Noise::Value2 => $macro!($self, from_fast_noise_2::Value),
-                Noise::OpenSimplex22 => $macro!($self, from_fast_noise_2::OpenSimplex2),
+                Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
+                Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
+                Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
             }
         }
     };
@@ -221,11 +221,11 @@ macro_rules! make_fractal3 {
                     Improve::Xz => $macro!($self, OpenSimplex2s.improve_xz()),
                 },
                 Noise::Perlin => $macro!($self, Perlin),
-                Noise::Perlin2 => $macro!($self, from_fast_noise_2::Perlin),
                 Noise::ValueCubic => $macro!($self, ValueCubic),
                 Noise::Value => $macro!($self, Value),
-                Noise::Value2 => $macro!($self, from_fast_noise_2::Value),
-                Noise::OpenSimplex22 => $macro!($self, from_fast_noise_2::OpenSimplex2),
+                Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
+                Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
+                Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
             }
         }
     };
@@ -245,7 +245,9 @@ macro_rules! sampler3 {
 macro_rules! make_fractal4 {
     ($self:ident, $macro:ident) => {
         match $self.noise {
-            Noise::Perlin2 => $macro!($self, from_fast_noise_2::Perlin),
+            Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
+            Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
+            Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
             _ => None,
         }
     };
