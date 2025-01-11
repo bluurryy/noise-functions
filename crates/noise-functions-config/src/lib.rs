@@ -90,6 +90,7 @@ simple_enum! {
         Perlin,
         Perlin2,
         Value,
+        Value2,
         ValueCubic,
     }
 }
@@ -158,6 +159,7 @@ macro_rules! make_fractal2 {
         if $self.tileable {
             match $self.noise {
                 Noise::Perlin2 => $macro!($self, from_fast_noise_2::Perlin.tileable($self.tile_width, $self.tile_height)),
+                Noise::Value2 => $macro!($self, from_fast_noise_2::Value.tileable($self.tile_width, $self.tile_height)),
                 _ => None,
             }
         } else {
@@ -179,6 +181,7 @@ macro_rules! make_fractal2 {
                 Noise::Perlin2 => $macro!($self, from_fast_noise_2::Perlin),
                 Noise::ValueCubic => $macro!($self, ValueCubic),
                 Noise::Value => $macro!($self, Value),
+                Noise::Value2 => $macro!($self, from_fast_noise_2::Value),
             }
         }
     };
@@ -218,6 +221,7 @@ macro_rules! make_fractal3 {
                 Noise::Perlin2 => $macro!($self, from_fast_noise_2::Perlin),
                 Noise::ValueCubic => $macro!($self, ValueCubic),
                 Noise::Value => $macro!($self, Value),
+                Noise::Value2 => $macro!($self, from_fast_noise_2::Value),
             }
         }
     };

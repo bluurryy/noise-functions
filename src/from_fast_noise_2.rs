@@ -30,8 +30,10 @@
 #![expect(clippy::needless_pub_self)] // false positive for macro
 
 mod perlin;
+mod value;
 
 pub use perlin::Perlin;
+pub use value::Value;
 
 mod primes {
     pub(super) const X: i32 = 501125321;
@@ -44,7 +46,7 @@ const ROOT2: f32 = 1.4142135623730950488;
 #[expect(unused)]
 const ROOT3: f32 = 1.7320508075688772935;
 
-use crate::{interp_quintic, lerp};
+use crate::{interp_hermite, interp_quintic, lerp};
 
 fn hash_primes2(seed: i32, x: i32, y: i32) -> i32 {
     let mut hash = seed;
@@ -65,6 +67,27 @@ fn hash_primes4(seed: i32, x: i32, y: i32, z: i32, w: i32) -> i32 {
     hash ^= x ^ y ^ z ^ w;
     hash = hash.wrapping_mul(0x27d4eb2d);
     (hash >> 15) ^ hash
+}
+
+fn value_coord2(seed: i32, x: i32, y: i32) -> f32 {
+    let mut hash = seed;
+    hash ^= x ^ y;
+    hash = hash.wrapping_mul(hash.wrapping_mul(0x27d4eb2d));
+    hash as f32 * (1.0 / i32::MAX as f32)
+}
+
+fn value_coord3(seed: i32, x: i32, y: i32, z: i32) -> f32 {
+    let mut hash = seed;
+    hash ^= x ^ y ^ z;
+    hash = hash.wrapping_mul(hash.wrapping_mul(0x27d4eb2d));
+    hash as f32 * (1.0 / i32::MAX as f32)
+}
+
+fn value_coord4(seed: i32, x: i32, y: i32, z: i32, w: i32) -> f32 {
+    let mut hash = seed;
+    hash ^= x ^ y ^ z ^ w;
+    hash = hash.wrapping_mul(hash.wrapping_mul(0x27d4eb2d));
+    hash as f32 * (1.0 / i32::MAX as f32)
 }
 
 fn gradient_dot2(hash: i32, x: f32, y: f32) -> f32 {
