@@ -227,6 +227,7 @@ macro_rules! make_fractal2 {
                 Noise::NewValue => $macro!($self, from_fast_noise_2::Value.tileable($self.tile_width, $self.tile_height)),
                 Noise::NewCellValue => $macro!($self, $self.new_cell_value().tileable($self.tile_width, $self.tile_height)),
                 Noise::NewCellDistance => $macro!($self, $self.new_cell_distance().tileable($self.tile_width, $self.tile_height)),
+                Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex.tileable($self.tile_width, $self.tile_height)),
                 _ => None,
             }
         } else {
