@@ -1,11 +1,14 @@
 use crate::floor;
 
-use super::{interp_hermite, lerp, noise234, primes, value_coord2, value_coord3, value_coord4};
+use super::{impl_noise234, interp_hermite, lerp, primes, value_coord2, value_coord3, value_coord4};
 
-noise234!(Value);
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Value;
+
+impl_noise234!(Value);
 
 #[inline]
-fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
+fn gen2([x, y]: [f32; 2], seed: i32, _: Value) -> f32 {
     let xs = floor(x);
     let ys = floor(y);
 
@@ -26,7 +29,7 @@ fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
 }
 
 #[inline]
-fn gen3([x, y, z]: [f32; 3], seed: i32) -> f32 {
+fn gen3([x, y, z]: [f32; 3], seed: i32, _: Value) -> f32 {
     let xs = floor(x);
     let ys = floor(y);
     let zs = floor(z);
@@ -59,7 +62,7 @@ fn gen3([x, y, z]: [f32; 3], seed: i32) -> f32 {
 }
 
 #[inline]
-fn gen4([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
+fn gen4([x, y, z, w]: [f32; 4], seed: i32, _: Value) -> f32 {
     let xs = floor(x);
     let ys = floor(y);
     let zs = floor(z);

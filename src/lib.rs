@@ -320,7 +320,7 @@ basic_noise! {
 #[inline(always)]
 #[cfg(feature = "nightly-simd")]
 fn array_4_take_3<T>(array: &[T; 4]) -> &[T; 3] {
-    array.as_slice().try_into().unwrap()
+    array[..3].try_into().unwrap()
 }
 
 #[cfg(test)]

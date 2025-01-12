@@ -1,11 +1,14 @@
 use crate::{fast_max, floor, mul_add};
 
-use super::{gradient_dot2_fancy, gradient_dot3, hash_primes2, hash_primes3, noise23, primes};
+use super::{gradient_dot2_fancy, gradient_dot3, hash_primes2, hash_primes3, impl_noise23, primes};
 
-noise23!(OpenSimplex2s);
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct OpenSimplex2s;
+
+impl_noise23!(OpenSimplex2s);
 
 #[inline]
-fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
+fn gen2([x, y]: [f32; 2], seed: i32, _: OpenSimplex2s) -> f32 {
     const SQRT3: f32 = 1.7320508075688772935274463415059;
     const F2: f32 = 0.5 * (SQRT3 - 1.0);
     const G2: f32 = (SQRT3 - 3.0) / 6.0;
@@ -75,7 +78,7 @@ fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
 
 // TODO: this is broken
 #[inline]
-fn gen3([x, y, z]: [f32; 3], mut seed: i32) -> f32 {
+fn gen3([x, y, z]: [f32; 3], mut seed: i32, _: OpenSimplex2s) -> f32 {
     let f = (2.0 / 3.0) * (x + y + z);
     let xr = f - x;
     let yr = f - y;

@@ -1,6 +1,11 @@
 #[cfg(feature = "libm")]
 mod libm_math {
     #[inline(always)]
+    pub(crate) fn abs(f: f32) -> f32 {
+        libm::fabsf(f)
+    }
+
+    #[inline(always)]
     pub(crate) fn sqrt(f: f32) -> f32 {
         libm::sqrtf(f)
     }
@@ -26,6 +31,11 @@ mod libm_math {
     }
 
     #[inline(always)]
+    pub(crate) fn max(a: f32, b: f32) -> f32 {
+        libm::fmaxf(a, b)
+    }
+
+    #[inline(always)]
     pub(crate) fn mul_add(a: f32, b: f32, c: f32) -> f32 {
         a * b + c
     }
@@ -33,6 +43,11 @@ mod libm_math {
 
 #[cfg(not(feature = "libm"))]
 mod std_math {
+    #[inline(always)]
+    pub(crate) fn abs(f: f32) -> f32 {
+        f32::abs(f)
+    }
+
     #[inline(always)]
     pub(crate) fn sqrt(f: f32) -> f32 {
         f32::sqrt(f)
@@ -56,6 +71,11 @@ mod std_math {
     #[inline(always)]
     pub(crate) fn cos(f: f32) -> f32 {
         f32::cos(f)
+    }
+
+    #[inline(always)]
+    pub(crate) fn max(a: f32, b: f32) -> f32 {
+        f32::max(a, b)
     }
 
     #[inline(always)]

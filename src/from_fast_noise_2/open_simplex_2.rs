@@ -1,11 +1,14 @@
 use crate::{fast_max, floor, mul_add};
 
-use super::{gradient_dot2, gradient_dot3, gradient_dot4, hash_primes2, hash_primes3, hash_primes4, noise234, primes};
+use super::{gradient_dot2, gradient_dot3, gradient_dot4, hash_primes2, hash_primes3, hash_primes4, impl_noise234, primes};
 
-noise234!(OpenSimplex2);
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct OpenSimplex2;
+
+impl_noise234!(OpenSimplex2);
 
 #[inline]
-fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
+fn gen2([x, y]: [f32; 2], seed: i32, _: OpenSimplex2) -> f32 {
     const SQRT3: f32 = 1.7320508075688772935274463415059;
     const F2: f32 = 0.5 * (SQRT3 - 1.0);
     const G2: f32 = (3.0 - SQRT3) / 6.0;
@@ -54,7 +57,7 @@ fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
 }
 
 #[inline]
-fn gen3([x, y, z]: [f32; 3], seed: i32) -> f32 {
+fn gen3([x, y, z]: [f32; 3], seed: i32, _: OpenSimplex2) -> f32 {
     const F3: f32 = 1.0 / 3.0;
     const G3: f32 = 1.0 / 2.0;
 
@@ -152,7 +155,7 @@ fn gen3([x, y, z]: [f32; 3], seed: i32) -> f32 {
 }
 
 #[inline]
-fn gen4([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
+fn gen4([x, y, z, w]: [f32; 4], seed: i32, _: OpenSimplex2) -> f32 {
     const SQRT5: f32 = 2.236067977499;
     const F4: f32 = (SQRT5 - 1.0) / 4.0;
     const G4: f32 = (5.0 - SQRT5) / 20.0;

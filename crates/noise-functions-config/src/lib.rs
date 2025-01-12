@@ -92,6 +92,7 @@ simple_enum! {
         ValueCubic,
         NewPerlin,
         NewValue,
+        NewCellValue,
         NewOpenSimplex2,
         NewOpenSimplex2s,
     }
@@ -162,6 +163,7 @@ macro_rules! make_fractal2 {
             match $self.noise {
                 Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin.tileable($self.tile_width, $self.tile_height)),
                 Noise::NewValue => $macro!($self, from_fast_noise_2::Value.tileable($self.tile_width, $self.tile_height)),
+                Noise::NewCellValue => $macro!($self, from_fast_noise_2::CellValue::default().jitter($self.jitter).tileable($self.tile_width, $self.tile_height)),
                 Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2.tileable($self.tile_width, $self.tile_height)),
                 _ => None,
             }
@@ -185,6 +187,7 @@ macro_rules! make_fractal2 {
                 Noise::Value => $macro!($self, Value),
                 Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
                 Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
+                Noise::NewCellValue => $macro!($self, from_fast_noise_2::CellValue::default().jitter($self.jitter)),
                 Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
                 Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
             }
@@ -227,6 +230,7 @@ macro_rules! make_fractal3 {
                 Noise::Value => $macro!($self, Value),
                 Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
                 Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
+                Noise::NewCellValue => $macro!($self, from_fast_noise_2::CellValue::default().jitter($self.jitter)),
                 Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
                 Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
             }
@@ -250,6 +254,7 @@ macro_rules! make_fractal4 {
         match $self.noise {
             Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
             Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
+            Noise::NewCellValue => $macro!($self, from_fast_noise_2::CellValue::default().jitter($self.jitter)),
             Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
             _ => None,
         }

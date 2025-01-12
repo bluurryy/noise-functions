@@ -28,11 +28,13 @@
 
 #![deny(arithmetic_overflow, clippy::arithmetic_side_effects)]
 
+mod cell_value;
 mod open_simplex_2;
 mod open_simplex_2s;
 mod perlin;
 mod value;
 
+pub use cell_value::CellValue;
 pub use open_simplex_2::OpenSimplex2;
 pub use open_simplex_2s::OpenSimplex2s;
 pub use perlin::Perlin;
@@ -69,6 +71,27 @@ fn hash_primes4(seed: i32, x: i32, y: i32, z: i32, w: i32) -> i32 {
     hash ^= x ^ y ^ z ^ w;
     hash = hash.wrapping_mul(0x27d4eb2d);
     (hash >> 15) ^ hash
+}
+
+fn hash_primes2_hb(seed: i32, x: i32, y: i32) -> i32 {
+    let mut hash = seed;
+    hash ^= x ^ y;
+    hash = hash.wrapping_mul(0x27d4eb2d);
+    hash
+}
+
+fn hash_primes3_hb(seed: i32, x: i32, y: i32, z: i32) -> i32 {
+    let mut hash = seed;
+    hash ^= x ^ y ^ z;
+    hash = hash.wrapping_mul(0x27d4eb2d);
+    hash
+}
+
+fn hash_primes4_hb(seed: i32, x: i32, y: i32, z: i32, w: i32) -> i32 {
+    let mut hash = seed;
+    hash ^= x ^ y ^ z ^ w;
+    hash = hash.wrapping_mul(0x27d4eb2d);
+    hash
 }
 
 fn value_coord2(seed: i32, x: i32, y: i32) -> f32 {
@@ -164,12 +187,79 @@ fn gradient_dot2_fancy(hash: i32, x: f32, y: f32) -> f32 {
     f32::from_bits((a + b).to_bits() ^ ((index >> 3) << 31) as u32)
 }
 
-macro_rules! noise23 {
-    ($(#[$attr:meta])* $struct:ident) => {
-        $(#[$attr])*
-        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-        pub struct $struct;
+fn inv_sqrt(mut a: f32) -> f32 {
+    let x_half = 0.5 * a;
+    a = f32::from_bits((0x5f3759dfi32.wrapping_sub(a.to_bits() as i32 >> 1)) as u32);
+    a *= 1.5 - x_half * a * a;
+    a
+}
 
+pub mod cell {
+    use crate::{abs, max, mul_add};
+
+    use super::inv_sqrt;
+
+    #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+    pub enum DistanceFn {
+        #[default]
+        Euclidean,
+        EuclideanSquared,
+        Manhatten,
+        Hybrid,
+        MaxAxis,
+    }
+
+    #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+    pub enum ValueIndex {
+        #[default]
+        I0 = 0,
+        I1 = 1,
+        I2 = 2,
+        I3 = 3,
+    }
+
+    pub(crate) fn calc_distance2(distance_fn: DistanceFn, x: f32, y: f32) -> f32 {
+        match distance_fn {
+            DistanceFn::Euclidean => {
+                let dist_sqr = mul_add(y, y, x * x);
+                inv_sqrt(dist_sqr) * dist_sqr
+            }
+            DistanceFn::EuclideanSquared => mul_add(y, y, x * x),
+            DistanceFn::Manhatten => abs(x) + abs(y),
+            DistanceFn::Hybrid => mul_add(x, x, abs(x)) + mul_add(y, y, abs(y)),
+            DistanceFn::MaxAxis => max(abs(x), abs(y)),
+        }
+    }
+
+    pub(crate) fn calc_distance3(distance_fn: DistanceFn, x: f32, y: f32, z: f32) -> f32 {
+        match distance_fn {
+            DistanceFn::Euclidean => {
+                let dist_sqr = mul_add(z, z, mul_add(y, y, x * x));
+                inv_sqrt(dist_sqr) * dist_sqr
+            }
+            DistanceFn::EuclideanSquared => mul_add(z, z, mul_add(y, y, x * x)),
+            DistanceFn::Manhatten => abs(x) + abs(y) + abs(z),
+            DistanceFn::Hybrid => mul_add(x, x, abs(x)) + mul_add(y, y, abs(y)) + mul_add(z, z, abs(z)),
+            DistanceFn::MaxAxis => max(max(abs(x), abs(y)), abs(z)),
+        }
+    }
+
+    pub(crate) fn calc_distance4(distance_fn: DistanceFn, x: f32, y: f32, z: f32, w: f32) -> f32 {
+        match distance_fn {
+            DistanceFn::Euclidean => {
+                let dist_sqr = mul_add(w, w, mul_add(z, z, mul_add(y, y, x * x)));
+                inv_sqrt(dist_sqr) * dist_sqr
+            }
+            DistanceFn::EuclideanSquared => mul_add(w, w, mul_add(z, z, mul_add(y, y, x * x))),
+            DistanceFn::Manhatten => abs(x) + abs(y) + abs(z) + abs(w),
+            DistanceFn::Hybrid => mul_add(x, x, abs(x)) + mul_add(y, y, abs(y)) + mul_add(z, z, abs(z)) + mul_add(w, w, abs(w)),
+            DistanceFn::MaxAxis => max(max(max(abs(x), abs(y)), abs(z)), abs(w)),
+        }
+    }
+}
+
+macro_rules! impl_noise23 {
+    ($struct:ident) => {
         impl $struct {
             #[inline(always)]
             pub const fn seed(self, seed: i32) -> $crate::Seeded<Self> {
@@ -230,42 +320,42 @@ macro_rules! noise23 {
         impl $crate::Sample<2> for $struct {
             #[inline(always)]
             fn sample(&self, point: [f32; 2]) -> f32 {
-                gen2(point, 0)
+                gen2(point, 0, *self)
             }
         }
 
         impl $crate::Sample<2> for $crate::Seeded<$struct> {
             #[inline(always)]
             fn sample(&self, point: [f32; 2]) -> f32 {
-                gen2(point, self.seed)
+                gen2(point, self.seed, self.noise)
             }
         }
 
         impl $crate::Sample<2> for $crate::Seeded<&$struct> {
             #[inline(always)]
             fn sample(&self, point: [f32; 2]) -> f32 {
-                gen2(point, self.seed)
+                gen2(point, self.seed, *self.noise)
             }
         }
 
         impl $crate::Sample<3> for $struct {
             #[inline(always)]
             fn sample(&self, point: [f32; 3]) -> f32 {
-                gen3(point, 0)
+                gen3(point, 0, *self)
             }
         }
 
         impl $crate::Sample<3> for $crate::Seeded<$struct> {
             #[inline(always)]
             fn sample(&self, point: [f32; 3]) -> f32 {
-                gen3(point, self.seed)
+                gen3(point, self.seed, self.noise)
             }
         }
 
         impl $crate::Sample<3> for $crate::Seeded<&$struct> {
             #[inline(always)]
             fn sample(&self, point: [f32; 3]) -> f32 {
-                gen3(point, self.seed)
+                gen3(point, self.seed, *self.noise)
             }
         }
 
@@ -273,7 +363,7 @@ macro_rules! noise23 {
         impl $crate::Sample<2, core::simd::f32x2> for $struct {
             #[inline(always)]
             fn sample(&self, point: core::simd::f32x2) -> f32 {
-                gen2(*point.as_array(), 0)
+                gen2(*point.as_array(), 0, *self)
             }
         }
 
@@ -281,7 +371,7 @@ macro_rules! noise23 {
         impl $crate::Sample<2, core::simd::f32x2> for $crate::Seeded<$struct> {
             #[inline(always)]
             fn sample(&self, point: core::simd::f32x2) -> f32 {
-                gen2(*point.as_array(), self.seed)
+                gen2(*point.as_array(), self.seed, self.noise)
             }
         }
 
@@ -289,7 +379,7 @@ macro_rules! noise23 {
         impl $crate::Sample<2, core::simd::f32x2> for $crate::Seeded<&$struct> {
             #[inline(always)]
             fn sample(&self, point: core::simd::f32x2) -> f32 {
-                gen2(*point.as_array(), self.seed)
+                gen2(*point.as_array(), self.seed, *self.noise)
             }
         }
 
@@ -297,7 +387,7 @@ macro_rules! noise23 {
         impl $crate::Sample<3, core::simd::f32x4> for $struct {
             #[inline(always)]
             fn sample(&self, point: core::simd::f32x4) -> f32 {
-                gen3(*$crate::array_4_take_3(point.as_array()), 0)
+                gen3(*$crate::array_4_take_3(point.as_array()), 0, *self)
             }
         }
 
@@ -305,7 +395,7 @@ macro_rules! noise23 {
         impl $crate::Sample<3, core::simd::f32x4> for $crate::Seeded<$struct> {
             #[inline(always)]
             fn sample(&self, point: core::simd::f32x4) -> f32 {
-                gen3(*$crate::array_4_take_3(point.as_array()), self.seed)
+                gen3(*$crate::array_4_take_3(point.as_array()), self.seed, self.noise)
             }
         }
 
@@ -313,39 +403,36 @@ macro_rules! noise23 {
         impl $crate::Sample<3, core::simd::f32x4> for $crate::Seeded<&$struct> {
             #[inline(always)]
             fn sample(&self, point: core::simd::f32x4) -> f32 {
-                gen3(*$crate::array_4_take_3(point.as_array()), self.seed)
+                gen3(*$crate::array_4_take_3(point.as_array()), self.seed, *self.noise)
             }
         }
     };
 }
 
-pub(crate) use noise23;
+pub(crate) use impl_noise23;
 
-macro_rules! noise234 {
-    ($(#[$attr:meta])* $struct:ident) => {
-        $crate::from_fast_noise_2::noise23! {
-            $(#[$attr])*
-            $struct
-        }
+macro_rules! impl_noise234 {
+    ($struct:ident) => {
+        $crate::from_fast_noise_2::impl_noise23!($struct);
 
         impl $crate::Sample<4> for $struct {
             #[inline(always)]
             fn sample(&self, point: [f32; 4]) -> f32 {
-                gen4(point, 0)
+                gen4(point, 0, *self)
             }
         }
 
         impl $crate::Sample<4> for $crate::Seeded<$struct> {
             #[inline(always)]
             fn sample(&self, point: [f32; 4]) -> f32 {
-                gen4(point, self.seed)
+                gen4(point, self.seed, self.noise)
             }
         }
 
         impl $crate::Sample<4> for $crate::Seeded<&$struct> {
             #[inline(always)]
             fn sample(&self, point: [f32; 4]) -> f32 {
-                gen4(point, self.seed)
+                gen4(point, self.seed, *self.noise)
             }
         }
 
@@ -353,7 +440,7 @@ macro_rules! noise234 {
         impl $crate::Sample<4, core::simd::f32x4> for $struct {
             #[inline(always)]
             fn sample(&self, point: core::simd::f32x4) -> f32 {
-                gen4(*point.as_array(), 0)
+                gen4(*point.as_array(), 0, *self)
             }
         }
 
@@ -361,7 +448,7 @@ macro_rules! noise234 {
         impl $crate::Sample<4, core::simd::f32x4> for $crate::Seeded<$struct> {
             #[inline(always)]
             fn sample(&self, point: core::simd::f32x4) -> f32 {
-                gen4(*point.as_array(), self.seed)
+                gen4(*point.as_array(), self.seed, self.noise)
             }
         }
 
@@ -369,10 +456,10 @@ macro_rules! noise234 {
         impl $crate::Sample<4, core::simd::f32x4> for $crate::Seeded<&$struct> {
             #[inline(always)]
             fn sample(&self, point: core::simd::f32x4) -> f32 {
-                gen4(*point.as_array(), self.seed)
+                gen4(*point.as_array(), self.seed, *self.noise)
             }
         }
     };
 }
 
-pub(crate) use noise234;
+pub(crate) use impl_noise234;

@@ -1,11 +1,14 @@
 use crate::floor;
 
-use super::{gradient_dot2, gradient_dot3, gradient_dot4, hash_primes2, hash_primes3, hash_primes4, interp_quintic, lerp, noise234, primes};
+use super::{gradient_dot2, gradient_dot3, gradient_dot4, hash_primes2, hash_primes3, hash_primes4, impl_noise234, interp_quintic, lerp, primes};
 
-noise234!(Perlin);
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Perlin;
+
+impl_noise234!(Perlin);
 
 #[inline]
-fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
+fn gen2([x, y]: [f32; 2], seed: i32, _: Perlin) -> f32 {
     let xs = floor(x);
     let ys = floor(y);
 
@@ -33,7 +36,7 @@ fn gen2([x, y]: [f32; 2], seed: i32) -> f32 {
 }
 
 #[inline]
-fn gen3([x, y, z]: [f32; 3], seed: i32) -> f32 {
+fn gen3([x, y, z]: [f32; 3], seed: i32, _: Perlin) -> f32 {
     let xs = floor(x);
     let ys = floor(y);
     let zs = floor(z);
@@ -75,7 +78,7 @@ fn gen3([x, y, z]: [f32; 3], seed: i32) -> f32 {
 }
 
 #[inline]
-fn gen4([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
+fn gen4([x, y, z, w]: [f32; 4], seed: i32, _: Perlin) -> f32 {
     let xs = floor(x);
     let ys = floor(y);
     let zs = floor(z);
