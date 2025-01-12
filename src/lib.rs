@@ -351,7 +351,7 @@ basic_noise! {
 
 basic_noise! {
     /// 2/3/4 dimensional Value noise
-    Value in value use from_fast_noise_2::Perlin
+    Value in value use from_fast_noise_2::Value
 }
 
 basic_noise! {
