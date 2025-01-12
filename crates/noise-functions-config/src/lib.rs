@@ -218,6 +218,11 @@ macro_rules! make_fractal2 {
     ($self:ident, $macro:ident) => {
         if $self.tileable {
             match $self.noise {
+                Noise::Value => $macro!($self, Value.tileable($self.tile_width, $self.tile_height)),
+                Noise::Perlin => $macro!($self, Perlin.tileable($self.tile_width, $self.tile_height)),
+                Noise::CellValue => $macro!($self, CellValue.tileable($self.tile_width, $self.tile_height)),
+                Noise::CellDistance => $macro!($self, CellDistance.tileable($self.tile_width, $self.tile_height)),
+                Noise::CellDistanceSq => $macro!($self, CellDistanceSq.tileable($self.tile_width, $self.tile_height)),
                 Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin.tileable($self.tile_width, $self.tile_height)),
                 Noise::NewValue => $macro!($self, from_fast_noise_2::Value.tileable($self.tile_width, $self.tile_height)),
                 Noise::NewCellValue => $macro!($self, $self.new_cell_value().tileable($self.tile_width, $self.tile_height)),
