@@ -9,7 +9,10 @@ Fast and lightweight noise functions.
 
 Check out the [live demo][demo]!
 
-### Base noises
+# Example Images
+Click on the images to view the code that created them.
+
+### Basic
 [![](/example-images/cell_distance_sq.jpg "Cell Distance Squared")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L49)
 [![](/example-images/cell_distance.jpg "Cell Distance")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L50)
 [![](/example-images/cell_value.jpg "Cell Value")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L51)
@@ -19,29 +22,29 @@ Check out the [live demo][demo]!
 [![](/example-images/value.jpg "Value")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L55)
 [![](/example-images/value_cubic.jpg "Value Cubic")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L56)
 
-### Fractal noises
+### Fractal
 [![](/example-images/fbm.jpg "Fbm (OpenSimplex2)")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L58)
 [![](/example-images/ridged.jpg "Ridged (OpenSimplex2)")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L59)
 [![](/example-images/ping_pong.jpg "Ping Pong (OpenSimplex2)")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L60)
 
-### Domain warped noises
+### Domain warped
 [![](/example-images/warped.jpg "Domain Warped (OpenSimplex2s)")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L62)
 [![](/example-images/warped_fbm.jpg "Domain Warped Fbm (OpenSimplex2s)")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L72)
 
-### Tileable noises
+### Tileable
 [![](/example-images/tileable_perlin.jpg "Tileable (Perlin)")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L83)
 [![](/example-images/tileable_value.jpg "Tileable (Value)")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L85)
 [![](/example-images/tileable_cell_value.jpg "Tileable (CellValue)")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L87)
 [![](/example-images/tileable_cell_distance_sq.jpg "Tileable (CellDistanceSq)")](https://github.com/bluurryy/noise-functions/blob/aee438330a530cfab84af088945b7c41c7df1c88/generate-example-images/src/main.rs#L89)
 
 # Motivation
-Noise libraries like [`noise`](https://docs.rs/noise) or [`libnoise`](https://docs.rs/libnoise) create a permutation table at runtime for each instance of `Perlin` and the like. This library uses static permutation tables instead. That means you can simply create a function like this:
+Noise libraries like [`noise`](https://docs.rs/noise) or [`libnoise`](https://docs.rs/libnoise) create a permutation table at runtime for each instance of `Perlin` and the like. This library uses static permutation tables / hashing instead. As such, there is no need to store and reuse noise structs for the sake of efficiency. For example:
 ```rust
 fn my_noise(point: Vec2) -> f32 {
     Perlin.fbm(3, 0.5, 2.0).seed(42).frequency(3.0).sample2(point)
 }
 ```
-The whole `Perlin.fbm(3, 0.5, 2.0).seed(42).frequency(3.0)` expression will be evaluated at compile time so there is no point in carrying around that noise struct or putting it into a `static`.
+In this example, the whole `Perlin.fbm(3, 0.5, 2.0).seed(42).frequency(3.0)` expression is evaluated at compile time.
 
 > [!NOTE]
 > This library uses `f32` instead of `f64`.
