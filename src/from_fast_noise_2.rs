@@ -202,6 +202,81 @@ fn reciprocal(mut a: f32) -> f32 {
     a * a
 }
 
+fn nmul_add(a: f32, b: f32, c: f32) -> f32 {
+    -(a * b) + c
+}
+
+trait WrappingOps {
+    fn wrapping_add(self, other: Self) -> Self;
+    fn wrapping_sub(self, other: Self) -> Self;
+}
+
+impl WrappingOps for i32 {
+    fn wrapping_add(self, other: Self) -> Self {
+        i32::wrapping_add(self, other)
+    }
+    fn wrapping_sub(self, other: Self) -> Self {
+        i32::wrapping_sub(self, other)
+    }
+}
+
+impl WrappingOps for f32 {
+    fn wrapping_add(self, other: Self) -> Self {
+        self + other
+    }
+    fn wrapping_sub(self, other: Self) -> Self {
+        self - other
+    }
+}
+
+fn select<T>(m: bool, a: T, b: T) -> T {
+    if m {
+        a
+    } else {
+        b
+    }
+}
+
+fn mask<T: From<u8>>(a: T, m: bool) -> T {
+    if m {
+        a
+    } else {
+        0.into()
+    }
+}
+
+fn masked_add<T: WrappingOps>(a: T, b: T, m: bool) -> T {
+    if m {
+        a.wrapping_add(b)
+    } else {
+        a
+    }
+}
+
+fn nmasked_add<T: WrappingOps>(a: T, b: T, m: bool) -> T {
+    if m {
+        a
+    } else {
+        a.wrapping_add(b)
+    }
+}
+
+fn masked_sub<T: WrappingOps>(a: T, b: T, m: bool) -> T {
+    if m {
+        a.wrapping_sub(b)
+    } else {
+        a
+    }
+}
+
+fn nmasked_sub<T: WrappingOps>(a: T, b: T, m: bool) -> T {
+    if m {
+        a
+    } else {
+        a.wrapping_sub(b)
+    }
+}
+
 pub mod cell {
     use crate::{abs, max, mul_add, simple_enum};
 

@@ -221,7 +221,6 @@ macro_rules! make_fractal2 {
                 Noise::NewValue => $macro!($self, from_fast_noise_2::Value.tileable($self.tile_width, $self.tile_height)),
                 Noise::NewCellValue => $macro!($self, $self.new_cell_value().tileable($self.tile_width, $self.tile_height)),
                 Noise::NewCellDistance => $macro!($self, $self.new_cell_distance().tileable($self.tile_width, $self.tile_height)),
-                Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2.tileable($self.tile_width, $self.tile_height)),
                 _ => None,
             }
         } else {
@@ -311,11 +310,15 @@ macro_rules! sampler3 {
 macro_rules! make_fractal4 {
     ($self:ident, $macro:ident) => {
         match $self.noise {
+            Noise::Value => $macro!($self, Value),
+            Noise::Perlin => $macro!($self, Perlin),
+            Noise::CellValue => $macro!($self, CellValue),
+            Noise::CellDistance => $macro!($self, CellDistance),
+            Noise::CellDistanceSq => $macro!($self, CellDistanceSq),
             Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
             Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
             Noise::NewCellValue => $macro!($self, $self.new_cell_value()),
             Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
-            Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
             _ => None,
         }
     };
