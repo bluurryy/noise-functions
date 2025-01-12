@@ -76,7 +76,6 @@ fn gen2([x, y]: [f32; 2], seed: i32, _: OpenSimplex2s) -> f32 {
     9.28993664146183 * value
 }
 
-// TODO: this is broken
 #[inline]
 fn gen3([x, y, z]: [f32; 3], mut seed: i32, _: OpenSimplex2s) -> f32 {
     let f = (2.0 / 3.0) * (x + y + z);
