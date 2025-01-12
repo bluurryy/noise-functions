@@ -15,12 +15,12 @@ pre-release:
 
 check:
   cargo fmt --all
-  cargo clippy --tests --all
-  cargo clippy --tests --features nightly-simd
-  cargo clippy --tests --features nightly-simd,libm
-  cargo clippy --tests --no-default-features --features libm
-  cargo clippy --tests --no-default-features --features libm,nightly-simd
-  cargo clippy --no-default-features --features libm -p noise-functions-config
+  cargo clippy --all --tests
+  cargo clippy --all --tests --features nightly-simd
+  cargo clippy --all --tests --features nightly-simd,libm
+  cargo clippy --all --tests --no-default-features --features libm
+  cargo clippy --all --tests --no-default-features --features libm,nightly-simd
+  cargo clippy --all --no-default-features --features libm -p noise-functions-config
   
 test:
   cargo test
