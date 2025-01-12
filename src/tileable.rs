@@ -8,24 +8,26 @@ use core::simd::{f32x2, f32x4};
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Tileable<Noise> {
     pub noise: Noise,
-    pub width: f32,
-    pub height: f32,
-    pub inv_width: f32,
-    pub inv_height: f32,
+    tau_div_width: f32,
+    tau_div_height: f32,
 }
 
 impl<Noise> Tileable<Noise> {
+    pub const fn new(noise: Noise, width: f32, height: f32) -> Self {
+        Self {
+            noise,
+            tau_div_width: TAU / width,
+            tau_div_height: TAU / height,
+        }
+    }
+
     impl_modifiers!();
 
     fn map_point(&self, [x, y]: [f32; 2]) -> [f32; 4] {
-        let s = x * self.inv_height;
-        let t = y * self.inv_width;
-
-        let nx = cos(s * TAU) * self.height;
-        let ny = cos(t * TAU) * self.width;
-        let nz = sin(s * TAU) * self.height;
-        let nw = sin(t * TAU) * self.width;
-
+        let nx = cos(x * self.tau_div_height);
+        let ny = cos(y * self.tau_div_width);
+        let nz = sin(x * self.tau_div_height);
+        let nw = sin(y * self.tau_div_width);
         [nx, ny, nz, nw]
     }
 }

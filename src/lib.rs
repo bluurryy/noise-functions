@@ -152,13 +152,7 @@ macro_rules! impl_modifiers {
 
         #[inline(always)]
         pub const fn tileable(self, width: f32, height: f32) -> $crate::Tileable<Self> {
-            $crate::Tileable {
-                noise: self,
-                width,
-                height,
-                inv_width: 1.0 / width,
-                inv_height: 1.0 / height,
-            }
+            $crate::Tileable::new(self, width, height)
         }
 
         #[inline(always)]
