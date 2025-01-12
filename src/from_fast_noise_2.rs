@@ -303,7 +303,7 @@ pub mod cell {
             #[default]
             Euclidean,
             EuclideanSquared,
-            Manhatten,
+            Manhattan,
             Hybrid,
             MaxAxis,
         }
@@ -337,7 +337,7 @@ pub mod cell {
                 inv_sqrt(dist_sqr) * dist_sqr
             }
             DistanceFn::EuclideanSquared => mul_add(y, y, x * x),
-            DistanceFn::Manhatten => abs(x) + abs(y),
+            DistanceFn::Manhattan => abs(x) + abs(y),
             DistanceFn::Hybrid => mul_add(x, x, abs(x)) + mul_add(y, y, abs(y)),
             DistanceFn::MaxAxis => max(abs(x), abs(y)),
         }
@@ -350,7 +350,7 @@ pub mod cell {
                 inv_sqrt(dist_sqr) * dist_sqr
             }
             DistanceFn::EuclideanSquared => mul_add(z, z, mul_add(y, y, x * x)),
-            DistanceFn::Manhatten => abs(x) + abs(y) + abs(z),
+            DistanceFn::Manhattan => abs(x) + abs(y) + abs(z),
             DistanceFn::Hybrid => mul_add(x, x, abs(x)) + mul_add(y, y, abs(y)) + mul_add(z, z, abs(z)),
             DistanceFn::MaxAxis => max(max(abs(x), abs(y)), abs(z)),
         }
@@ -363,7 +363,7 @@ pub mod cell {
                 inv_sqrt(dist_sqr) * dist_sqr
             }
             DistanceFn::EuclideanSquared => mul_add(w, w, mul_add(z, z, mul_add(y, y, x * x))),
-            DistanceFn::Manhatten => abs(x) + abs(y) + abs(z) + abs(w),
+            DistanceFn::Manhattan => abs(x) + abs(y) + abs(z) + abs(w),
             DistanceFn::Hybrid => mul_add(x, x, abs(x)) + mul_add(y, y, abs(y)) + mul_add(z, z, abs(z)) + mul_add(w, w, abs(w)),
             DistanceFn::MaxAxis => max(max(max(abs(x), abs(y)), abs(z)), abs(w)),
         }
