@@ -16,7 +16,7 @@ impl<CellularNoise> Jitter<CellularNoise> {
 macro_rules! cellular {
     (
         $(#[$attr:meta])*
-        $noise:ident in $noise_mod:ident
+        $noise:ident in $noise_mod:ident $(use $noise_4d:expr)?
     ) => {
         $(#[$attr])*
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -212,18 +212,112 @@ macro_rules! cellular {
                 crate::simd::$noise_mod::gen3(point, self.seed, self.noise.jitter * DEFAULT_JITTER_3D)
             }
         }
+
+        $(
+            impl Sample<4> for $noise {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 4]) -> f32 {
+                    $noise_4d.sample4(point)
+                }
+            }
+
+            impl Sample<4> for Seeded<$noise> {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 4]) -> f32 {
+                    $noise_4d.seed(self.seed).sample4(point)
+                }
+            }
+
+            impl Sample<4> for Seeded<&$noise> {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 4]) -> f32 {
+                    $noise_4d.seed(self.seed).sample4(point)
+                }
+            }
+
+            impl Sample<4> for Jitter<$noise> {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 4]) -> f32 {
+                    $noise_4d.jitter(self.jitter).sample4(point)
+                }
+            }
+
+            impl Sample<4> for Seeded<Jitter<$noise>> {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 4]) -> f32 {
+                    $noise_4d.jitter(self.noise.jitter).seed(self.seed).sample4(point)
+                }
+            }
+
+            impl Sample<4> for Seeded<&Jitter<$noise>> {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 4]) -> f32 {
+                    $noise_4d.jitter(self.noise.jitter).seed(self.seed).sample4(point)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl Sample<4, f32x4> for $noise {
+                #[inline(always)]
+                fn sample(&self, point: f32x4) -> f32 {
+                    $noise_4d.sample4(point)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl Sample<4, f32x4> for Seeded<$noise> {
+                #[inline(always)]
+                fn sample(&self, point: f32x4) -> f32 {
+                    $noise_4d.seed(self.seed).sample4(point)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl Sample<4, f32x4> for Seeded<&$noise> {
+                #[inline(always)]
+                fn sample(&self, point: f32x4) -> f32 {
+                    $noise_4d.seed(self.seed).sample4(point)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl Sample<4, f32x4> for Jitter<$noise> {
+                #[inline(always)]
+                fn sample(&self, point: f32x4) -> f32 {
+                    $noise_4d.jitter(self.jitter).sample4(point)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl Sample<4, f32x4> for Seeded<Jitter<$noise>> {
+                #[inline(always)]
+                fn sample(&self, point: f32x4) -> f32 {
+                    $noise_4d.jitter(self.noise.jitter).seed(self.seed).sample4(point)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl Sample<4, f32x4> for Seeded<&Jitter<$noise>> {
+                #[inline(always)]
+                fn sample(&self, point: f32x4) -> f32 {
+                    $noise_4d.jitter(self.noise.jitter).seed(self.seed).sample4(point)
+                }
+            }
+        )?
     };
 }
 
 cellular! {
-    /// 2/3 dimensional noise of the distance to the closest cell
-    CellDistance in cell_distance
+    /// 2/3/4 dimensional noise of the distance to the closest cell
+    CellDistance in cell_distance use from_fast_noise_2::CellDistance::default()
 }
+
 cellular! {
-    /// 2/3 dimensional noise of the squared distance to the closest cell
-    CellDistanceSq in cell_distance_sq
+    /// 2/3/4 dimensional noise of the squared distance to the closest cell
+    CellDistanceSq in cell_distance_sq use from_fast_noise_2::CellDistance::default().distance_fn(from_fast_noise_2::cell::DistanceFn::EuclideanSquared)
 }
+
 cellular! {
-    /// 2/3 dimensional noise of the value of the closest cell
-    CellValue in cell_value
+    /// 2/3/4 dimensional noise of the value of the closest cell
+    CellValue in cell_value use from_fast_noise_2::CellValue::default()
 }

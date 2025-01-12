@@ -97,11 +97,11 @@ pub use tileable::Tileable;
 
 #[doc(inline)]
 pub use open_simplex_2::{OpenSimplex2, OpenSimplex2s};
-pub use sample::{Sample, Sample2, Sample3};
+pub use sample::{Sample, Sample2, Sample3, Sample4};
 pub use seeded::Seeded;
 
 #[cfg(feature = "nightly-simd")]
-pub use sample::{Sample2a, Sample3a};
+pub use sample::{Sample2a, Sample3a, Sample4a};
 
 mod private_prelude {
     pub(crate) use crate::fractal::*;
@@ -201,7 +201,7 @@ macro_rules! impl_modifiers {
 pub(crate) use impl_modifiers;
 
 macro_rules! basic_noise {
-    ($(#[$attr:meta])* $noise:ident in $noise_mod:ident) => {
+    ($(#[$attr:meta])* $noise:ident in $noise_mod:ident $(use $noise_4d:expr)?) => {
         $(#[$attr])*
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
         pub struct $noise;
@@ -299,19 +299,68 @@ macro_rules! basic_noise {
                 crate::simd::$noise_mod::gen3(point, self.seed)
             }
         }
+
+        $(
+            impl Sample<4> for $noise {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 4]) -> f32 {
+                    $noise_4d.sample4(point)
+                }
+            }
+
+            impl Sample<4> for Seeded<$noise> {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 4]) -> f32 {
+                    $noise_4d.seed(self.seed).sample4(point)
+                }
+            }
+
+            impl Sample<4> for Seeded<&$noise> {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 4]) -> f32 {
+                    $noise_4d.seed(self.seed).sample4(point)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl Sample<4, f32x4> for $noise {
+                #[inline(always)]
+                fn sample(&self, point: f32x4) -> f32 {
+                    $noise_4d.sample4(point)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl Sample<4, f32x4> for Seeded<$noise> {
+                #[inline(always)]
+                fn sample(&self, point: f32x4) -> f32 {
+                    $noise_4d.seed(self.seed).sample4(point)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl Sample<4, f32x4> for Seeded<&$noise> {
+                #[inline(always)]
+                fn sample(&self, point: f32x4) -> f32 {
+                    $noise_4d.seed(self.seed).sample4(point)
+                }
+            }
+        )?
     };
 }
 
 pub(crate) use basic_noise;
 
 basic_noise! {
-    /// 2/3 dimensional Perlin noise
-    Perlin in perlin
+    /// 2/3/4 dimensional Perlin noise
+    Perlin in perlin use from_fast_noise_2::Perlin
 }
+
 basic_noise! {
-    /// 2/3 dimensional Value noise
-    Value in value
+    /// 2/3/4 dimensional Value noise
+    Value in value use from_fast_noise_2::Perlin
 }
+
 basic_noise! {
     /// 2/3 dimensional Cubic Value noise
     ValueCubic in value_cubic
