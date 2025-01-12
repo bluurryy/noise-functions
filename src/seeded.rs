@@ -12,4 +12,9 @@ impl<Noise> Seeded<Noise> {
     pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
         Frequency { noise: self, frequency }
     }
+
+    #[inline(always)]
+    pub const fn tileable(self, width: f32, height: f32) -> Tileable<Self> {
+        Tileable::new(self, width, height)
+    }
 }
