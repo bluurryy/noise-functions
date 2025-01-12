@@ -15,6 +15,7 @@ extern crate alloc;
 
 use alloc::boxed::Box;
 
+use from_fast_noise_2::cell::{CellIndex, DistanceFn, DistanceReturnType};
 use noise_functions::*;
 
 #[cfg(feature = "nightly-simd")]
@@ -25,21 +26,27 @@ pub use noise_functions;
 macro_rules! simple_enum {
 	(
 		enum $name:ident {
-			$($variant:ident),* $(,)?
+			$(
+                $(#[$variant_attr:meta])*
+                $variant:ident $(= $variant_expr:expr)?
+            ),* $(,)?
 		}
 	) => {
-		#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+		#[derive(Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		pub enum $name {
-			$($variant,)*
+			$(
+                $(#[$variant_attr])*
+                $variant $(= $variant_expr)?,
+            )*
 		}
 
 		impl core::str::FromStr for $name {
-			type Err = EnumFromStrError;
+			type Err = $crate::EnumFromStrError;
 
 			fn from_str(s: &str) -> Result<Self, Self::Err> {
 				Ok(match s {
 					$(stringify!($variant) => Self::$variant,)*
-					_ => return Err(EnumFromStrError),
+					_ => return Err($crate::EnumFromStrError),
 				})
 			}
 		}
@@ -87,14 +94,23 @@ simple_enum! {
         CellValue,
         OpenSimplex2,
         OpenSimplex2s,
+        #[default]
         Perlin,
         Value,
         ValueCubic,
+        NewPerlin,
+        NewValue,
+        NewCellValue,
+        NewCellDistance,
+        NewOpenSimplex2,
+        NewOpenSimplex2s,
+        NewSimplex,
     }
 }
 
 simple_enum! {
     enum Fractal {
+        #[default]
         None,
         Fbm,
         Ridged,
@@ -105,6 +121,7 @@ simple_enum! {
 simple_enum! {
     enum Improve {
         None,
+        #[default]
         Xy,
         Xz,
     }
@@ -113,33 +130,69 @@ simple_enum! {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Config {
     pub noise: Noise,
+    pub seed: i32,
+    pub frequency: f32,
+
+    // fractal
     pub fractal: Fractal,
-    pub improve: Improve,
     pub lacunarity: f32,
     pub octaves: u32,
     pub gain: f32,
     pub ping_pong_strength: f32,
     pub weighted_strength: f32,
-    pub seed: i32,
-    pub frequency: f32,
+
+    // open simplex 2
+    pub improve: Improve,
+
+    // cell
     pub jitter: f32,
+    pub value_index: CellIndex,
+    pub distance_fn: DistanceFn,
+    pub distance_indices: [CellIndex; 2],
+    pub distance_return_type: DistanceReturnType,
+
+    // tiling
+    pub tileable: bool,
+    pub tile_width: f32,
+    pub tile_height: f32,
 }
 
-impl Sample<2> for Config {
-    fn sample(&self, point: [f32; 2]) -> f32 {
-        self.sampler2().sample(point)
-    }
-}
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            noise: Default::default(),
+            seed: Default::default(),
+            frequency: 1.0,
 
-impl Sample<3> for Config {
-    fn sample(&self, point: [f32; 3]) -> f32 {
-        self.sampler3().sample(point)
+            // fractal
+            fractal: Default::default(),
+            lacunarity: 2.0,
+            octaves: 3,
+            gain: 0.5,
+            ping_pong_strength: 2.0,
+            weighted_strength: 0.0,
+
+            // open simplex 2
+            improve: Default::default(),
+
+            // cell
+            jitter: 1.0,
+            value_index: CellIndex::I0,
+            distance_fn: Default::default(),
+            distance_indices: [CellIndex::I0, CellIndex::I1],
+            distance_return_type: Default::default(),
+
+            // tiling
+            tileable: false,
+            tile_width: 1.0,
+            tile_height: 1.0,
+        }
     }
 }
 
 macro_rules! make {
     ($self:ident, $noise:expr) => {
-        Box::new($noise.seed($self.seed).frequency($self.frequency))
+        Some(Box::new($noise.seed($self.seed).frequency($self.frequency)))
     };
 }
 
@@ -161,81 +214,133 @@ macro_rules! make_ping_pong {
     };
 }
 
-macro_rules! sampler {
+macro_rules! make_fractal2 {
+    ($self:ident, $macro:ident) => {
+        if $self.tileable {
+            match $self.noise {
+                Noise::Value => $macro!($self, Value.tileable($self.tile_width, $self.tile_height)),
+                Noise::Perlin => $macro!($self, Perlin.tileable($self.tile_width, $self.tile_height)),
+                Noise::CellValue => $macro!($self, CellValue.tileable($self.tile_width, $self.tile_height)),
+                Noise::CellDistance => $macro!($self, CellDistance.tileable($self.tile_width, $self.tile_height)),
+                Noise::CellDistanceSq => $macro!($self, CellDistanceSq.tileable($self.tile_width, $self.tile_height)),
+                Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin.tileable($self.tile_width, $self.tile_height)),
+                Noise::NewValue => $macro!($self, from_fast_noise_2::Value.tileable($self.tile_width, $self.tile_height)),
+                Noise::NewCellValue => $macro!($self, $self.new_cell_value().tileable($self.tile_width, $self.tile_height)),
+                Noise::NewCellDistance => $macro!($self, $self.new_cell_distance().tileable($self.tile_width, $self.tile_height)),
+                Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex.tileable($self.tile_width, $self.tile_height)),
+                _ => None,
+            }
+        } else {
+            match $self.noise {
+                Noise::CellDistanceSq => $macro!($self, CellDistanceSq.jitter($self.jitter)),
+                Noise::CellDistance => $macro!($self, CellDistance.jitter($self.jitter)),
+                Noise::CellValue => $macro!($self, CellValue.jitter($self.jitter)),
+                Noise::OpenSimplex2 => match $self.improve {
+                    Improve::None => $macro!($self, OpenSimplex2),
+                    Improve::Xy => $macro!($self, OpenSimplex2.improve_xy()),
+                    Improve::Xz => $macro!($self, OpenSimplex2.improve_xz()),
+                },
+                Noise::OpenSimplex2s => match $self.improve {
+                    Improve::None => $macro!($self, OpenSimplex2s),
+                    Improve::Xy => $macro!($self, OpenSimplex2s.improve_xy()),
+                    Improve::Xz => $macro!($self, OpenSimplex2s.improve_xz()),
+                },
+                Noise::Perlin => $macro!($self, Perlin),
+                Noise::ValueCubic => $macro!($self, ValueCubic),
+                Noise::Value => $macro!($self, Value),
+                Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
+                Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
+                Noise::NewCellValue => $macro!($self, $self.new_cell_value()),
+                Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
+                Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
+                Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
+                Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex),
+            }
+        }
+    };
+}
+
+macro_rules! sampler2 {
     ($self:ident) => {
         match $self.fractal {
-            Fractal::None => match $self.noise {
-                Noise::CellDistanceSq => make!($self, CellDistanceSq.jitter($self.jitter)),
-                Noise::CellDistance => make!($self, CellDistance.jitter($self.jitter)),
-                Noise::CellValue => make!($self, CellValue.jitter($self.jitter)),
+            Fractal::None => make_fractal2!($self, make),
+            Fractal::Fbm => make_fractal2!($self, make_fbm),
+            Fractal::Ridged => make_fractal2!($self, make_ridged),
+            Fractal::PingPong => make_fractal2!($self, make_ping_pong),
+        }
+    };
+}
+
+macro_rules! make_fractal3 {
+    ($self:ident, $macro:ident) => {
+        if $self.tileable {
+            None
+        } else {
+            match $self.noise {
+                Noise::CellDistanceSq => $macro!($self, CellDistanceSq.jitter($self.jitter)),
+                Noise::CellDistance => $macro!($self, CellDistance.jitter($self.jitter)),
+                Noise::CellValue => $macro!($self, CellValue.jitter($self.jitter)),
                 Noise::OpenSimplex2 => match $self.improve {
-                    Improve::None => make!($self, OpenSimplex2),
-                    Improve::Xy => make!($self, OpenSimplex2.improve_xy()),
-                    Improve::Xz => make!($self, OpenSimplex2.improve_xz()),
+                    Improve::None => $macro!($self, OpenSimplex2),
+                    Improve::Xy => $macro!($self, OpenSimplex2.improve_xy()),
+                    Improve::Xz => $macro!($self, OpenSimplex2.improve_xz()),
                 },
                 Noise::OpenSimplex2s => match $self.improve {
-                    Improve::None => make!($self, OpenSimplex2s),
-                    Improve::Xy => make!($self, OpenSimplex2s.improve_xy()),
-                    Improve::Xz => make!($self, OpenSimplex2s.improve_xz()),
+                    Improve::None => $macro!($self, OpenSimplex2s),
+                    Improve::Xy => $macro!($self, OpenSimplex2s.improve_xy()),
+                    Improve::Xz => $macro!($self, OpenSimplex2s.improve_xz()),
                 },
-                Noise::Perlin => make!($self, Perlin),
-                Noise::ValueCubic => make!($self, ValueCubic),
-                Noise::Value => make!($self, Value),
-            },
-            Fractal::Fbm => match $self.noise {
-                Noise::CellDistanceSq => make_fbm!($self, CellDistanceSq.jitter($self.jitter)),
-                Noise::CellDistance => make_fbm!($self, CellDistance.jitter($self.jitter)),
-                Noise::CellValue => make_fbm!($self, CellValue.jitter($self.jitter)),
-                Noise::OpenSimplex2 => match $self.improve {
-                    Improve::None => make_fbm!($self, OpenSimplex2),
-                    Improve::Xy => make_fbm!($self, OpenSimplex2.improve_xy()),
-                    Improve::Xz => make_fbm!($self, OpenSimplex2.improve_xz()),
-                },
-                Noise::OpenSimplex2s => match $self.improve {
-                    Improve::None => make_fbm!($self, OpenSimplex2s),
-                    Improve::Xy => make_fbm!($self, OpenSimplex2s.improve_xy()),
-                    Improve::Xz => make_fbm!($self, OpenSimplex2s.improve_xz()),
-                },
-                Noise::Perlin => make_fbm!($self, Perlin),
-                Noise::ValueCubic => make_fbm!($self, ValueCubic),
-                Noise::Value => make_fbm!($self, Value),
-            },
-            Fractal::Ridged => match $self.noise {
-                Noise::CellDistanceSq => make_ridged!($self, CellDistanceSq.jitter($self.jitter)),
-                Noise::CellDistance => make_ridged!($self, CellDistance.jitter($self.jitter)),
-                Noise::CellValue => make_ridged!($self, CellValue.jitter($self.jitter)),
-                Noise::OpenSimplex2 => match $self.improve {
-                    Improve::None => make_ridged!($self, OpenSimplex2),
-                    Improve::Xy => make_ridged!($self, OpenSimplex2.improve_xy()),
-                    Improve::Xz => make_ridged!($self, OpenSimplex2.improve_xz()),
-                },
-                Noise::OpenSimplex2s => match $self.improve {
-                    Improve::None => make_ridged!($self, OpenSimplex2s),
-                    Improve::Xy => make_ridged!($self, OpenSimplex2s.improve_xy()),
-                    Improve::Xz => make_ridged!($self, OpenSimplex2s.improve_xz()),
-                },
-                Noise::Perlin => make_ridged!($self, Perlin),
-                Noise::ValueCubic => make_ridged!($self, ValueCubic),
-                Noise::Value => make_ridged!($self, Value),
-            },
-            Fractal::PingPong => match $self.noise {
-                Noise::CellDistanceSq => make_ping_pong!($self, CellDistanceSq.jitter($self.jitter)),
-                Noise::CellDistance => make_ping_pong!($self, CellDistance.jitter($self.jitter)),
-                Noise::CellValue => make_ping_pong!($self, CellValue.jitter($self.jitter)),
-                Noise::OpenSimplex2 => match $self.improve {
-                    Improve::None => make_ping_pong!($self, OpenSimplex2),
-                    Improve::Xy => make_ping_pong!($self, OpenSimplex2.improve_xy()),
-                    Improve::Xz => make_ping_pong!($self, OpenSimplex2.improve_xz()),
-                },
-                Noise::OpenSimplex2s => match $self.improve {
-                    Improve::None => make_ping_pong!($self, OpenSimplex2s),
-                    Improve::Xy => make_ping_pong!($self, OpenSimplex2s.improve_xy()),
-                    Improve::Xz => make_ping_pong!($self, OpenSimplex2s.improve_xz()),
-                },
-                Noise::Perlin => make_ping_pong!($self, Perlin),
-                Noise::ValueCubic => make_ping_pong!($self, ValueCubic),
-                Noise::Value => make_ping_pong!($self, Value),
-            },
+                Noise::Perlin => $macro!($self, Perlin),
+                Noise::ValueCubic => $macro!($self, ValueCubic),
+                Noise::Value => $macro!($self, Value),
+                Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
+                Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
+                Noise::NewCellValue => $macro!($self, $self.new_cell_value()),
+                Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
+                Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
+                Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
+                Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex),
+            }
+        }
+    };
+}
+
+macro_rules! sampler3 {
+    ($self:ident) => {
+        match $self.fractal {
+            Fractal::None => make_fractal3!($self, make),
+            Fractal::Fbm => make_fractal3!($self, make_fbm),
+            Fractal::Ridged => make_fractal3!($self, make_ridged),
+            Fractal::PingPong => make_fractal3!($self, make_ping_pong),
+        }
+    };
+}
+
+macro_rules! make_fractal4 {
+    ($self:ident, $macro:ident) => {
+        match $self.noise {
+            Noise::Value => $macro!($self, Value),
+            Noise::Perlin => $macro!($self, Perlin),
+            Noise::CellValue => $macro!($self, CellValue),
+            Noise::CellDistance => $macro!($self, CellDistance),
+            Noise::CellDistanceSq => $macro!($self, CellDistanceSq),
+            Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
+            Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
+            Noise::NewCellValue => $macro!($self, $self.new_cell_value()),
+            Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
+            Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex),
+            _ => None,
+        }
+    };
+}
+
+macro_rules! sampler4 {
+    ($self:ident) => {
+        match $self.fractal {
+            Fractal::None => make_fractal4!($self, make),
+            Fractal::Fbm => make_fractal4!($self, make_fbm),
+            Fractal::Ridged => make_fractal4!($self, make_ridged),
+            Fractal::PingPong => make_fractal4!($self, make_ping_pong),
         }
     };
 }
@@ -250,30 +355,56 @@ pub trait AnySampleA: Sample<2> + Sample<3> + Sample<2, f32x2> + Sample<3, f32x4
 impl<T> AnySampleA for T where T: Sample<2> + Sample<3> + Sample<2, f32x2> + Sample<3, f32x4> {}
 
 impl Config {
-    pub fn sampler(&self) -> Box<dyn AnySample> {
-        sampler!(self)
+    fn new_cell_value(&self) -> from_fast_noise_2::CellValue {
+        from_fast_noise_2::CellValue {
+            jitter: self.jitter,
+            distance_fn: self.distance_fn,
+            value_index: self.value_index,
+        }
+    }
+
+    fn new_cell_distance(&self) -> from_fast_noise_2::CellDistance {
+        from_fast_noise_2::CellDistance {
+            jitter: self.jitter,
+            distance_fn: self.distance_fn,
+            distance_indices: self.distance_indices,
+            return_type: self.distance_return_type,
+        }
+    }
+
+    pub fn sampler(&self) -> Option<Box<dyn AnySample>> {
+        sampler3!(self)
     }
 
     #[cfg(feature = "nightly-simd")]
-    pub fn sampler_a(&self) -> Box<dyn AnySampleA> {
-        sampler!(self)
+    pub fn sampler_a(&self) -> Option<Box<dyn AnySampleA>> {
+        sampler3!(self)
     }
 
-    pub fn sampler2(&self) -> Box<dyn Sample<2>> {
-        sampler!(self)
-    }
-
-    #[cfg(feature = "nightly-simd")]
-    pub fn sampler2a(&self) -> Box<dyn Sample<2, f32x2>> {
-        sampler!(self)
-    }
-
-    pub fn sampler3(&self) -> Box<dyn Sample<3>> {
-        sampler!(self)
+    pub fn sampler2(&self) -> Option<Box<dyn Sample<2>>> {
+        sampler2!(self)
     }
 
     #[cfg(feature = "nightly-simd")]
-    pub fn sampler3a(&self) -> Box<dyn Sample<3, f32x4>> {
-        sampler!(self)
+    pub fn sampler2a(&self) -> Option<Box<dyn Sample<2, f32x2>>> {
+        sampler2!(self)
+    }
+
+    pub fn sampler3(&self) -> Option<Box<dyn Sample<3>>> {
+        sampler3!(self)
+    }
+
+    #[cfg(feature = "nightly-simd")]
+    pub fn sampler3a(&self) -> Option<Box<dyn Sample<3, f32x4>>> {
+        sampler3!(self)
+    }
+
+    pub fn sampler4(&self) -> Option<Box<dyn Sample<4>>> {
+        sampler4!(self)
+    }
+
+    #[cfg(feature = "nightly-simd")]
+    pub fn sampler4a(&self) -> Option<Box<dyn Sample<4, f32x4>>> {
+        sampler4!(self)
     }
 }
