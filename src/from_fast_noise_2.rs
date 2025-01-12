@@ -33,6 +33,7 @@ mod cell_value;
 mod open_simplex_2;
 mod open_simplex_2s;
 mod perlin;
+mod simplex;
 mod value;
 
 pub use cell_distance::CellDistance;
@@ -40,6 +41,7 @@ pub use cell_value::CellValue;
 pub use open_simplex_2::OpenSimplex2;
 pub use open_simplex_2s::OpenSimplex2s;
 pub use perlin::Perlin;
+pub use simplex::Simplex;
 pub use value::Value;
 
 mod primes {
@@ -242,6 +244,14 @@ fn mask<T: From<u8>>(a: T, m: bool) -> T {
         a
     } else {
         0.into()
+    }
+}
+
+fn masked_inc<T: WrappingOps + From<u8>>(a: T, m: bool) -> T {
+    if m {
+        a.wrapping_add(1.into())
+    } else {
+        a
     }
 }
 

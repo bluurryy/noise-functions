@@ -104,6 +104,7 @@ simple_enum! {
         NewCellDistance,
         NewOpenSimplex2,
         NewOpenSimplex2s,
+        NewSimplex,
     }
 }
 
@@ -247,6 +248,7 @@ macro_rules! make_fractal2 {
                 Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
                 Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
                 Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
+                Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex),
             }
         }
     };
@@ -291,6 +293,7 @@ macro_rules! make_fractal3 {
                 Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
                 Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
                 Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
+                Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex),
             }
         }
     };
@@ -319,6 +322,7 @@ macro_rules! make_fractal4 {
             Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
             Noise::NewCellValue => $macro!($self, $self.new_cell_value()),
             Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
+            Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex),
             _ => None,
         }
     };
