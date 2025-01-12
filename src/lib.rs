@@ -77,7 +77,6 @@ mod lookup;
 mod math;
 mod noise_fn;
 
-mod fallback;
 pub mod from_fast_noise_2;
 /// OpenSimplex2 noise functions and combinators.
 pub mod open_simplex_2;
