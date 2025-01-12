@@ -5,6 +5,9 @@ use core::f32::consts::{PI, TAU};
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
+/// Creates a tileable 2D noise from a 4D noise.
+///
+/// The parameters `width` and `height` describe the size of the repeating tile.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Tileable<Noise> {
     pub noise: Noise,

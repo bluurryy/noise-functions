@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+- **added:** `Sample4` and `Sample4a` helper trait
+- **added:** `Perlin`, `Value`, `CellValue`, `CellDistance`, `CellDistanceSq` now support 4D sampling
+- **added:** `tileable` method and `Tileable` to create a 2D tileable noise from a 4D noise
+
 ## 0.3.0 (2024-11-29)
 - **breaking:** removed `"nightly-const-fn-float"` feature; those functions are now always const
 - **breaking:** increased msrv to `1.82.0`
