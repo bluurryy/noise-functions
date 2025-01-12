@@ -323,5 +323,68 @@ fn array_4_take_3<T>(array: &[T; 4]) -> &[T; 3] {
     array[..3].try_into().unwrap()
 }
 
+macro_rules! simple_enum {
+	(
+		enum $name:ident {
+			$(
+                $(#[$variant_attr:meta])*
+                $variant:ident $(= $variant_expr:expr)?
+            ),* $(,)?
+		}
+	) => {
+		#[derive(Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+		pub enum $name {
+			$(
+                $(#[$variant_attr])*
+                $variant $(= $variant_expr)?,
+            )*
+		}
+
+		impl core::str::FromStr for $name {
+			type Err = $crate::EnumFromStrError;
+
+			fn from_str(s: &str) -> Result<Self, Self::Err> {
+				Ok(match s {
+					$(stringify!($variant) => Self::$variant,)*
+					_ => return Err($crate::EnumFromStrError),
+				})
+			}
+		}
+
+		impl $name {
+			pub const VARIANTS: &'static [Self] = &[
+				$(Self::$variant,)*
+			];
+
+			pub fn to_str(self) -> &'static str {
+				[$(stringify!($variant)),*][self as usize]
+			}
+		}
+
+		impl core::fmt::Debug for $name {
+			fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+				f.write_str(self.to_str())
+			}
+		}
+
+		impl core::fmt::Display for $name {
+			fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+				f.write_str(self.to_str())
+			}
+		}
+	};
+}
+
+pub(crate) use simple_enum;
+
+#[derive(Debug, Clone, Copy)]
+pub struct EnumFromStrError;
+
+impl core::fmt::Display for EnumFromStrError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str("can't convert string to enum")
+    }
+}
+
 #[cfg(test)]
 mod tests;

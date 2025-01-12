@@ -28,12 +28,14 @@
 
 #![deny(arithmetic_overflow, clippy::arithmetic_side_effects)]
 
+mod cell_distance;
 mod cell_value;
 mod open_simplex_2;
 mod open_simplex_2s;
 mod perlin;
 mod value;
 
+pub use cell_distance::CellDistance;
 pub use cell_value::CellValue;
 pub use open_simplex_2::OpenSimplex2;
 pub use open_simplex_2s::OpenSimplex2s;
@@ -194,28 +196,53 @@ fn inv_sqrt(mut a: f32) -> f32 {
     a
 }
 
+fn reciprocal(mut a: f32) -> f32 {
+    // pow( pow(x,-0.5), 2 ) = pow( x, -1 ) = 1.0 / x
+    a = f32::from_bits(0xbe6eb3beu32.wrapping_sub(a.to_bits()) >> 1);
+    a * a
+}
+
 pub mod cell {
-    use crate::{abs, max, mul_add};
+    use crate::{abs, max, mul_add, simple_enum};
 
     use super::inv_sqrt;
 
-    #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-    pub enum DistanceFn {
-        #[default]
-        Euclidean,
-        EuclideanSquared,
-        Manhatten,
-        Hybrid,
-        MaxAxis,
+    pub(crate) const JITTER_2D: f32 = 0.437016;
+    pub(crate) const JITTER_3D: f32 = 0.396144;
+    pub(crate) const JITTER_4D: f32 = 0.366025;
+
+    pub(crate) const MAX_DISTANCE_COUNT: usize = 4;
+
+    simple_enum! {
+        enum DistanceFn {
+            #[default]
+            Euclidean,
+            EuclideanSquared,
+            Manhatten,
+            Hybrid,
+            MaxAxis,
+        }
     }
 
-    #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-    pub enum ValueIndex {
-        #[default]
-        I0 = 0,
-        I1 = 1,
-        I2 = 2,
-        I3 = 3,
+    simple_enum! {
+        enum CellIndex {
+            #[default]
+            I0 = 0,
+            I1 = 1,
+            I2 = 2,
+            I3 = 3,
+        }
+    }
+
+    simple_enum! {
+        enum DistanceReturnType {
+            #[default]
+            Index0,
+            Index0Add1,
+            Index0Sub1,
+            Index0Mul1,
+            Index0Div1,
+        }
     }
 
     pub(crate) fn calc_distance2(distance_fn: DistanceFn, x: f32, y: f32) -> f32 {

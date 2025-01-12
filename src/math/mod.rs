@@ -31,6 +31,11 @@ mod libm_math {
     }
 
     #[inline(always)]
+    pub(crate) fn min(a: f32, b: f32) -> f32 {
+        libm::fminf(a, b)
+    }
+
+    #[inline(always)]
     pub(crate) fn max(a: f32, b: f32) -> f32 {
         libm::fmaxf(a, b)
     }
@@ -71,6 +76,11 @@ mod std_math {
     #[inline(always)]
     pub(crate) fn cos(f: f32) -> f32 {
         f32::cos(f)
+    }
+
+    #[inline(always)]
+    pub(crate) fn min(a: f32, b: f32) -> f32 {
+        f32::min(a, b)
     }
 
     #[inline(always)]

@@ -15,6 +15,7 @@ extern crate alloc;
 
 use alloc::boxed::Box;
 
+use from_fast_noise_2::cell::{CellIndex, DistanceFn, DistanceReturnType};
 use noise_functions::*;
 
 #[cfg(feature = "nightly-simd")]
@@ -25,21 +26,27 @@ pub use noise_functions;
 macro_rules! simple_enum {
 	(
 		enum $name:ident {
-			$($variant:ident),* $(,)?
+			$(
+                $(#[$variant_attr:meta])*
+                $variant:ident $(= $variant_expr:expr)?
+            ),* $(,)?
 		}
 	) => {
-		#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+		#[derive(Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 		pub enum $name {
-			$($variant,)*
+			$(
+                $(#[$variant_attr])*
+                $variant $(= $variant_expr)?,
+            )*
 		}
 
 		impl core::str::FromStr for $name {
-			type Err = EnumFromStrError;
+			type Err = $crate::EnumFromStrError;
 
 			fn from_str(s: &str) -> Result<Self, Self::Err> {
 				Ok(match s {
 					$(stringify!($variant) => Self::$variant,)*
-					_ => return Err(EnumFromStrError),
+					_ => return Err($crate::EnumFromStrError),
 				})
 			}
 		}
@@ -87,12 +94,14 @@ simple_enum! {
         CellValue,
         OpenSimplex2,
         OpenSimplex2s,
+        #[default]
         Perlin,
         Value,
         ValueCubic,
         NewPerlin,
         NewValue,
         NewCellValue,
+        NewCellDistance,
         NewOpenSimplex2,
         NewOpenSimplex2s,
     }
@@ -100,6 +109,7 @@ simple_enum! {
 
 simple_enum! {
     enum Fractal {
+        #[default]
         None,
         Fbm,
         Ridged,
@@ -110,6 +120,7 @@ simple_enum! {
 simple_enum! {
     enum Improve {
         None,
+        #[default]
         Xy,
         Xz,
     }
@@ -118,19 +129,64 @@ simple_enum! {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Config {
     pub noise: Noise,
+    pub seed: i32,
+    pub frequency: f32,
+
+    // fractal
     pub fractal: Fractal,
-    pub improve: Improve,
     pub lacunarity: f32,
     pub octaves: u32,
     pub gain: f32,
     pub ping_pong_strength: f32,
     pub weighted_strength: f32,
-    pub seed: i32,
-    pub frequency: f32,
+
+    // open simplex 2
+    pub improve: Improve,
+
+    // cell
     pub jitter: f32,
+    pub value_index: CellIndex,
+    pub distance_fn: DistanceFn,
+    pub distance_indices: [CellIndex; 2],
+    pub distance_return_type: DistanceReturnType,
+
+    // tiling
     pub tileable: bool,
     pub tile_width: f32,
     pub tile_height: f32,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            noise: Default::default(),
+            seed: Default::default(),
+            frequency: 1.0,
+
+            // fractal
+            fractal: Default::default(),
+            lacunarity: 2.0,
+            octaves: 3,
+            gain: 0.5,
+            ping_pong_strength: 2.0,
+            weighted_strength: 0.0,
+
+            // open simplex 2
+            improve: Default::default(),
+
+            // cell
+            jitter: 1.0,
+            value_index: CellIndex::I0,
+            distance_fn: Default::default(),
+            distance_indices: [CellIndex::I0, CellIndex::I1],
+            distance_return_type: Default::default(),
+
+            // tiling
+            tileable: false,
+            tile_width: 1.0,
+            tile_height: 1.0,
+        }
+    }
 }
 
 macro_rules! make {
@@ -163,7 +219,8 @@ macro_rules! make_fractal2 {
             match $self.noise {
                 Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin.tileable($self.tile_width, $self.tile_height)),
                 Noise::NewValue => $macro!($self, from_fast_noise_2::Value.tileable($self.tile_width, $self.tile_height)),
-                Noise::NewCellValue => $macro!($self, from_fast_noise_2::CellValue::default().jitter($self.jitter).tileable($self.tile_width, $self.tile_height)),
+                Noise::NewCellValue => $macro!($self, $self.new_cell_value().tileable($self.tile_width, $self.tile_height)),
+                Noise::NewCellDistance => $macro!($self, $self.new_cell_distance().tileable($self.tile_width, $self.tile_height)),
                 Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2.tileable($self.tile_width, $self.tile_height)),
                 _ => None,
             }
@@ -187,7 +244,8 @@ macro_rules! make_fractal2 {
                 Noise::Value => $macro!($self, Value),
                 Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
                 Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
-                Noise::NewCellValue => $macro!($self, from_fast_noise_2::CellValue::default().jitter($self.jitter)),
+                Noise::NewCellValue => $macro!($self, $self.new_cell_value()),
+                Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
                 Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
                 Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
             }
@@ -230,7 +288,8 @@ macro_rules! make_fractal3 {
                 Noise::Value => $macro!($self, Value),
                 Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
                 Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
-                Noise::NewCellValue => $macro!($self, from_fast_noise_2::CellValue::default().jitter($self.jitter)),
+                Noise::NewCellValue => $macro!($self, $self.new_cell_value()),
+                Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
                 Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
                 Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
             }
@@ -254,7 +313,8 @@ macro_rules! make_fractal4 {
         match $self.noise {
             Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
             Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
-            Noise::NewCellValue => $macro!($self, from_fast_noise_2::CellValue::default().jitter($self.jitter)),
+            Noise::NewCellValue => $macro!($self, $self.new_cell_value()),
+            Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
             Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
             _ => None,
         }
@@ -282,6 +342,23 @@ pub trait AnySampleA: Sample<2> + Sample<3> + Sample<2, f32x2> + Sample<3, f32x4
 impl<T> AnySampleA for T where T: Sample<2> + Sample<3> + Sample<2, f32x2> + Sample<3, f32x4> {}
 
 impl Config {
+    fn new_cell_value(&self) -> from_fast_noise_2::CellValue {
+        from_fast_noise_2::CellValue {
+            jitter: self.jitter,
+            distance_fn: self.distance_fn,
+            value_index: self.value_index,
+        }
+    }
+
+    fn new_cell_distance(&self) -> from_fast_noise_2::CellDistance {
+        from_fast_noise_2::CellDistance {
+            jitter: self.jitter,
+            distance_fn: self.distance_fn,
+            distance_indices: self.distance_indices,
+            return_type: self.distance_return_type,
+        }
+    }
+
     pub fn sampler(&self) -> Option<Box<dyn AnySample>> {
         sampler3!(self)
     }
