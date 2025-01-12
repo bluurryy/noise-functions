@@ -21,7 +21,12 @@ check:
   cargo clippy --all --tests --no-default-features --features libm
   cargo clippy --all --tests --no-default-features --features libm,nightly-simd
   cargo clippy --all --no-default-features --features libm -p noise-functions-config
-  
+  just check-msrv
+
+check-msrv:
+  cargo ('+' + (open Cargo.toml).package.rust-version) check
+  cargo ('+' + (open Cargo.toml).package.rust-version) check --no-default-features --features libm
+
 test:
   cargo test
   cargo test --features nightly-simd
