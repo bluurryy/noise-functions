@@ -77,7 +77,10 @@ mod lookup;
 mod math;
 mod noise_fn;
 
+/// This is experimental and not part of the public api.
+#[doc(hidden)]
 pub mod from_fast_noise_2;
+
 /// OpenSimplex2 noise functions and combinators.
 pub mod open_simplex_2;
 mod sample;
