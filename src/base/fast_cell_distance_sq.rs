@@ -3,12 +3,21 @@ use crate::{base::impl_noise, from_fast_noise_lite::cell_distance_euclidean_squa
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
+use super::{cell::DistanceFn, CellDistance};
+
+/// 2/3/4 dimensional noise of the squared distance to the closest cell
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct FastCellDistanceSq {
     pub jitter: f32,
 }
 
-impl_noise!(23 FastCellDistanceSq);
+impl Default for FastCellDistanceSq {
+    fn default() -> Self {
+        Self { jitter: 1.0 }
+    }
+}
+
+impl_noise!(234 FastCellDistanceSq);
 
 impl FastCellDistanceSq {
     #[inline]
@@ -24,6 +33,11 @@ impl FastCellDistanceSq {
     }
 
     #[inline]
+    fn gen4(self, point: [f32; 4], seed: i32) -> f32 {
+        CellDistance::default().jitter(self.jitter).distance_fn(DistanceFn::EuclideanSquared).gen4(point, seed)
+    }
+
+    #[inline]
     #[cfg(feature = "nightly-simd")]
     fn gen2a(self, point: f32x2, seed: i32) -> f32 {
         // implementation from FastNoiseLite
@@ -35,5 +49,11 @@ impl FastCellDistanceSq {
     fn gen3a(self, point: f32x4, seed: i32) -> f32 {
         // implementation from FastNoiseLite
         cell_distance_euclidean_squared::gen3a(self.jitter, point, seed) - 1.0
+    }
+
+    #[inline]
+    #[cfg(feature = "nightly-simd")]
+    fn gen4a(self, point: f32x4, seed: i32) -> f32 {
+        CellDistance::default().jitter(self.jitter).distance_fn(DistanceFn::EuclideanSquared).gen4a(point, seed)
     }
 }

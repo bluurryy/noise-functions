@@ -29,6 +29,16 @@ impl CellValue {
     }
 }
 
+impl Default for CellValue {
+    fn default() -> Self {
+        Self {
+            jitter: 1.0,
+            distance_fn: Default::default(),
+            value_index: Default::default(),
+        }
+    }
+}
+
 impl_noise!(234 CellValue);
 
 impl CellValue {
@@ -190,7 +200,7 @@ impl CellValue {
     }
 
     #[inline]
-    fn gen4(self, [x, y, z, w]: [f32; 4], seed: i32) -> f32 {
+    pub(super) fn gen4(self, [x, y, z, w]: [f32; 4], seed: i32) -> f32 {
         // implementation from FastNoise2
         use crate::from_fast_noise_2::{
             cell::{calc_distance4, JITTER_4D, MAX_DISTANCE_COUNT},
@@ -299,17 +309,7 @@ impl CellValue {
 
     #[inline]
     #[cfg(feature = "nightly-simd")]
-    fn gen4a(self, point: f32x4, seed: i32) -> f32 {
+    pub(super) fn gen4a(self, point: f32x4, seed: i32) -> f32 {
         self.gen4(point.into(), seed)
-    }
-}
-
-impl Default for CellValue {
-    fn default() -> Self {
-        Self {
-            jitter: 1.0,
-            distance_fn: Default::default(),
-            value_index: Default::default(),
-        }
     }
 }

@@ -1,14 +1,21 @@
-use crate::base::impl_noise;
+use crate::base::{impl_noise, CellValue};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
+/// 2/3/4 dimensional noise of the value of the closest cell
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct FastCellValue {
     pub jitter: f32,
 }
 
-impl_noise!(23 FastCellValue);
+impl_noise!(234 FastCellValue);
+
+impl Default for FastCellValue {
+    fn default() -> Self {
+        Self { jitter: 1.0 }
+    }
+}
 
 impl FastCellValue {
     #[inline]
@@ -98,6 +105,11 @@ impl FastCellValue {
     }
 
     #[inline]
+    fn gen4(self, point: [f32; 4], seed: i32) -> f32 {
+        CellValue::default().jitter(self.jitter).gen4(point, seed)
+    }
+
+    #[inline]
     #[cfg(feature = "nightly-simd")]
     fn gen2a(self, point: f32x2, seed: i32) -> f32 {
         // based on the implementation from FastNoiseLite
@@ -174,5 +186,11 @@ impl FastCellValue {
         }
 
         closest_hash as f32 * (1.0 / 2147483648.0)
+    }
+
+    #[inline]
+    #[cfg(feature = "nightly-simd")]
+    fn gen4a(self, point: f32x4, seed: i32) -> f32 {
+        CellValue::default().jitter(self.jitter).gen4a(point, seed)
     }
 }

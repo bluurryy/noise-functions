@@ -5,6 +5,7 @@ use super::cell::{CellIndex, DistanceFn, DistanceReturnType};
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
+/// 2/3/4 dimensional noise of the distance to a cell
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct CellDistance {
     pub jitter: f32,
@@ -205,7 +206,7 @@ impl CellDistance {
     }
 
     #[inline]
-    fn gen4(self, [x, y, z, w]: [f32; 4], seed: i32) -> f32 {
+    pub(super) fn gen4(self, [x, y, z, w]: [f32; 4], seed: i32) -> f32 {
         // implementation from FastNoise2
         use crate::from_fast_noise_2::{
             cell::{calc_distance4, JITTER_4D, MAX_DISTANCE_COUNT},
@@ -305,7 +306,7 @@ impl CellDistance {
 
     #[inline]
     #[cfg(feature = "nightly-simd")]
-    fn gen4a(self, point: f32x4, seed: i32) -> f32 {
+    pub(super) fn gen4a(self, point: f32x4, seed: i32) -> f32 {
         self.gen4(point.into(), seed)
     }
 }
