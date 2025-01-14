@@ -19,7 +19,10 @@ impl<Noise> Seeded<Noise> {
     }
 }
 
-impl<const DIM: usize, Point, Noise: SampleWithSeed<DIM, Point>> Sample<DIM, Point> for Seeded<Noise> {
+impl<const DIM: usize, Point, Noise> Sample<DIM, Point> for Seeded<Noise>
+where
+    Noise: SampleWithSeed<DIM, Point>,
+{
     fn sample(&self, point: Point) -> f32 {
         self.noise.sample_with_seed(point, self.seed)
     }
