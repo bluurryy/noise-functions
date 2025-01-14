@@ -56,7 +56,11 @@ impl Simplex {
         t2 *= t2;
 
         let n0 = gradient_dot2(hash_primes2(seed, i, j), x0, y0);
-        let n1 = gradient_dot2(hash_primes2(seed, if i1 { i.wrapping_add(primes::X) } else { i }, if i1 { j } else { j.wrapping_add(primes::Y) }), x1, y1);
+        let n1 = gradient_dot2(
+            hash_primes2(seed, if i1 { i.wrapping_add(primes::X) } else { i }, if i1 { j } else { j.wrapping_add(primes::Y) }),
+            x1,
+            y1,
+        );
         let n2 = gradient_dot2(hash_primes2(seed, i.wrapping_add(primes::X), j.wrapping_add(primes::Y)), x2, y2);
 
         38.283687591552734375 * mul_add(n0, t0, mul_add(n1, t1, n2 * t2))
@@ -134,7 +138,12 @@ impl Simplex {
 
         let n0 = gradient_dot3(hash_primes3(seed, i, j, k), x0, y0, z0);
         let n1 = gradient_dot3(hash_primes3(seed, masked_add(i, primes::X, i1), masked_add(j, primes::Y, j1), masked_add(k, primes::Z, k1)), x1, y1, z1);
-        let n2 = gradient_dot3(hash_primes3(seed, masked_add(i, primes::X, i2), masked_add(j, primes::Y, j2), nmasked_add(k, primes::Z, k2)), x2, y2, z2);
+        let n2 = gradient_dot3(
+            hash_primes3(seed, masked_add(i, primes::X, i2), masked_add(j, primes::Y, j2), nmasked_add(k, primes::Z, k2)),
+            x2,
+            y2,
+            z2,
+        );
         let n3 = gradient_dot3(hash_primes3(seed, i.wrapping_add(primes::X), j.wrapping_add(primes::Y), k.wrapping_add(primes::Z)), x3, y3, z3);
 
         32.69428253173828125 * mul_add(n0, t0, mul_add(n1, t1, mul_add(n2, t2, n3 * t3)))
@@ -261,21 +270,39 @@ impl Simplex {
 
         let n0 = gradient_dot4(hash_primes4(seed, i, j, k, l), x0, y0, z0, w0);
         let n1 = gradient_dot4(
-            hash_primes4(seed, masked_add(i, primes::X, i1), masked_add(j, primes::Y, j1), masked_add(k, primes::Z, k1), masked_add(l, primes::W, l1)),
+            hash_primes4(
+                seed,
+                masked_add(i, primes::X, i1),
+                masked_add(j, primes::Y, j1),
+                masked_add(k, primes::Z, k1),
+                masked_add(l, primes::W, l1),
+            ),
             x1,
             y1,
             z1,
             w1,
         );
         let n2 = gradient_dot4(
-            hash_primes4(seed, masked_add(i, primes::X, i2), masked_add(j, primes::Y, j2), masked_add(k, primes::Z, k2), masked_add(l, primes::W, l2)),
+            hash_primes4(
+                seed,
+                masked_add(i, primes::X, i2),
+                masked_add(j, primes::Y, j2),
+                masked_add(k, primes::Z, k2),
+                masked_add(l, primes::W, l2),
+            ),
             x2,
             y2,
             z2,
             w2,
         );
         let n3 = gradient_dot4(
-            hash_primes4(seed, masked_add(i, primes::X, i3), masked_add(j, primes::Y, j3), masked_add(k, primes::Z, k3), masked_add(l, primes::W, l3)),
+            hash_primes4(
+                seed,
+                masked_add(i, primes::X, i3),
+                masked_add(j, primes::Y, j3),
+                masked_add(k, primes::Z, k3),
+                masked_add(l, primes::W, l3),
+            ),
             x3,
             y3,
             z3,

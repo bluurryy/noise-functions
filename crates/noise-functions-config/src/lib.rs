@@ -206,7 +206,12 @@ macro_rules! make_ridged {
 
 macro_rules! make_ping_pong {
     ($self:ident, $noise:expr) => {
-        make!($self, $noise.ping_pong($self.octaves, $self.gain, $self.lacunarity, $self.ping_pong_strength).weighted($self.weighted_strength))
+        make!(
+            $self,
+            $noise
+                .ping_pong($self.octaves, $self.gain, $self.lacunarity, $self.ping_pong_strength)
+                .weighted($self.weighted_strength)
+        )
     };
 }
 

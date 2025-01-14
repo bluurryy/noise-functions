@@ -297,7 +297,16 @@ where
 
 #[cfg(feature = "nightly-simd")]
 #[inline(always)]
-fn weighted_fbm_a<Noise, const DIM: usize, const LANES: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, weighted_strength: f32, mut seed: i32, mut point: Simd<f32, LANES>) -> f32
+fn weighted_fbm_a<Noise, const DIM: usize, const LANES: usize>(
+    noise: &Noise,
+    octaves: u32,
+    gain: f32,
+    lacunarity: f32,
+    fractal_bounding: f32,
+    weighted_strength: f32,
+    mut seed: i32,
+    mut point: Simd<f32, LANES>,
+) -> f32
 where
     for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,

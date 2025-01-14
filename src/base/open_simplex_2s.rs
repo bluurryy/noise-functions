@@ -200,7 +200,17 @@ impl OpenSimplex2s {
         let y0: f32 = yi + y_n_mask as f32;
         let z0: f32 = zi + z_n_mask as f32;
         let a0: f32 = 0.75 - x0 * x0 - y0 * y0 - z0 * z0;
-        let mut value: f32 = (a0 * a0) * (a0 * a0) * grad3(seed, i.wrapping_add(x_n_mask & PRIME_X), j.wrapping_add(y_n_mask & PRIME_Y), k.wrapping_add(z_n_mask & PRIME_Z), x0, y0, z0);
+        let mut value: f32 = (a0 * a0)
+            * (a0 * a0)
+            * grad3(
+                seed,
+                i.wrapping_add(x_n_mask & PRIME_X),
+                j.wrapping_add(y_n_mask & PRIME_Y),
+                k.wrapping_add(z_n_mask & PRIME_Z),
+                x0,
+                y0,
+                z0,
+            );
 
         let x1: f32 = xi - 0.5;
         let y1: f32 = yi - 0.5;
@@ -221,14 +231,34 @@ impl OpenSimplex2s {
             let x2: f32 = x0 - (x_n_mask | 1) as f32;
             let y2: f32 = y0;
             let z2: f32 = z0;
-            value += (a2 * a2) * (a2 * a2) * grad3(seed, i.wrapping_add(!x_n_mask & PRIME_X), j.wrapping_add(y_n_mask & PRIME_Y), k.wrapping_add(z_n_mask & PRIME_Z), x2, y2, z2);
+            value += (a2 * a2)
+                * (a2 * a2)
+                * grad3(
+                    seed,
+                    i.wrapping_add(!x_n_mask & PRIME_X),
+                    j.wrapping_add(y_n_mask & PRIME_Y),
+                    k.wrapping_add(z_n_mask & PRIME_Z),
+                    x2,
+                    y2,
+                    z2,
+                );
         } else {
             let a3: f32 = y_a_flip_mask_0 + z_a_flip_mask_0 + a0;
             if a3 > 0.0 {
                 let x3: f32 = x0;
                 let y3: f32 = y0 - (y_n_mask | 1) as f32;
                 let z3: f32 = z0 - (z_n_mask | 1) as f32;
-                value += (a3 * a3) * (a3 * a3) * grad3(seed, i.wrapping_add(x_n_mask & PRIME_X), j.wrapping_add(!y_n_mask & PRIME_Y), k.wrapping_add(!z_n_mask & PRIME_Z), x3, y3, z3);
+                value += (a3 * a3)
+                    * (a3 * a3)
+                    * grad3(
+                        seed,
+                        i.wrapping_add(x_n_mask & PRIME_X),
+                        j.wrapping_add(!y_n_mask & PRIME_Y),
+                        k.wrapping_add(!z_n_mask & PRIME_Z),
+                        x3,
+                        y3,
+                        z3,
+                    );
             }
 
             let a4: f32 = x_a_flip_mask_1 + a1;
@@ -236,7 +266,17 @@ impl OpenSimplex2s {
                 let x4: f32 = (x_n_mask | 1) as f32 + x1;
                 let y4: f32 = y1;
                 let z4: f32 = z1;
-                value += (a4 * a4) * (a4 * a4) * grad3(seed2, i.wrapping_add(x_n_mask & (PRIME_X.wrapping_mul(2))), j.wrapping_add(PRIME_Y), k.wrapping_add(PRIME_Z), x4, y4, z4);
+                value += (a4 * a4)
+                    * (a4 * a4)
+                    * grad3(
+                        seed2,
+                        i.wrapping_add(x_n_mask & (PRIME_X.wrapping_mul(2))),
+                        j.wrapping_add(PRIME_Y),
+                        k.wrapping_add(PRIME_Z),
+                        x4,
+                        y4,
+                        z4,
+                    );
                 skip_5 = true;
             }
         }
@@ -247,14 +287,34 @@ impl OpenSimplex2s {
             let x6: f32 = x0;
             let y6: f32 = y0 - (y_n_mask | 1) as f32;
             let z6: f32 = z0;
-            value += (a6 * a6) * (a6 * a6) * grad3(seed, i.wrapping_add(x_n_mask & PRIME_X), j.wrapping_add(!y_n_mask & PRIME_Y), k.wrapping_add(z_n_mask & PRIME_Z), x6, y6, z6);
+            value += (a6 * a6)
+                * (a6 * a6)
+                * grad3(
+                    seed,
+                    i.wrapping_add(x_n_mask & PRIME_X),
+                    j.wrapping_add(!y_n_mask & PRIME_Y),
+                    k.wrapping_add(z_n_mask & PRIME_Z),
+                    x6,
+                    y6,
+                    z6,
+                );
         } else {
             let a7: f32 = x_a_flip_mask_0 + z_a_flip_mask_0 + a0;
             if a7 > 0.0 {
                 let x7: f32 = x0 - (x_n_mask | 1) as f32;
                 let y7: f32 = y0;
                 let z7: f32 = z0 - (z_n_mask | 1) as f32;
-                value += (a7 * a7) * (a7 * a7) * grad3(seed, i.wrapping_add(!x_n_mask & PRIME_X), j.wrapping_add(y_n_mask & PRIME_Y), k.wrapping_add(!z_n_mask & PRIME_Z), x7, y7, z7);
+                value += (a7 * a7)
+                    * (a7 * a7)
+                    * grad3(
+                        seed,
+                        i.wrapping_add(!x_n_mask & PRIME_X),
+                        j.wrapping_add(y_n_mask & PRIME_Y),
+                        k.wrapping_add(!z_n_mask & PRIME_Z),
+                        x7,
+                        y7,
+                        z7,
+                    );
             }
 
             let a8: f32 = y_a_flip_mask_1 + a1;
@@ -273,14 +333,34 @@ impl OpenSimplex2s {
             let x_a: f32 = x0;
             let y_a: f32 = y0;
             let z_a: f32 = z0 - (z_n_mask | 1) as f32;
-            value += (a_a * a_a) * (a_a * a_a) * grad3(seed, i.wrapping_add(x_n_mask & PRIME_X), j.wrapping_add(y_n_mask & PRIME_Y), k.wrapping_add(!z_n_mask & PRIME_Z), x_a, y_a, z_a);
+            value += (a_a * a_a)
+                * (a_a * a_a)
+                * grad3(
+                    seed,
+                    i.wrapping_add(x_n_mask & PRIME_X),
+                    j.wrapping_add(y_n_mask & PRIME_Y),
+                    k.wrapping_add(!z_n_mask & PRIME_Z),
+                    x_a,
+                    y_a,
+                    z_a,
+                );
         } else {
             let a_b: f32 = x_a_flip_mask_0 + y_a_flip_mask_0 + a0;
             if a_b > 0.0 {
                 let x_b: f32 = x0 - (x_n_mask | 1) as f32;
                 let y_b: f32 = y0 - (y_n_mask | 1) as f32;
                 let z_b: f32 = z0;
-                value += (a_b * a_b) * (a_b * a_b) * grad3(seed, i.wrapping_add(!x_n_mask & PRIME_X), j.wrapping_add(!y_n_mask & PRIME_Y), k.wrapping_add(z_n_mask & PRIME_Z), x_b, y_b, z_b);
+                value += (a_b * a_b)
+                    * (a_b * a_b)
+                    * grad3(
+                        seed,
+                        i.wrapping_add(!x_n_mask & PRIME_X),
+                        j.wrapping_add(!y_n_mask & PRIME_Y),
+                        k.wrapping_add(z_n_mask & PRIME_Z),
+                        x_b,
+                        y_b,
+                        z_b,
+                    );
             }
 
             let a_c: f32 = z_a_flip_mask_1 + a1;
@@ -288,7 +368,17 @@ impl OpenSimplex2s {
                 let x_c: f32 = x1;
                 let y_c: f32 = y1;
                 let z_c: f32 = (z_n_mask | 1) as f32 + z1;
-                value += (a_c * a_c) * (a_c * a_c) * grad3(seed2, i.wrapping_add(PRIME_X), j.wrapping_add(PRIME_Y), k.wrapping_add(z_n_mask & PRIME_Z.wrapping_shl(1)), x_c, y_c, z_c);
+                value += (a_c * a_c)
+                    * (a_c * a_c)
+                    * grad3(
+                        seed2,
+                        i.wrapping_add(PRIME_X),
+                        j.wrapping_add(PRIME_Y),
+                        k.wrapping_add(z_n_mask & PRIME_Z.wrapping_shl(1)),
+                        x_c,
+                        y_c,
+                        z_c,
+                    );
                 skip_d = true;
             }
         }
