@@ -4,7 +4,9 @@
 - **breaking:** `CellValue`, `CellDistance` and `CellDistanceSq` now have the `Fast*` prefix. They also have a `jitter` field. There is no more `Jitter` wrapper struct.
 - **breaking:** sampling with a seed is now expressed by the trait `SampleWithSeed` instead of `Seeded<T>`/`Seeded<&T>`; this brings with it better error messages, less boilerplate and extensibility
 - **added:** `Sample4` and `Sample4a` helper trait
-- **added:** `Perlin`, `Value`, `CellValue`, `CellDistance`, `CellDistanceSq` now support 4D sampling
+- **added:** `Perlin`, `Value` and `Cell*` noises now support 4D sampling
+- **added:** a new 2, 3 and 4 dimensional `Simplex` noise
+- **added:** new `CellValue` and `CellDistance` noises with configurable distance function, cell indices and add/sub/mul/div return options
 - **added:** `tileable` method and `Tileable` to create a 2D tileable noise from a 4D noise
 
 ## 0.3.0 (2024-11-29)
