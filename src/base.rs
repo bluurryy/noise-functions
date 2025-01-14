@@ -9,13 +9,18 @@ mod open_simplex_2s;
 mod perlin;
 mod simplex;
 mod value;
+mod value_cubic;
 
 pub use cell_distance::CellDistance;
 pub use cell_value::CellValue;
+pub use fast_cell_distance::FastCellDistance;
+pub use fast_cell_distance_sq::FastCellDistanceSq;
+pub use fast_cell_value::FastCellValue;
 pub use open_simplex_2::OpenSimplex2;
 pub use perlin::Perlin;
 pub use simplex::Simplex;
 pub use value::Value;
+pub use value_cubic::ValueCubic;
 
 macro_rules! if_has_dim_4 {
     (234; $($tt:tt)*) => { $($tt)* };

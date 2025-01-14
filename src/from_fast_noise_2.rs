@@ -208,7 +208,7 @@ pub(crate) fn nmul_add(a: f32, b: f32, c: f32) -> f32 {
     -(a * b) + c
 }
 
-trait WrappingOps {
+pub(crate) trait WrappingOps {
     fn wrapping_add(self, other: Self) -> Self;
     fn wrapping_sub(self, other: Self) -> Self;
 }
