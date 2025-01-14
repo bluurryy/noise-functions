@@ -1,4 +1,15 @@
-use crate::private_prelude::*;
+#[cfg(feature = "nightly-simd")]
+use core::simd::{LaneCount, Simd, SupportedLaneCount};
+
+use crate::{
+    math::{fast_min, lerp},
+    Frequency, Sample, Seeded,
+};
+
+#[cfg(feature = "nightly-simd")]
+use crate::math::splat;
+
+use super::{fractal_bounding, Weighted};
 
 /// Fractal Brownian motion (fBm) noise.
 ///
@@ -13,6 +24,17 @@ pub struct Fbm<Noise> {
 }
 
 impl<Noise> Fbm<Noise> {
+    #[inline(always)]
+    pub const fn new(noise: Noise, octaves: u32, gain: f32, lacunarity: f32) -> Self {
+        Self {
+            noise,
+            octaves,
+            gain,
+            lacunarity,
+            fractal_bounding: fractal_bounding(octaves, gain),
+        }
+    }
+
     #[inline(always)]
     pub const fn seed(self, seed: i32) -> Seeded<Self> {
         Seeded { noise: self, seed }
@@ -275,7 +297,16 @@ where
 
 #[cfg(feature = "nightly-simd")]
 #[inline(always)]
-fn weighted_fbm_a<Noise, const DIM: usize, const LANES: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, weighted_strength: f32, mut seed: i32, mut point: Simd<f32, LANES>) -> f32
+fn weighted_fbm_a<Noise, const DIM: usize, const LANES: usize>(
+    noise: &Noise,
+    octaves: u32,
+    gain: f32,
+    lacunarity: f32,
+    fractal_bounding: f32,
+    weighted_strength: f32,
+    mut seed: i32,
+    mut point: Simd<f32, LANES>,
+) -> f32
 where
     for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,

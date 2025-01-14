@@ -1,4 +1,7 @@
-use crate::private_prelude::*;
+#[cfg(feature = "nightly-simd")]
+use core::simd::{LaneCount, Simd, SupportedLaneCount};
+
+use crate::Sample;
 
 /// Wraps a noise and modifies its frequency.
 ///
@@ -31,7 +34,7 @@ where
     LaneCount<LANES>: SupportedLaneCount,
 {
     fn sample(&self, mut point: Simd<f32, LANES>) -> f32 {
-        point *= splat(self.frequency);
+        point *= Simd::splat(self.frequency);
         self.noise.sample(point)
     }
 }

@@ -27,10 +27,10 @@
 //! let value = Perlin.frequency(3.0).sample2(point);
 //!
 //! // cell distance (voronoi/worley) noise
-//! let value = CellDistance.sample2(point);
+//! let value = CellDistance::default().sample2(point);
 //!
 //! // cell distance (voronoi/worley) noise with jitter multiplier
-//! let value = CellDistance.jitter(0.5).sample2(point);
+//! let value = CellDistance::default().jitter(0.5).sample2(point);
 //!
 //! // domain warped OpenSimplex2s noise
 //! let warped_noise = |point: [f32; 2]| {
@@ -67,13 +67,9 @@ extern crate std;
 #[cfg(all(not(feature = "std"), not(feature = "libm")))]
 compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature must be enabled"#);
 
-/// Cellular noise functions and combinators.
-pub mod cellular;
-
 /// Fractal noise combinators.
 pub mod fractal;
 mod frequency;
-mod lookup;
 mod math;
 mod noise_fn;
 
@@ -81,286 +77,29 @@ mod noise_fn;
 #[doc(hidden)]
 pub mod from_fast_noise_2;
 
+mod base;
+mod cellular;
+mod from_fast_noise_lite;
 /// OpenSimplex2 noise functions and combinators.
 pub mod open_simplex_2;
 mod sample;
-mod scalar;
 mod seeded;
-#[cfg(feature = "nightly-simd")]
-mod simd;
 mod tileable;
-mod util;
 
 #[doc(inline)]
-pub use cellular::{CellDistance, CellDistanceSq, CellValue};
 pub use frequency::Frequency;
 pub use noise_fn::NoiseFn;
 pub use tileable::Tileable;
 
-#[doc(inline)]
-pub use open_simplex_2::{OpenSimplex2, OpenSimplex2s};
 pub use sample::{Sample, Sample2, Sample3, Sample4};
 pub use seeded::Seeded;
 
+pub use base::{CellDistance, CellValue, FastCellDistance, FastCellDistanceSq, FastCellValue, OpenSimplex2, OpenSimplex2s, Perlin, Simplex, Value, ValueCubic};
+
+pub use cellular::{CellIndex, DistanceFn, DistanceReturnType};
+
 #[cfg(feature = "nightly-simd")]
 pub use sample::{Sample2a, Sample3a, Sample4a};
-
-mod private_prelude {
-    pub(crate) use crate::fractal::*;
-    pub(crate) use crate::lookup::*;
-    pub(crate) use crate::math::*;
-    pub(crate) use crate::util::*;
-    pub(crate) use crate::*;
-
-    #[cfg(test)]
-    #[cfg(feature = "nightly-simd")]
-    pub(crate) use crate::open_simplex_2::*;
-
-    #[cfg(test)]
-    #[cfg(feature = "nightly-simd")]
-    pub(crate) use crate::cellular::*;
-
-    #[cfg(feature = "nightly-simd")]
-    pub(crate) use crate::simd::{PRIME_XY, PRIME_XYZ};
-
-    #[cfg(feature = "nightly-simd")]
-    pub(crate) use core::simd::{LaneCount, SimdElement, SupportedLaneCount};
-
-    #[cfg(feature = "nightly-simd")]
-    pub(crate) use core::simd::prelude::*;
-
-    #[cfg(feature = "nightly-simd")]
-    pub(crate) use core::simd::num::SimdFloat;
-
-    #[cfg(feature = "nightly-simd")]
-    pub(crate) use crate::simd::splat;
-}
-
-use crate::private_prelude::*;
-
-const DEFAULT_JITTER_2D: f32 = 0.43701595;
-const DEFAULT_JITTER_3D: f32 = 0.39614353;
-
-macro_rules! impl_modifiers {
-    () => {
-        #[inline(always)]
-        pub const fn seed(self, seed: i32) -> $crate::Seeded<Self> {
-            $crate::Seeded { noise: self, seed }
-        }
-
-        #[inline(always)]
-        pub const fn frequency(self, frequency: f32) -> $crate::Frequency<Self> {
-            $crate::Frequency { noise: self, frequency }
-        }
-
-        #[inline(always)]
-        pub const fn tileable(self, width: f32, height: f32) -> $crate::Tileable<Self> {
-            $crate::Tileable::new(self, width, height)
-        }
-
-        #[inline(always)]
-        pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Fbm<Self> {
-            $crate::Fbm {
-                noise: self,
-                octaves,
-                gain,
-                lacunarity,
-                fractal_bounding: $crate::fractal_bounding(octaves, gain),
-            }
-        }
-
-        #[inline(always)]
-        pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Ridged<Self> {
-            $crate::Ridged {
-                noise: self,
-                octaves,
-                gain,
-                lacunarity,
-                fractal_bounding: $crate::fractal_bounding(octaves, gain),
-            }
-        }
-
-        #[inline(always)]
-        pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> $crate::PingPong<Self> {
-            $crate::PingPong {
-                noise: self,
-                octaves,
-                gain,
-                lacunarity,
-                fractal_bounding: $crate::fractal_bounding(octaves, gain),
-                strength,
-            }
-        }
-    };
-}
-
-pub(crate) use impl_modifiers;
-
-macro_rules! basic_noise {
-    ($(#[$attr:meta])* $noise:ident in $noise_mod:ident $(use $noise_4d:expr)?) => {
-        $(#[$attr])*
-        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-        pub struct $noise;
-
-        impl $noise {
-            impl_modifiers!();
-        }
-
-        impl Sample<2> for $noise {
-            #[inline(always)]
-            fn sample(&self, point: [f32; 2]) -> f32 {
-                crate::scalar::$noise_mod::gen2(point, 0)
-            }
-        }
-
-        impl Sample<2> for Seeded<$noise> {
-            #[inline(always)]
-            fn sample(&self, point: [f32; 2]) -> f32 {
-                crate::scalar::$noise_mod::gen2(point, self.seed)
-            }
-        }
-
-        impl Sample<2> for Seeded<&$noise> {
-            #[inline(always)]
-            fn sample(&self, point: [f32; 2]) -> f32 {
-                crate::scalar::$noise_mod::gen2(point, self.seed)
-            }
-        }
-
-        impl Sample<3> for $noise {
-            #[inline(always)]
-            fn sample(&self, point: [f32; 3]) -> f32 {
-                crate::scalar::$noise_mod::gen3(point, 0)
-            }
-        }
-
-        impl Sample<3> for Seeded<$noise> {
-            #[inline(always)]
-            fn sample(&self, point: [f32; 3]) -> f32 {
-                crate::scalar::$noise_mod::gen3(point, self.seed)
-            }
-        }
-
-        impl Sample<3> for Seeded<&$noise> {
-            #[inline(always)]
-            fn sample(&self, point: [f32; 3]) -> f32 {
-                crate::scalar::$noise_mod::gen3(point, self.seed)
-            }
-        }
-
-        #[cfg(feature = "nightly-simd")]
-        impl Sample<2, f32x2> for $noise {
-            #[inline(always)]
-            fn sample(&self, point: f32x2) -> f32 {
-                crate::simd::$noise_mod::gen2(point, 0)
-            }
-        }
-
-        #[cfg(feature = "nightly-simd")]
-        impl Sample<2, f32x2> for Seeded<$noise> {
-            #[inline(always)]
-            fn sample(&self, point: f32x2) -> f32 {
-                crate::simd::$noise_mod::gen2(point, self.seed)
-            }
-        }
-
-        #[cfg(feature = "nightly-simd")]
-        impl Sample<2, f32x2> for Seeded<&$noise> {
-            #[inline(always)]
-            fn sample(&self, point: f32x2) -> f32 {
-                crate::simd::$noise_mod::gen2(point, self.seed)
-            }
-        }
-
-        #[cfg(feature = "nightly-simd")]
-        impl Sample<3, f32x4> for $noise {
-            #[inline(always)]
-            fn sample(&self, point: f32x4) -> f32 {
-                crate::simd::$noise_mod::gen3(point, 0)
-            }
-        }
-
-        #[cfg(feature = "nightly-simd")]
-        impl Sample<3, f32x4> for Seeded<$noise> {
-            #[inline(always)]
-            fn sample(&self, point: f32x4) -> f32 {
-                crate::simd::$noise_mod::gen3(point, self.seed)
-            }
-        }
-
-        #[cfg(feature = "nightly-simd")]
-        impl Sample<3, f32x4> for Seeded<&$noise> {
-            #[inline(always)]
-            fn sample(&self, point: f32x4) -> f32 {
-                crate::simd::$noise_mod::gen3(point, self.seed)
-            }
-        }
-
-        $(
-            impl Sample<4> for $noise {
-                #[inline(always)]
-                fn sample(&self, point: [f32; 4]) -> f32 {
-                    $noise_4d.sample4(point)
-                }
-            }
-
-            impl Sample<4> for Seeded<$noise> {
-                #[inline(always)]
-                fn sample(&self, point: [f32; 4]) -> f32 {
-                    $noise_4d.seed(self.seed).sample4(point)
-                }
-            }
-
-            impl Sample<4> for Seeded<&$noise> {
-                #[inline(always)]
-                fn sample(&self, point: [f32; 4]) -> f32 {
-                    $noise_4d.seed(self.seed).sample4(point)
-                }
-            }
-
-            #[cfg(feature = "nightly-simd")]
-            impl Sample<4, f32x4> for $noise {
-                #[inline(always)]
-                fn sample(&self, point: f32x4) -> f32 {
-                    $noise_4d.sample4(point)
-                }
-            }
-
-            #[cfg(feature = "nightly-simd")]
-            impl Sample<4, f32x4> for Seeded<$noise> {
-                #[inline(always)]
-                fn sample(&self, point: f32x4) -> f32 {
-                    $noise_4d.seed(self.seed).sample4(point)
-                }
-            }
-
-            #[cfg(feature = "nightly-simd")]
-            impl Sample<4, f32x4> for Seeded<&$noise> {
-                #[inline(always)]
-                fn sample(&self, point: f32x4) -> f32 {
-                    $noise_4d.seed(self.seed).sample4(point)
-                }
-            }
-        )?
-    };
-}
-
-pub(crate) use basic_noise;
-
-basic_noise! {
-    /// 2/3/4 dimensional Perlin noise
-    Perlin in perlin use from_fast_noise_2::Perlin
-}
-
-basic_noise! {
-    /// 2/3/4 dimensional Value noise
-    Value in value use from_fast_noise_2::Value
-}
-
-basic_noise! {
-    /// 2/3 dimensional Cubic Value noise
-    ValueCubic in value_cubic
-}
 
 #[inline(always)]
 #[cfg(feature = "nightly-simd")]
@@ -430,6 +169,47 @@ impl core::fmt::Display for EnumFromStrError {
         f.write_str("can't convert string to enum")
     }
 }
+
+macro_rules! impl_modifier_methods {
+    () => {
+        #[inline(always)]
+        pub const fn seed(self, seed: i32) -> $crate::Seeded<Self> {
+            $crate::Seeded { noise: self, seed }
+        }
+
+        #[inline(always)]
+        pub const fn frequency(self, frequency: f32) -> $crate::Frequency<Self> {
+            $crate::Frequency { noise: self, frequency }
+        }
+
+        #[inline(always)]
+        pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::fractal::Fbm<Self> {
+            $crate::fractal::Fbm::new(self, octaves, gain, lacunarity)
+        }
+
+        #[inline(always)]
+        pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::fractal::Ridged<Self> {
+            $crate::fractal::Ridged::new(self, octaves, gain, lacunarity)
+        }
+
+        #[inline(always)]
+        pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> $crate::fractal::PingPong<Self> {
+            $crate::fractal::PingPong::new(self, octaves, gain, lacunarity, strength)
+        }
+    };
+}
+
+macro_rules! impl_modifier_methods_tileable {
+    () => {
+        #[inline(always)]
+        pub const fn tileable(self, width: f32, height: f32) -> $crate::Tileable<Self> {
+            $crate::Tileable::new(self, width, height)
+        }
+    };
+}
+
+pub(crate) use impl_modifier_methods;
+pub(crate) use impl_modifier_methods_tileable;
 
 #[cfg(test)]
 mod tests;

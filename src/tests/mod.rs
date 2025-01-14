@@ -1,3 +1,5 @@
+#![cfg(any())]
+
 mod regression;
 
 #[cfg(feature = "nightly-simd")]

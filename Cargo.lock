@@ -60,13 +60,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "inspect-asm"
-version = "0.0.0"
-dependencies = [
- "noise-functions",
-]
-
-[[package]]
 name = "libm"
 version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"

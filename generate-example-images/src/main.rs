@@ -46,9 +46,9 @@ fn save_jpg_tileable(name: &str, noise: impl Sample2) {
 }
 
 fn main() {
-    save_jpg("cell_distance_sq", CellDistanceSq);
-    save_jpg("cell_distance", CellDistance);
-    save_jpg("cell_value", CellValue);
+    save_jpg("cell_distance_sq", FastCellDistanceSq::default());
+    save_jpg("cell_distance", FastCellDistance::default());
+    save_jpg("cell_value", FastCellValue::default());
     save_jpg("perlin", Perlin);
     save_jpg("open_simplex_2", OpenSimplex2);
     save_jpg("open_simplex_2s", OpenSimplex2s);
@@ -84,10 +84,10 @@ fn main() {
 
     save_jpg_tileable("tileable_value", Value.seed(12).tileable(3.0, 3.0).frequency(2.0));
 
-    save_jpg_tileable("tileable_cell_value", CellValue.seed(12).tileable(2.15, 2.15).frequency(2.15 * 2.0 / 3.0));
+    save_jpg_tileable("tileable_cell_value", CellValue::default().seed(12).tileable(2.15, 2.15).frequency(2.15 * 2.0 / 3.0));
 
     save_jpg_tileable(
         "tileable_cell_distance_sq",
-        NoiseFn(|point: [f32; 2]| (CellDistanceSq.seed(12).tileable(2.0, 2.0).frequency(2.0 * 2.0 / 3.0).sample2(point) - 0.4) * 2.5),
+        NoiseFn(|point: [f32; 2]| (CellDistance::default().seed(12).tileable(2.0, 2.0).frequency(2.0 * 2.0 / 3.0).sample2(point) - 0.4) * 2.5),
     );
 }

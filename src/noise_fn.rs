@@ -1,4 +1,4 @@
-use crate::private_prelude::*;
+use crate::{impl_modifier_methods, impl_modifier_methods_tileable, Sample, Seeded};
 
 /// Wraps a function to make it implement [`Sample`].
 ///
@@ -23,7 +23,8 @@ use crate::private_prelude::*;
 pub struct NoiseFn<F>(pub F);
 
 impl<F> NoiseFn<F> {
-    impl_modifiers!();
+    impl_modifier_methods!();
+    impl_modifier_methods_tileable!();
 }
 
 impl<const DIM: usize, Point, F> Sample<DIM, Point> for NoiseFn<F>

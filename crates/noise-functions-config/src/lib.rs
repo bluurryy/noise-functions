@@ -89,22 +89,18 @@ impl std::error::Error for EnumFromStrError {}
 
 simple_enum! {
     enum Noise {
-        CellDistance,
-        CellDistanceSq,
-        CellValue,
-        OpenSimplex2,
-        OpenSimplex2s,
-        #[default]
-        Perlin,
         Value,
         ValueCubic,
-        NewPerlin,
-        NewValue,
-        NewCellValue,
-        NewCellDistance,
-        NewOpenSimplex2,
-        NewOpenSimplex2s,
-        NewSimplex,
+        #[default]
+        Perlin,
+        Simplex,
+        OpenSimplex2,
+        OpenSimplex2s,
+        CellValue,
+        CellDistance,
+        FastCellValue,
+        FastCellDistance,
+        FastCellDistanceSq,
     }
 }
 
@@ -210,7 +206,12 @@ macro_rules! make_ridged {
 
 macro_rules! make_ping_pong {
     ($self:ident, $noise:expr) => {
-        make!($self, $noise.ping_pong($self.octaves, $self.gain, $self.lacunarity, $self.ping_pong_strength).weighted($self.weighted_strength))
+        make!(
+            $self,
+            $noise
+                .ping_pong($self.octaves, $self.gain, $self.lacunarity, $self.ping_pong_strength)
+                .weighted($self.weighted_strength)
+        )
     };
 }
 
@@ -220,21 +221,20 @@ macro_rules! make_fractal2 {
             match $self.noise {
                 Noise::Value => $macro!($self, Value.tileable($self.tile_width, $self.tile_height)),
                 Noise::Perlin => $macro!($self, Perlin.tileable($self.tile_width, $self.tile_height)),
-                Noise::CellValue => $macro!($self, CellValue.tileable($self.tile_width, $self.tile_height)),
-                Noise::CellDistance => $macro!($self, CellDistance.tileable($self.tile_width, $self.tile_height)),
-                Noise::CellDistanceSq => $macro!($self, CellDistanceSq.tileable($self.tile_width, $self.tile_height)),
-                Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin.tileable($self.tile_width, $self.tile_height)),
-                Noise::NewValue => $macro!($self, from_fast_noise_2::Value.tileable($self.tile_width, $self.tile_height)),
-                Noise::NewCellValue => $macro!($self, $self.new_cell_value().tileable($self.tile_width, $self.tile_height)),
-                Noise::NewCellDistance => $macro!($self, $self.new_cell_distance().tileable($self.tile_width, $self.tile_height)),
-                Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex.tileable($self.tile_width, $self.tile_height)),
+                Noise::Simplex => $macro!($self, Simplex.tileable($self.tile_width, $self.tile_height)),
+                Noise::CellValue => $macro!($self, $self.new_cell_value().tileable($self.tile_width, $self.tile_height)),
+                Noise::CellDistance => $macro!($self, $self.new_cell_distance().tileable($self.tile_width, $self.tile_height)),
+                Noise::FastCellValue => $macro!($self, FastCellValue::default().jitter($self.jitter).tileable($self.tile_width, $self.tile_height)),
+                Noise::FastCellDistance => $macro!($self, FastCellDistance::default().jitter($self.jitter).tileable($self.tile_width, $self.tile_height)),
+                Noise::FastCellDistanceSq => $macro!($self, FastCellDistanceSq::default().jitter($self.jitter).tileable($self.tile_width, $self.tile_height)),
                 _ => None,
             }
         } else {
             match $self.noise {
-                Noise::CellDistanceSq => $macro!($self, CellDistanceSq.jitter($self.jitter)),
-                Noise::CellDistance => $macro!($self, CellDistance.jitter($self.jitter)),
-                Noise::CellValue => $macro!($self, CellValue.jitter($self.jitter)),
+                Noise::Value => $macro!($self, Value),
+                Noise::ValueCubic => $macro!($self, ValueCubic),
+                Noise::Perlin => $macro!($self, Perlin),
+                Noise::Simplex => $macro!($self, Simplex),
                 Noise::OpenSimplex2 => match $self.improve {
                     Improve::None => $macro!($self, OpenSimplex2),
                     Improve::Xy => $macro!($self, OpenSimplex2.improve_xy()),
@@ -245,16 +245,11 @@ macro_rules! make_fractal2 {
                     Improve::Xy => $macro!($self, OpenSimplex2s.improve_xy()),
                     Improve::Xz => $macro!($self, OpenSimplex2s.improve_xz()),
                 },
-                Noise::Perlin => $macro!($self, Perlin),
-                Noise::ValueCubic => $macro!($self, ValueCubic),
-                Noise::Value => $macro!($self, Value),
-                Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
-                Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
-                Noise::NewCellValue => $macro!($self, $self.new_cell_value()),
-                Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
-                Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
-                Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
-                Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex),
+                Noise::CellValue => $macro!($self, $self.new_cell_value()),
+                Noise::CellDistance => $macro!($self, $self.new_cell_distance()),
+                Noise::FastCellValue => $macro!($self, FastCellValue::default().jitter($self.jitter)),
+                Noise::FastCellDistance => $macro!($self, FastCellDistance::default().jitter($self.jitter)),
+                Noise::FastCellDistanceSq => $macro!($self, FastCellDistanceSq::default().jitter($self.jitter)),
             }
         }
     };
@@ -277,9 +272,10 @@ macro_rules! make_fractal3 {
             None
         } else {
             match $self.noise {
-                Noise::CellDistanceSq => $macro!($self, CellDistanceSq.jitter($self.jitter)),
-                Noise::CellDistance => $macro!($self, CellDistance.jitter($self.jitter)),
-                Noise::CellValue => $macro!($self, CellValue.jitter($self.jitter)),
+                Noise::Value => $macro!($self, Value),
+                Noise::ValueCubic => $macro!($self, ValueCubic),
+                Noise::Perlin => $macro!($self, Perlin),
+                Noise::Simplex => $macro!($self, Simplex),
                 Noise::OpenSimplex2 => match $self.improve {
                     Improve::None => $macro!($self, OpenSimplex2),
                     Improve::Xy => $macro!($self, OpenSimplex2.improve_xy()),
@@ -290,16 +286,11 @@ macro_rules! make_fractal3 {
                     Improve::Xy => $macro!($self, OpenSimplex2s.improve_xy()),
                     Improve::Xz => $macro!($self, OpenSimplex2s.improve_xz()),
                 },
-                Noise::Perlin => $macro!($self, Perlin),
-                Noise::ValueCubic => $macro!($self, ValueCubic),
-                Noise::Value => $macro!($self, Value),
-                Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
-                Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
-                Noise::NewCellValue => $macro!($self, $self.new_cell_value()),
-                Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
-                Noise::NewOpenSimplex2 => $macro!($self, from_fast_noise_2::OpenSimplex2),
-                Noise::NewOpenSimplex2s => $macro!($self, from_fast_noise_2::OpenSimplex2s),
-                Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex),
+                Noise::CellValue => $macro!($self, $self.new_cell_value()),
+                Noise::CellDistance => $macro!($self, $self.new_cell_distance()),
+                Noise::FastCellValue => $macro!($self, FastCellValue::default().jitter($self.jitter)),
+                Noise::FastCellDistance => $macro!($self, FastCellDistance::default().jitter($self.jitter)),
+                Noise::FastCellDistanceSq => $macro!($self, FastCellDistanceSq::default().jitter($self.jitter)),
             }
         }
     };
@@ -321,14 +312,12 @@ macro_rules! make_fractal4 {
         match $self.noise {
             Noise::Value => $macro!($self, Value),
             Noise::Perlin => $macro!($self, Perlin),
-            Noise::CellValue => $macro!($self, CellValue),
-            Noise::CellDistance => $macro!($self, CellDistance),
-            Noise::CellDistanceSq => $macro!($self, CellDistanceSq),
-            Noise::NewPerlin => $macro!($self, from_fast_noise_2::Perlin),
-            Noise::NewValue => $macro!($self, from_fast_noise_2::Value),
-            Noise::NewCellValue => $macro!($self, $self.new_cell_value()),
-            Noise::NewCellDistance => $macro!($self, $self.new_cell_distance()),
-            Noise::NewSimplex => $macro!($self, from_fast_noise_2::Simplex),
+            Noise::Simplex => $macro!($self, Simplex),
+            Noise::CellValue => $macro!($self, $self.new_cell_value()),
+            Noise::CellDistance => $macro!($self, $self.new_cell_distance()),
+            Noise::FastCellValue => $macro!($self, FastCellValue::default().jitter($self.jitter)),
+            Noise::FastCellDistance => $macro!($self, FastCellDistance::default().jitter($self.jitter)),
+            Noise::FastCellDistanceSq => $macro!($self, FastCellDistanceSq::default().jitter($self.jitter)),
             _ => None,
         }
     };
@@ -355,16 +344,16 @@ pub trait AnySampleA: Sample<2> + Sample<3> + Sample<2, f32x2> + Sample<3, f32x4
 impl<T> AnySampleA for T where T: Sample<2> + Sample<3> + Sample<2, f32x2> + Sample<3, f32x4> {}
 
 impl Config {
-    fn new_cell_value(&self) -> from_fast_noise_2::CellValue {
-        from_fast_noise_2::CellValue {
+    fn new_cell_value(&self) -> CellValue {
+        CellValue {
             jitter: self.jitter,
             distance_fn: self.distance_fn,
             value_index: self.value_index,
         }
     }
 
-    fn new_cell_distance(&self) -> from_fast_noise_2::CellDistance {
-        from_fast_noise_2::CellDistance {
+    fn new_cell_distance(&self) -> CellDistance {
+        CellDistance {
             jitter: self.jitter,
             distance_fn: self.distance_fn,
             distance_indices: self.distance_indices,

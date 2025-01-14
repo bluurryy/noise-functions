@@ -1,4 +1,4 @@
-use crate::private_prelude::*;
+use crate::{Frequency, Tileable};
 
 /// Wraps a noise with a seed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

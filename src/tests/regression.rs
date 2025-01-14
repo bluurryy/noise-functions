@@ -166,7 +166,10 @@ fn fbm_weighted() {
                                 if reference != ours {
                                     let reference = basic_noise.get_noise_3d(x, y, z);
                                     let ours = gen3(x, y, z);
-                                    assert_eq!(reference, ours, "gain={gain} weighted_strength={weighted_strength} lacunarity={lacunarity} octaves={octaves} x={x} y={y} z={z}");
+                                    assert_eq!(
+                                        reference, ours,
+                                        "gain={gain} weighted_strength={weighted_strength} lacunarity={lacunarity} octaves={octaves} x={x} y={y} z={z}"
+                                    );
                                 }
                             }
                         }

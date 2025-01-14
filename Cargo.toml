@@ -52,7 +52,6 @@ pre-release-replacements = [
 [workspace]
 members = [
   "crates/test-no_std",
-  "crates/inspect-asm",
   "crates/noise-functions-config",
   "generate-example-images",
 ]
