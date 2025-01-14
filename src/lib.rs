@@ -27,10 +27,10 @@
 //! let value = Perlin.frequency(3.0).sample2(point);
 //!
 //! // cell distance (voronoi/worley) noise
-//! let value = CellDistance.sample2(point);
+//! let value = CellDistance::default().sample2(point);
 //!
 //! // cell distance (voronoi/worley) noise with jitter multiplier
-//! let value = CellDistance.jitter(0.5).sample2(point);
+//! let value = CellDistance::default().jitter(0.5).sample2(point);
 //!
 //! // domain warped OpenSimplex2s noise
 //! let warped_noise = |point: [f32; 2]| {
