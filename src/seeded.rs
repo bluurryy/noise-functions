@@ -1,4 +1,4 @@
-use crate::{Frequency, Tileable};
+use crate::{Frequency, Sample, SampleWithSeed, Tileable};
 
 /// Wraps a noise with a seed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -16,5 +16,11 @@ impl<Noise> Seeded<Noise> {
     #[inline(always)]
     pub const fn tileable(self, width: f32, height: f32) -> Tileable<Self> {
         Tileable::new(self, width, height)
+    }
+}
+
+impl<const DIM: usize, Point, Noise: SampleWithSeed<DIM, Point>> Sample<DIM, Point> for Seeded<Noise> {
+    fn sample(&self, point: Point) -> f32 {
+        self.noise.sample_with_seed(point, self.seed)
     }
 }

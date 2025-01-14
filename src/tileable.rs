@@ -1,7 +1,7 @@
 use crate::{
     impl_modifier_methods, impl_modifier_methods_tileable,
     math::{cos, sin},
-    Sample, Seeded,
+    Sample, SampleWithSeed,
 };
 
 use core::f32::consts::{PI, TAU};
@@ -53,29 +53,12 @@ where
     }
 }
 
-impl<Noise> Sample<2> for Seeded<Tileable<Noise>>
+impl<Noise> SampleWithSeed<2> for Tileable<Noise>
 where
-    for<'a> Seeded<&'a Noise>: Sample<4>,
+    Noise: SampleWithSeed<4>,
 {
-    fn sample(&self, point: [f32; 2]) -> f32 {
-        Seeded {
-            noise: &self.noise.noise,
-            seed: self.seed,
-        }
-        .sample(self.noise.map_point(point))
-    }
-}
-
-impl<Noise> Sample<2> for Seeded<&Tileable<Noise>>
-where
-    for<'a> Seeded<&'a Noise>: Sample<4>,
-{
-    fn sample(&self, point: [f32; 2]) -> f32 {
-        Seeded {
-            noise: &self.noise.noise,
-            seed: self.seed,
-        }
-        .sample(self.noise.map_point(point))
+    fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
+        self.noise.sample_with_seed(self.map_point(point), seed)
     }
 }
 
@@ -90,29 +73,11 @@ where
 }
 
 #[cfg(feature = "nightly-simd")]
-impl<Noise> Sample<2, f32x2> for Seeded<Tileable<Noise>>
+impl<Noise> SampleWithSeed<2, f32x2> for Tileable<Noise>
 where
-    for<'a> Seeded<&'a Noise>: Sample<4, f32x4>,
+    Noise: SampleWithSeed<4, f32x4>,
 {
-    fn sample(&self, point: f32x2) -> f32 {
-        Seeded {
-            noise: &self.noise.noise,
-            seed: self.seed,
-        }
-        .sample(self.noise.map_point(point.into()).into())
-    }
-}
-
-#[cfg(feature = "nightly-simd")]
-impl<Noise> Sample<2, f32x2> for Seeded<&Tileable<Noise>>
-where
-    for<'a> Seeded<&'a Noise>: Sample<4, f32x4>,
-{
-    fn sample(&self, point: f32x2) -> f32 {
-        Seeded {
-            noise: &self.noise.noise,
-            seed: self.seed,
-        }
-        .sample(self.noise.map_point(point.into()).into())
+    fn sample_with_seed(&self, point: f32x2, seed: i32) -> f32 {
+        self.noise.sample_with_seed(self.map_point(point.into()).into(), seed)
     }
 }

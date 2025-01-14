@@ -91,7 +91,7 @@ pub use frequency::Frequency;
 pub use noise_fn::NoiseFn;
 pub use tileable::Tileable;
 
-pub use sample::{Sample, Sample2, Sample3, Sample4};
+pub use sample::{Sample, Sample2, Sample3, Sample4, SampleWithSeed};
 pub use seeded::Seeded;
 
 pub use base::{CellDistance, CellValue, FastCellDistance, FastCellDistanceSq, FastCellValue, OpenSimplex2, OpenSimplex2s, Perlin, Simplex, Value, ValueCubic};

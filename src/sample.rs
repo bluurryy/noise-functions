@@ -74,3 +74,8 @@ helper_trait!(
     sample4a,
     4 as f32x4 as f32x4
 );
+
+/// Trait for sampling noises with a seed.
+pub trait SampleWithSeed<const DIM: usize, Point = [f32; DIM]>: Sample<DIM, Point> {
+    fn sample_with_seed(&self, point: Point, seed: i32) -> f32;
+}

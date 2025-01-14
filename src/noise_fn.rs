@@ -1,4 +1,4 @@
-use crate::{impl_modifier_methods, impl_modifier_methods_tileable, Sample, Seeded};
+use crate::{impl_modifier_methods, impl_modifier_methods_tileable, Sample, SampleWithSeed};
 
 /// Wraps a function to make it implement [`Sample`].
 ///
@@ -20,14 +20,14 @@ use crate::{impl_modifier_methods, impl_modifier_methods_tileable, Sample, Seede
 ///
 /// let value = warped_fbm.sample2([1.0, 2.0]);
 /// ```
-pub struct NoiseFn<F>(pub F);
+pub struct NoiseFn<F, const WITH_SEED: bool>(pub F);
 
-impl<F> NoiseFn<F> {
+impl<F, const WITH_SEED: bool> NoiseFn<F, WITH_SEED> {
     impl_modifier_methods!();
     impl_modifier_methods_tileable!();
 }
 
-impl<const DIM: usize, Point, F> Sample<DIM, Point> for NoiseFn<F>
+impl<const DIM: usize, Point, F> Sample<DIM, Point> for NoiseFn<F, false>
 where
     F: Fn(Point) -> f32,
 {
@@ -36,22 +36,20 @@ where
     }
 }
 
-impl<const DIM: usize, Point, F> Sample<DIM, Point> for Seeded<NoiseFn<F>>
+impl<const DIM: usize, Point, F> Sample<DIM, Point> for NoiseFn<F, true>
 where
     F: Fn(Point, i32) -> f32,
 {
     fn sample(&self, point: Point) -> f32 {
-        let &Seeded { ref noise, seed } = self;
-        noise.0(point, seed)
+        self.0(point, 0)
     }
 }
 
-impl<const DIM: usize, Point, F> Sample<DIM, Point> for Seeded<&NoiseFn<F>>
+impl<const DIM: usize, Point, F> SampleWithSeed<DIM, Point> for NoiseFn<F, true>
 where
     F: Fn(Point, i32) -> f32,
 {
-    fn sample(&self, point: Point) -> f32 {
-        let &Seeded { noise, seed } = self;
-        noise.0(point, seed)
+    fn sample_with_seed(&self, point: Point, seed: i32) -> f32 {
+        self.0(point, seed)
     }
 }

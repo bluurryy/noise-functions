@@ -4,7 +4,7 @@ use core::simd::{LaneCount, Simd, SupportedLaneCount};
 use crate::{
     fractal::Weighted,
     math::{lerp, trunc},
-    Frequency, Sample, Seeded,
+    Frequency, Sample, SampleWithSeed, Seeded,
 };
 
 #[cfg(feature = "nightly-simd")]
@@ -53,7 +53,7 @@ impl<Noise> PingPong<Noise> {
 
 impl<Noise, const DIM: usize> Sample<DIM, [f32; DIM]> for PingPong<Noise>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM, [f32; DIM]>,
 {
     #[inline]
     fn sample(&self, point: [f32; DIM]) -> f32 {
@@ -71,24 +71,20 @@ where
     }
 }
 
-impl<Noise, const DIM: usize> Sample<DIM, [f32; DIM]> for Seeded<PingPong<Noise>>
+impl<Noise, const DIM: usize> SampleWithSeed<DIM, [f32; DIM]> for PingPong<Noise>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM, [f32; DIM]>,
 {
     #[inline]
-    fn sample(&self, point: [f32; DIM]) -> f32 {
-        let &Seeded {
-            noise:
-                PingPong {
-                    ref noise,
-                    octaves,
-                    gain,
-                    lacunarity,
-                    fractal_bounding,
-                    strength,
-                    ..
-                },
-            seed,
+    fn sample_with_seed(&self, point: [f32; DIM], seed: i32) -> f32 {
+        let &PingPong {
+            ref noise,
+            octaves,
+            gain,
+            lacunarity,
+            fractal_bounding,
+            strength,
+            ..
         } = self;
 
         ping_pong(noise, octaves, gain, lacunarity, fractal_bounding, strength, seed, point)
@@ -97,7 +93,7 @@ where
 
 impl<Noise, const DIM: usize> Sample<DIM, [f32; DIM]> for Weighted<PingPong<Noise>>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM, [f32; DIM]>,
 {
     #[inline]
     fn sample(&self, point: [f32; DIM]) -> f32 {
@@ -118,27 +114,23 @@ where
     }
 }
 
-impl<Noise, const DIM: usize> Sample<DIM, [f32; DIM]> for Seeded<Weighted<PingPong<Noise>>>
+impl<Noise, const DIM: usize> SampleWithSeed<DIM, [f32; DIM]> for Weighted<PingPong<Noise>>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM, [f32; DIM]>,
 {
     #[inline]
-    fn sample(&self, point: [f32; DIM]) -> f32 {
-        let &Seeded {
-            noise:
-                Weighted {
-                    fractal:
-                        PingPong {
-                            ref noise,
-                            octaves,
-                            gain,
-                            lacunarity,
-                            fractal_bounding,
-                            strength,
-                        },
-                    strength: weighted_strength,
+    fn sample_with_seed(&self, point: [f32; DIM], seed: i32) -> f32 {
+        let &Weighted {
+            fractal:
+                PingPong {
+                    ref noise,
+                    octaves,
+                    gain,
+                    lacunarity,
+                    fractal_bounding,
+                    strength,
                 },
-            seed,
+            strength: weighted_strength,
         } = self;
 
         weighted_ping_pong(noise, octaves, gain, lacunarity, fractal_bounding, strength, weighted_strength, seed, point)
@@ -148,7 +140,7 @@ where
 #[cfg(feature = "nightly-simd")]
 impl<Noise, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for PingPong<Noise>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
+    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
@@ -168,24 +160,20 @@ where
 }
 
 #[cfg(feature = "nightly-simd")]
-impl<Noise, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for Seeded<PingPong<Noise>>
+impl<Noise, const DIM: usize, const LANES: usize> SampleWithSeed<DIM, Simd<f32, LANES>> for PingPong<Noise>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
+    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
-    fn sample(&self, point: Simd<f32, LANES>) -> f32 {
-        let &Seeded {
-            noise:
-                PingPong {
-                    ref noise,
-                    octaves,
-                    gain,
-                    lacunarity,
-                    fractal_bounding,
-                    strength,
-                },
-            seed,
+    fn sample_with_seed(&self, point: Simd<f32, LANES>, seed: i32) -> f32 {
+        let &PingPong {
+            ref noise,
+            octaves,
+            gain,
+            lacunarity,
+            fractal_bounding,
+            strength,
         } = self;
 
         ping_pong_a(noise, octaves, gain, lacunarity, fractal_bounding, strength, seed, point)
@@ -195,7 +183,7 @@ where
 #[cfg(feature = "nightly-simd")]
 impl<Noise, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for Weighted<PingPong<Noise>>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
+    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
@@ -218,28 +206,24 @@ where
 }
 
 #[cfg(feature = "nightly-simd")]
-impl<Noise, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for Seeded<Weighted<PingPong<Noise>>>
+impl<Noise, const DIM: usize, const LANES: usize> SampleWithSeed<DIM, Simd<f32, LANES>> for Weighted<PingPong<Noise>>
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
+    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
-    fn sample(&self, point: Simd<f32, LANES>) -> f32 {
-        let &Seeded {
-            noise:
-                Weighted {
-                    fractal:
-                        PingPong {
-                            ref noise,
-                            octaves,
-                            gain,
-                            lacunarity,
-                            fractal_bounding,
-                            strength,
-                        },
-                    strength: weighted_strength,
+    fn sample_with_seed(&self, point: Simd<f32, LANES>, seed: i32) -> f32 {
+        let &Weighted {
+            fractal:
+                PingPong {
+                    ref noise,
+                    octaves,
+                    gain,
+                    lacunarity,
+                    fractal_bounding,
+                    strength,
                 },
-            seed,
+            strength: weighted_strength,
         } = self;
 
         weighted_ping_pong_a(noise, octaves, gain, lacunarity, fractal_bounding, strength, weighted_strength, seed, point)
@@ -259,13 +243,13 @@ fn do_ping_pong(t: f32) -> f32 {
 #[inline(always)]
 fn ping_pong<Noise, const DIM: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, strength: f32, mut seed: i32, mut point: [f32; DIM]) -> f32
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM, [f32; DIM]>,
 {
     let mut sum = 0.0;
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = do_ping_pong((Seeded { noise, seed }.sample(point) + 1.0) * strength);
+        let noise = do_ping_pong((noise.sample_with_seed(point, seed) + 1.0) * strength);
         seed = seed.wrapping_add(1);
         sum += (noise - 0.5) * 2.0 * amp;
         amp *= noise;
@@ -293,14 +277,14 @@ fn ping_pong_a<Noise, const DIM: usize, const LANES: usize>(
     mut point: Simd<f32, LANES>,
 ) -> f32
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
+    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     let mut sum = 0.0;
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = do_ping_pong((Seeded { noise, seed }.sample(point) + 1.0) * strength);
+        let noise = do_ping_pong((noise.sample_with_seed(point, seed) + 1.0) * strength);
         seed = seed.wrapping_add(1);
         sum += (noise - 0.5) * 2.0 * amp;
         amp *= noise;
@@ -325,13 +309,13 @@ fn weighted_ping_pong<Noise, const DIM: usize>(
     mut point: [f32; DIM],
 ) -> f32
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM, [f32; DIM]>,
 {
     let mut sum = 0.0;
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = do_ping_pong((Seeded { noise, seed }.sample(point) + 1.0) * strength);
+        let noise = do_ping_pong((noise.sample_with_seed(point, seed) + 1.0) * strength);
         seed = seed.wrapping_add(1);
         sum += (noise - 0.5) * 2.0 * amp;
         amp *= lerp(1.0, noise, weighted_strength);
@@ -360,14 +344,14 @@ fn weighted_ping_pong_a<Noise, const DIM: usize, const LANES: usize>(
     mut point: Simd<f32, LANES>,
 ) -> f32
 where
-    for<'a> Seeded<&'a Noise>: Sample<DIM, Simd<f32, LANES>>,
+    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     let mut sum = 0.0;
     let mut amp = fractal_bounding;
 
     for _ in 0..octaves {
-        let noise = do_ping_pong((Seeded { noise, seed }.sample(point) + 1.0) * strength);
+        let noise = do_ping_pong((noise.sample_with_seed(point, seed) + 1.0) * strength);
         seed = seed.wrapping_add(1);
         sum += (noise - 0.5) * 2.0 * amp;
         amp *= lerp(1.0, noise, weighted_strength);
