@@ -19,7 +19,7 @@ exclude = [
 ]
 
 [features]
-default = ["std", "nightly-simd"]
+default = ["std"]
 
 ## Uses floating point functions from the standard library.
 std = []
