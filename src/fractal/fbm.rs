@@ -9,6 +9,8 @@ use crate::{
 #[cfg(feature = "nightly-simd")]
 use crate::math::splat;
 
+use super::fractal_bounding;
+
 /// Fractal Brownian motion (fBm) noise.
 ///
 /// `fBm` noise is created by calling the base noise `octaves` amount of times with increasing frequency and decreasing amplitude.
@@ -22,6 +24,17 @@ pub struct Fbm<Noise> {
 }
 
 impl<Noise> Fbm<Noise> {
+    #[inline(always)]
+    pub const fn new(noise: Noise, octaves: u32, gain: f32, lacunarity: f32) -> Self {
+        Self {
+            noise,
+            octaves,
+            gain,
+            lacunarity,
+            fractal_bounding: fractal_bounding(octaves, gain),
+        }
+    }
+
     #[inline(always)]
     pub const fn seed(self, seed: i32) -> Seeded<Self> {
         Seeded { noise: self, seed }

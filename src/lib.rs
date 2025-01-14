@@ -239,5 +239,46 @@ impl core::fmt::Display for EnumFromStrError {
     }
 }
 
+macro_rules! impl_modifier_methods {
+    () => {
+        #[inline(always)]
+        pub const fn seed(self, seed: i32) -> $crate::Seeded<Self> {
+            $crate::Seeded { noise: self, seed }
+        }
+
+        #[inline(always)]
+        pub const fn frequency(self, frequency: f32) -> $crate::Frequency<Self> {
+            $crate::Frequency { noise: self, frequency }
+        }
+
+        #[inline(always)]
+        pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Fbm<Self> {
+            $crate::Fbm::new(self, octaves, gain, lacunarity)
+        }
+
+        #[inline(always)]
+        pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Ridged<Self> {
+            $crate::Ridged::new(self, octaves, gain, lacunarity)
+        }
+
+        #[inline(always)]
+        pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> $crate::PingPong<Self> {
+            $crate::PingPong::new(self, octaves, gain, lacunarity, strength)
+        }
+    };
+}
+
+macro_rules! impl_modifier_methods_tileable {
+    () => {
+        #[inline(always)]
+        pub const fn tileable(self, width: f32, height: f32) -> $crate::Tileable<Self> {
+            $crate::Tileable::new(self, width, height)
+        }
+    };
+}
+
+pub(crate) use impl_modifier_methods;
+pub(crate) use impl_modifier_methods_tileable;
+
 #[cfg(test)]
 mod tests;

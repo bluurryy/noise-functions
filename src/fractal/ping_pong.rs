@@ -9,6 +9,8 @@ use crate::{
 #[cfg(feature = "nightly-simd")]
 use crate::math::splat;
 
+use super::fractal_bounding;
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PingPong<Noise> {
     pub noise: Noise,
@@ -20,6 +22,18 @@ pub struct PingPong<Noise> {
 }
 
 impl<Noise> PingPong<Noise> {
+    #[inline(always)]
+    pub const fn new(noise: Noise, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> Self {
+        Self {
+            noise,
+            octaves,
+            gain,
+            lacunarity,
+            fractal_bounding: fractal_bounding(octaves, gain),
+            strength,
+        }
+    }
+
     #[inline(always)]
     pub const fn seed(self, seed: i32) -> Seeded<Self> {
         Seeded { noise: self, seed }

@@ -9,6 +9,13 @@ pub struct FastCellValue {
     pub jitter: f32,
 }
 
+impl FastCellValue {
+    pub const fn jitter(mut self, jitter: f32) -> Self {
+        self.jitter = jitter;
+        self
+    }
+}
+
 impl_noise!(234 FastCellValue);
 
 impl Default for FastCellValue {

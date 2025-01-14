@@ -11,6 +11,13 @@ pub struct FastCellDistanceSq {
     pub jitter: f32,
 }
 
+impl FastCellDistanceSq {
+    pub const fn jitter(mut self, jitter: f32) -> Self {
+        self.jitter = jitter;
+        self
+    }
+}
+
 impl Default for FastCellDistanceSq {
     fn default() -> Self {
         Self { jitter: 1.0 }

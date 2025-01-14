@@ -32,59 +32,12 @@ macro_rules! if_has_dim {
 }
 
 macro_rules! impl_noise {
-    ($dims:tt $struct:ident $(; $($extra:tt)*)?) => {
+    ($dims:tt $struct:ident) => {
         impl $struct {
-            #[inline(always)]
-            pub const fn seed(self, seed: i32) -> $crate::Seeded<Self> {
-                $crate::Seeded { noise: self, seed }
-            }
-
-            $($($extra)*)?
-
-            #[inline(always)]
-            pub const fn frequency(self, frequency: f32) -> $crate::Frequency<Self> {
-                $crate::Frequency { noise: self, frequency }
-            }
+            $crate::impl_modifier_methods!();
 
             $crate::base::if_has_dim! { 4 in $dims;
-                #[inline(always)]
-                pub const fn tileable(self, width: f32, height: f32) -> $crate::Tileable<Self> {
-                    $crate::Tileable::new(self, width, height)
-                }
-            }
-
-            #[inline(always)]
-            pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Fbm<Self> {
-                $crate::Fbm {
-                    noise: self,
-                    octaves,
-                    gain,
-                    lacunarity,
-                    fractal_bounding: $crate::fractal_bounding(octaves, gain),
-                }
-            }
-
-            #[inline(always)]
-            pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Ridged<Self> {
-                $crate::Ridged {
-                    noise: self,
-                    octaves,
-                    gain,
-                    lacunarity,
-                    fractal_bounding: $crate::fractal_bounding(octaves, gain),
-                }
-            }
-
-            #[inline(always)]
-            pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> $crate::PingPong<Self> {
-                $crate::PingPong {
-                    noise: self,
-                    octaves,
-                    gain,
-                    lacunarity,
-                    fractal_bounding: $crate::fractal_bounding(octaves, gain),
-                    strength,
-                }
+                $crate::impl_modifier_methods_tileable!();
             }
         }
 
