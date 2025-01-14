@@ -101,61 +101,6 @@ pub use cellular::{CellIndex, DistanceFn, DistanceReturnType};
 #[cfg(feature = "nightly-simd")]
 pub use sample::{Sample2a, Sample3a, Sample4a};
 
-macro_rules! impl_modifiers {
-    () => {
-        #[inline(always)]
-        pub const fn seed(self, seed: i32) -> $crate::Seeded<Self> {
-            $crate::Seeded { noise: self, seed }
-        }
-
-        #[inline(always)]
-        pub const fn frequency(self, frequency: f32) -> $crate::Frequency<Self> {
-            $crate::Frequency { noise: self, frequency }
-        }
-
-        #[inline(always)]
-        pub const fn tileable(self, width: f32, height: f32) -> $crate::Tileable<Self> {
-            $crate::Tileable::new(self, width, height)
-        }
-
-        #[inline(always)]
-        pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::fractal::Fbm<Self> {
-            $crate::fractal::Fbm {
-                noise: self,
-                octaves,
-                gain,
-                lacunarity,
-                fractal_bounding: $crate::fractal::fractal_bounding(octaves, gain),
-            }
-        }
-
-        #[inline(always)]
-        pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::fractal::Ridged<Self> {
-            $crate::fractal::Ridged {
-                noise: self,
-                octaves,
-                gain,
-                lacunarity,
-                fractal_bounding: $crate::fractal::fractal_bounding(octaves, gain),
-            }
-        }
-
-        #[inline(always)]
-        pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> $crate::fractal::PingPong<Self> {
-            $crate::fractal::PingPong {
-                noise: self,
-                octaves,
-                gain,
-                lacunarity,
-                fractal_bounding: $crate::fractal::fractal_bounding(octaves, gain),
-                strength,
-            }
-        }
-    };
-}
-
-pub(crate) use impl_modifiers;
-
 #[inline(always)]
 #[cfg(feature = "nightly-simd")]
 fn array_4_take_3<T>(array: &[T; 4]) -> &[T; 3] {

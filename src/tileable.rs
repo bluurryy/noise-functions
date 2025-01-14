@@ -1,5 +1,5 @@
 use crate::{
-    impl_modifiers,
+    impl_modifier_methods, impl_modifier_methods_tileable,
     math::{cos, sin},
     Sample, Seeded,
 };
@@ -32,7 +32,8 @@ impl<Noise> Tileable<Noise> {
         }
     }
 
-    impl_modifiers!();
+    impl_modifier_methods!();
+    impl_modifier_methods_tileable!();
 
     fn map_point(&self, [x, y]: [f32; 2]) -> [f32; 4] {
         let nx = cos(x * self.tau_div_width) * self.width_div_pi;
