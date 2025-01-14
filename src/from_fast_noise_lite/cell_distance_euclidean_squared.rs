@@ -1,4 +1,4 @@
-use super::{cell_neighbours, fast_min, hash2, hash3, round_to_int, Index2, Index3, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_2D, RAND_VECS_3D};
+use super::{cell_neighbours, fast_min, hash2, hash3, round_to_int, Index2, Index3, JITTER_2D, JITTER_3D, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_2D, RAND_VECS_3D};
 
 #[cfg(feature = "nightly-simd")]
 use super::{length_squared, splat};
@@ -8,6 +8,8 @@ use core::simd::{f32x2, f32x4};
 
 #[inline(always)]
 pub(crate) fn gen2(jitter: f32, [x, y]: [f32; 2], seed: i32) -> f32 {
+    let jitter = jitter * JITTER_2D;
+
     let xr: i32 = round_to_int(x);
     let yr: i32 = round_to_int(y);
 
@@ -37,6 +39,8 @@ pub(crate) fn gen2(jitter: f32, [x, y]: [f32; 2], seed: i32) -> f32 {
 
 #[inline(always)]
 pub(crate) fn gen3(jitter: f32, [x, y, z]: [f32; 3], seed: i32) -> f32 {
+    let jitter = jitter * JITTER_3D;
+
     let xr: i32 = round_to_int(x);
     let yr: i32 = round_to_int(y);
     let zr: i32 = round_to_int(z);
@@ -76,6 +80,8 @@ pub(crate) fn gen3(jitter: f32, [x, y, z]: [f32; 3], seed: i32) -> f32 {
 #[inline(always)]
 #[cfg(feature = "nightly-simd")]
 pub(crate) fn gen2a(jitter: f32, point: f32x2, seed: i32) -> f32 {
+    let jitter = jitter * JITTER_2D;
+
     let rounded = round_to_int(point);
     let mut distance: f32 = 1e10;
 
@@ -104,6 +110,8 @@ pub(crate) fn gen2a(jitter: f32, point: f32x2, seed: i32) -> f32 {
 #[inline(always)]
 #[cfg(feature = "nightly-simd")]
 pub(crate) fn gen3a(jitter: f32, point: f32x4, seed: i32) -> f32 {
+    let jitter = jitter * JITTER_3D;
+
     let rounded = round_to_int(point);
     let mut distance: f32 = 1e10;
 

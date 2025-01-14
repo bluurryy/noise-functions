@@ -63,6 +63,9 @@ pub(crate) const PRIME_X: i32 = 501125321;
 pub(crate) const PRIME_Y: i32 = 1136930381;
 pub(crate) const PRIME_Z: i32 = 1720413743;
 
+pub(crate) const JITTER_2D: f32 = 0.43701595;
+pub(crate) const JITTER_3D: f32 = 0.39614353;
+
 #[inline(always)]
 pub fn hash2(seed: i32, x_primed: i32, y_primed: i32) -> i32 {
     let mut hash = seed ^ x_primed ^ y_primed;

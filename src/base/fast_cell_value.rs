@@ -28,7 +28,9 @@ impl FastCellValue {
     #[inline]
     fn gen2(self, [x, y]: [f32; 2], seed: i32) -> f32 {
         // implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{cell_neighbours, hash2, round_to_int, Index2, PRIME_X, PRIME_Y, RAND_VECS_2D};
+        use crate::from_fast_noise_lite::{cell_neighbours, hash2, round_to_int, Index2, JITTER_2D, PRIME_X, PRIME_Y, RAND_VECS_2D};
+
+        let jitter = self.jitter * JITTER_2D;
 
         let xr: i32 = round_to_int(x);
         let yr: i32 = round_to_int(y);
@@ -46,8 +48,8 @@ impl FastCellValue {
                 let hash: i32 = hash2(seed, x_primed, y_primed);
                 let [rand_x, rand_y] = *RAND_VECS_2D[Index2::new(hash)].as_array();
 
-                let vec_x: f32 = (xi as f32 - x) + rand_x * self.jitter;
-                let vec_y: f32 = (yi as f32 - y) + rand_y * self.jitter;
+                let vec_x: f32 = (xi as f32 - x) + rand_x * jitter;
+                let vec_y: f32 = (yi as f32 - y) + rand_y * jitter;
 
                 let new_distance: f32 = vec_x * vec_x + vec_y * vec_y;
 
@@ -67,7 +69,9 @@ impl FastCellValue {
     #[inline]
     fn gen3(self, [x, y, z]: [f32; 3], seed: i32) -> f32 {
         // implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{cell_neighbours, hash3, round_to_int, Index3, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_3D};
+        use crate::from_fast_noise_lite::{cell_neighbours, hash3, round_to_int, Index3, JITTER_3D, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_3D};
+
+        let jitter = self.jitter * JITTER_3D;
 
         let xr: i32 = round_to_int(x);
         let yr: i32 = round_to_int(y);
@@ -90,9 +94,9 @@ impl FastCellValue {
                     let hash: i32 = hash3(seed, x_primed, y_primed, z_primed);
                     let [rand_x, rand_y, rand_z, _] = *RAND_VECS_3D[Index3::new(hash)].as_array();
 
-                    let vec_x: f32 = (xi as f32 - x) + rand_x * self.jitter;
-                    let vec_y: f32 = (yi as f32 - y) + rand_y * self.jitter;
-                    let vec_z: f32 = (zi as f32 - z) + rand_z * self.jitter;
+                    let vec_x: f32 = (xi as f32 - x) + rand_x * jitter;
+                    let vec_y: f32 = (yi as f32 - y) + rand_y * jitter;
+                    let vec_z: f32 = (zi as f32 - z) + rand_z * jitter;
 
                     let new_distance: f32 = vec_x * vec_x + vec_y * vec_y + vec_z * vec_z;
 
@@ -120,7 +124,9 @@ impl FastCellValue {
     #[cfg(feature = "nightly-simd")]
     fn gen2a(self, point: f32x2, seed: i32) -> f32 {
         // based on the implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{cell_neighbours, hash2, length_squared, round_to_int, splat, Index2, PRIME_X, PRIME_Y, RAND_VECS_2D};
+        use crate::from_fast_noise_lite::{cell_neighbours, hash2, length_squared, round_to_int, splat, Index2, JITTER_2D, PRIME_X, PRIME_Y, RAND_VECS_2D};
+
+        let jitter = self.jitter * JITTER_2D;
 
         let rounded = round_to_int(point);
         let mut distance: f32 = 1e10;
@@ -136,7 +142,7 @@ impl FastCellValue {
                 let hash = hash2(seed, x_primed, y_primed);
                 let rand = RAND_VECS_2D[Index2::new(hash)].0;
                 let coor = f32x2::from_array([xi as f32, yi as f32]);
-                let vec = (coor - point) + rand * splat(self.jitter);
+                let vec = (coor - point) + rand * splat(jitter);
                 let new_distance = length_squared(vec);
 
                 if new_distance < distance {
@@ -156,7 +162,9 @@ impl FastCellValue {
     #[cfg(feature = "nightly-simd")]
     fn gen3a(self, point: f32x4, seed: i32) -> f32 {
         // based on the implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{cell_neighbours, hash3, length_squared, round_to_int, splat, Index3, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_3D};
+        use crate::from_fast_noise_lite::{cell_neighbours, hash3, length_squared, round_to_int, splat, Index3, JITTER_3D, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_3D};
+
+        let jitter = self.jitter * JITTER_3D;
 
         let rounded = round_to_int(point);
 
@@ -177,7 +185,7 @@ impl FastCellValue {
                     let hash = hash3(seed, x_primed, y_primed, z_primed);
                     let rand = RAND_VECS_3D[Index3::new(hash)].0;
                     let coor = f32x4::from_array([xi as f32, yi as f32, zi as f32, zi as f32]);
-                    let vec = (coor - point) + rand * splat(self.jitter);
+                    let vec = (coor - point) + rand * splat(jitter);
                     let new_distance = length_squared(vec);
 
                     if new_distance < distance {
