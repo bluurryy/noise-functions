@@ -1,4 +1,3 @@
-pub mod cell;
 mod cell_distance;
 mod cell_value;
 mod fast_cell_distance;

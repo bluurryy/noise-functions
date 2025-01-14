@@ -1,9 +1,9 @@
-use crate::{base::impl_noise, from_fast_noise_lite::cell_distance_euclidean_squared};
+use crate::{base::impl_noise, cellular::DistanceFn, from_fast_noise_lite::cell_distance_euclidean_squared};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
-use super::{cell::DistanceFn, CellDistance};
+use super::CellDistance;
 
 /// 2/3/4 dimensional noise of the squared distance to the closest cell
 #[derive(Debug, Clone, Copy, PartialEq)]

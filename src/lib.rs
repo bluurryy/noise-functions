@@ -78,6 +78,7 @@ mod noise_fn;
 pub mod from_fast_noise_2;
 
 mod base;
+mod cellular;
 mod from_fast_noise_lite;
 /// OpenSimplex2 noise functions and combinators.
 pub mod open_simplex_2;
@@ -94,6 +95,8 @@ pub use sample::{Sample, Sample2, Sample3, Sample4};
 pub use seeded::Seeded;
 
 pub use base::{CellDistance, CellValue, FastCellDistance, FastCellDistanceSq, FastCellValue, OpenSimplex2, OpenSimplex2s, Perlin, Simplex, Value, ValueCubic};
+
+pub use cellular::{CellIndex, DistanceFn, DistanceReturnType};
 
 #[cfg(feature = "nightly-simd")]
 pub use sample::{Sample2a, Sample3a, Sample4a};

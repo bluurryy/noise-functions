@@ -1,6 +1,8 @@
-use crate::{base::impl_noise, from_fast_noise_2::cell::MAX_DISTANCE_COUNT};
-
-use super::cell::{CellIndex, DistanceFn, DistanceReturnType};
+use crate::{
+    base::impl_noise,
+    cellular::{CellIndex, DistanceFn, DistanceReturnType},
+    from_fast_noise_2::cell::MAX_DISTANCE_COUNT,
+};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};

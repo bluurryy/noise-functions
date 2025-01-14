@@ -223,7 +223,7 @@ pub(crate) fn nmasked_sub<T: WrappingOps>(a: T, b: T, m: bool) -> T {
 pub mod cell {
     use crate::{abs, max, mul_add};
 
-    pub use crate::base::cell::{CellIndex, DistanceFn, DistanceReturnType};
+    pub use crate::cellular::{CellIndex, DistanceFn, DistanceReturnType};
 
     use super::inv_sqrt;
 
