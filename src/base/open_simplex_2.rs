@@ -1,22 +1,76 @@
-use crate::base::impl_noise;
+use crate::{
+    base::impl_noise,
+    open_simplex_2::{impl_open_simplex_2, improve3},
+    Sample, Seeded,
+};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
-/// /// 2/3 dimensional OpenSimplex2 noise. Fast variant.
+#[cfg(feature = "nightly-simd")]
+use crate::open_simplex_2::improve3a;
+
+/// 2/3 dimensional OpenSimplex2 noise. Fast variant.
 ///
 /// When sampling in 3 Dimensions you can improve the visual isotropy in a the respective planes via [`improve_xy`] or [`improve_xz`].
 ///
 /// [`improve_xy`]: Self::improve_xy
-/// [`improve_xz`]: Self::improve_xz#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// [`improve_xz`]: Self::improve_xz
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OpenSimplex2;
 
-impl_noise!(23 OpenSimplex2);
+impl_noise!(2 OpenSimplex2);
+
+impl Sample<3> for OpenSimplex2 {
+    #[inline(always)]
+    fn sample(&self, point: [f32; 3]) -> f32 {
+        self.gen3(improve3(point), 0)
+    }
+}
+
+impl Sample<3> for Seeded<OpenSimplex2> {
+    #[inline(always)]
+    fn sample(&self, point: [f32; 3]) -> f32 {
+        self.noise.gen3(improve3(point), self.seed)
+    }
+}
+
+impl Sample<3> for Seeded<&OpenSimplex2> {
+    #[inline(always)]
+    fn sample(&self, point: [f32; 3]) -> f32 {
+        self.noise.gen3(improve3(point), self.seed)
+    }
+}
+
+#[cfg(feature = "nightly-simd")]
+impl Sample<3, core::simd::f32x4> for OpenSimplex2 {
+    #[inline(always)]
+    fn sample(&self, point: core::simd::f32x4) -> f32 {
+        self.gen3a(improve3a(point), 0)
+    }
+}
+
+#[cfg(feature = "nightly-simd")]
+impl Sample<3, core::simd::f32x4> for Seeded<OpenSimplex2> {
+    #[inline(always)]
+    fn sample(&self, point: core::simd::f32x4) -> f32 {
+        self.noise.gen3a(improve3a(point), self.seed)
+    }
+}
+
+#[cfg(feature = "nightly-simd")]
+impl Sample<3, core::simd::f32x4> for Seeded<&OpenSimplex2> {
+    #[inline(always)]
+    fn sample(&self, point: core::simd::f32x4) -> f32 {
+        self.noise.gen3a(improve3a(point), self.seed)
+    }
+}
+
+impl_open_simplex_2!(OpenSimplex2);
 
 impl OpenSimplex2 {
     #[inline]
-    fn gen2(self, [x, y]: [f32; 2], seed: i32) -> f32 {
+    pub(crate) fn gen2(self, [x, y]: [f32; 2], seed: i32) -> f32 {
         // implementation from FastNoiseLite
         use crate::from_fast_noise_lite::{floor_to_int, grad2, open_simplex_2::improve2, PRIME_X, PRIME_Y};
 
@@ -82,7 +136,7 @@ impl OpenSimplex2 {
     }
 
     #[inline]
-    fn gen3(self, [x, y, z]: [f32; 3], mut seed: i32) -> f32 {
+    pub(crate) fn gen3(self, [x, y, z]: [f32; 3], mut seed: i32) -> f32 {
         // implementation from FastNoiseLite
         use crate::from_fast_noise_lite::{grad3, round_to_int, PRIME_X, PRIME_Y, PRIME_Z};
 
@@ -169,7 +223,7 @@ impl OpenSimplex2 {
 
     #[inline]
     #[cfg(feature = "nightly-simd")]
-    fn gen2a(self, point: f32x2, seed: i32) -> f32 {
+    pub(crate) fn gen2a(self, point: f32x2, seed: i32) -> f32 {
         // based on the implementation from FastNoiseLite
         use crate::from_fast_noise_lite::{floor_to_int, grad2, grad2_simd, open_simplex_2::improve2a, splat, PRIME_X, PRIME_XY, PRIME_Y};
 
@@ -233,7 +287,7 @@ impl OpenSimplex2 {
 
     #[inline]
     #[cfg(feature = "nightly-simd")]
-    fn gen3a(self, point: f32x4, mut seed: i32) -> f32 {
+    pub(crate) fn gen3a(self, point: f32x4, mut seed: i32) -> f32 {
         // based on the implementation from FastNoiseLite
         use crate::from_fast_noise_lite::{grad3_simd, round_to_int, splat, PRIME_X, PRIME_XYZ, PRIME_Y, PRIME_Z};
 

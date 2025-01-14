@@ -1,10 +1,10 @@
 #[cfg(feature = "nightly-simd")]
 use core::simd::{LaneCount, Simd, SupportedLaneCount};
 
-use crate::{
-    math::{lerp, splat},
-    Frequency, Sample, Seeded, Weighted,
-};
+use crate::{math::lerp, Frequency, Sample, Seeded, Weighted};
+
+#[cfg(feature = "nightly-simd")]
+use crate::math::splat;
 
 use super::fast_abs;
 

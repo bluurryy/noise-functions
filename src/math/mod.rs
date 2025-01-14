@@ -21,11 +21,6 @@ mod libm_math {
     }
 
     #[inline(always)]
-    pub(crate) fn round(f: f32) -> f32 {
-        libm::roundf(f)
-    }
-
-    #[inline(always)]
     pub(crate) fn sin(f: f32) -> f32 {
         libm::sinf(f)
     }
@@ -71,11 +66,6 @@ mod std_math {
     #[inline(always)]
     pub(crate) fn floor(f: f32) -> f32 {
         f32::floor(f)
-    }
-
-    #[inline(always)]
-    pub(crate) fn round(f: f32) -> f32 {
-        f32::round(f)
     }
 
     #[inline(always)]

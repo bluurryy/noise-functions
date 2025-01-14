@@ -3,6 +3,7 @@ use crate::{base::impl_noise, floor};
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
+/// 2/3/4 dimensional Simplex noise.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Simplex;
 

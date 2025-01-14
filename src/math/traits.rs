@@ -1,5 +1,5 @@
 #[cfg(feature = "nightly-simd")]
-use core::simd::{LaneCount, Simd, SimdElement, SupportedLaneCount};
+use core::simd::{num::SimdFloat, prelude::SimdPartialOrd, LaneCount, Simd, SimdElement, SupportedLaneCount};
 
 pub trait Dot {
     type Output;
@@ -39,6 +39,20 @@ impl FloorToInt for f32 {
     }
 }
 
+#[cfg(feature = "nightly-simd")]
+impl<const LANES: usize> FloorToInt for Simd<f32, LANES>
+where
+    LaneCount<LANES>: SupportedLaneCount,
+{
+    type Output = Simd<i32, LANES>;
+
+    #[inline(always)]
+    fn floor_to_int(self) -> Self::Output {
+        let int = unsafe { self.to_int_unchecked::<i32>() };
+        int - self.simd_ge(splat(0.0)).select(splat(0), splat(1))
+    }
+}
+
 #[inline(always)]
 pub fn floor_to_int<T: FloorToInt>(value: T) -> T::Output {
     FloorToInt::floor_to_int(value)
@@ -62,6 +76,20 @@ impl RoundToInt for f32 {
     }
 }
 
+#[cfg(feature = "nightly-simd")]
+impl<const LANES: usize> RoundToInt for Simd<f32, LANES>
+where
+    LaneCount<LANES>: SupportedLaneCount,
+{
+    type Output = Simd<i32, LANES>;
+
+    #[inline(always)]
+    fn round_to_int(self) -> Self::Output {
+        let f = self + self.simd_ge(splat(0.0)).select(splat(0.5), splat(-0.5));
+        unsafe { f.to_int_unchecked() }
+    }
+}
+
 #[inline(always)]
 pub fn round_to_int<T: RoundToInt>(value: T) -> T::Output {
     RoundToInt::round_to_int(value)
@@ -78,6 +106,17 @@ impl InterpQuintic for f32 {
     }
 }
 
+#[cfg(feature = "nightly-simd")]
+impl<const LANES: usize> InterpQuintic for Simd<f32, LANES>
+where
+    LaneCount<LANES>: SupportedLaneCount,
+{
+    #[inline(always)]
+    fn interp_quintic(self) -> Self {
+        self * self * self * (self * (self * splat(6.0) - splat(15.0)) + splat(10.0))
+    }
+}
+
 #[inline(always)]
 pub fn interp_quintic<T: InterpQuintic>(value: T) -> T {
     InterpQuintic::interp_quintic(value)
@@ -91,6 +130,17 @@ impl InterpHermite for f32 {
     #[inline(always)]
     fn interp_hermite(self) -> Self {
         self * self * (3.0 - 2.0 * self)
+    }
+}
+
+#[cfg(feature = "nightly-simd")]
+impl<const LANES: usize> InterpHermite for Simd<f32, LANES>
+where
+    LaneCount<LANES>: SupportedLaneCount,
+{
+    #[inline(always)]
+    fn interp_hermite(self) -> Self {
+        self * self * (splat(3.0) - splat(2.0) * self)
     }
 }
 
@@ -118,6 +168,7 @@ pub fn lerp<T, V: Lerp<T>>(a: V, b: V, t: T) -> V::Output {
     Lerp::lerp(a, b, t)
 }
 
+#[cfg(feature = "nightly-simd")]
 impl<const LANES: usize> Lerp for Simd<f32, LANES>
 where
     LaneCount<LANES>: SupportedLaneCount,
@@ -130,6 +181,7 @@ where
     }
 }
 
+#[cfg(feature = "nightly-simd")]
 impl<const LANES: usize> Lerp<f32> for Simd<f32, LANES>
 where
     LaneCount<LANES>: SupportedLaneCount,

@@ -2,9 +2,12 @@
 use core::simd::{LaneCount, Simd, SupportedLaneCount};
 
 use crate::{
-    math::{fast_min, lerp, splat},
+    math::{fast_min, lerp},
     Frequency, Sample, Seeded, Weighted,
 };
+
+#[cfg(feature = "nightly-simd")]
+use crate::math::splat;
 
 /// Fractal Brownian motion (fBm) noise.
 ///

@@ -9,6 +9,9 @@ pub(crate) use lookup::*;
 pub(crate) use table2::*;
 pub(crate) use table4::*;
 
+pub(crate) use crate::math::{floor_to_int, interp_hermite, interp_quintic, round_to_int};
+
+#[cfg(feature = "nightly-simd")]
 pub(crate) use crate::math::splat;
 
 pub trait Dot {
@@ -31,84 +34,6 @@ pub fn length<T: Dot<Output = f32> + Copy>(value: T) -> T::Output {
     crate::math::sqrt(length_squared(value))
 }
 
-pub trait FloorToInt {
-    type Output;
-    fn floor_to_int(self) -> Self::Output;
-}
-
-impl FloorToInt for f32 {
-    type Output = i32;
-
-    #[inline(always)]
-    fn floor_to_int(self) -> Self::Output {
-        if self >= 0.0 {
-            self as i32
-        } else {
-            (self as i32).wrapping_sub(1)
-        }
-    }
-}
-
-#[inline(always)]
-pub fn floor_to_int<T: FloorToInt>(value: T) -> T::Output {
-    FloorToInt::floor_to_int(value)
-}
-
-pub trait RoundToInt {
-    type Output;
-    fn round_to_int(self) -> Self::Output;
-}
-
-impl RoundToInt for f32 {
-    type Output = i32;
-
-    #[inline(always)]
-    fn round_to_int(self) -> Self::Output {
-        if self >= 0.0 {
-            (self + 0.5) as i32
-        } else {
-            (self - 0.5) as i32
-        }
-    }
-}
-
-#[inline(always)]
-pub fn round_to_int<T: RoundToInt>(value: T) -> T::Output {
-    RoundToInt::round_to_int(value)
-}
-
-pub trait InterpQuintic {
-    fn interp_quintic(self) -> Self;
-}
-
-impl InterpQuintic for f32 {
-    #[inline(always)]
-    fn interp_quintic(self) -> Self {
-        self * self * self * (self * (self * 6.0 - 15.0) + 10.0)
-    }
-}
-
-#[inline(always)]
-pub fn interp_quintic<T: InterpQuintic>(value: T) -> T {
-    InterpQuintic::interp_quintic(value)
-}
-
-pub trait InterpHermite {
-    fn interp_hermite(self) -> Self;
-}
-
-impl InterpHermite for f32 {
-    #[inline(always)]
-    fn interp_hermite(self) -> Self {
-        self * self * (3.0 - 2.0 * self)
-    }
-}
-
-#[inline(always)]
-pub fn interp_hermite<T: InterpHermite>(value: T) -> T {
-    InterpHermite::interp_hermite(value)
-}
-
 #[inline(always)]
 pub fn fast_min(a: f32, b: f32) -> f32 {
     if a < b {
@@ -125,15 +50,6 @@ pub fn fast_max(a: f32, b: f32) -> f32 {
         a
     } else {
         b
-    }
-}
-
-#[inline(always)]
-pub const fn fast_abs(f: f32) -> f32 {
-    if f < 0.0 {
-        -f
-    } else {
-        f
     }
 }
 
@@ -229,58 +145,12 @@ pub(crate) mod open_simplex_2 {
 
 #[cfg(feature = "nightly-simd")]
 mod simd {
-    use core::simd::{cmp::SimdPartialOrd, f32x2, f32x4, i32x2, i32x4, num::SimdFloat, simd_swizzle, LaneCount, Simd, SupportedLaneCount};
+    use core::simd::{f32x2, f32x4, i32x2, i32x4, simd_swizzle};
 
-    use super::{dot, splat, Dot, FloorToInt, Index2, Index3, InterpHermite, InterpQuintic, RoundToInt, GRADIENTS_2D, GRADIENTS_3D, PRIME_X, PRIME_Y, PRIME_Z};
+    use super::{dot, Dot, Index2, Index3, GRADIENTS_2D, GRADIENTS_3D, PRIME_X, PRIME_Y, PRIME_Z};
 
     pub(crate) const PRIME_XY: i32x2 = i32x2::from_array([PRIME_X, PRIME_Y]);
     pub(crate) const PRIME_XYZ: i32x4 = i32x4::from_array([PRIME_X, PRIME_Y, PRIME_Z, 0]);
-
-    impl<const LANES: usize> FloorToInt for Simd<f32, LANES>
-    where
-        LaneCount<LANES>: SupportedLaneCount,
-    {
-        type Output = Simd<i32, LANES>;
-
-        #[inline(always)]
-        fn floor_to_int(self) -> Self::Output {
-            let int = unsafe { self.to_int_unchecked::<i32>() };
-            int - self.simd_ge(splat(0.0)).select(splat(0), splat(1))
-        }
-    }
-
-    impl<const LANES: usize> RoundToInt for Simd<f32, LANES>
-    where
-        LaneCount<LANES>: SupportedLaneCount,
-    {
-        type Output = Simd<i32, LANES>;
-
-        #[inline(always)]
-        fn round_to_int(self) -> Self::Output {
-            let f = self + self.simd_ge(splat(0.0)).select(splat(0.5), splat(-0.5));
-            unsafe { f.to_int_unchecked() }
-        }
-    }
-
-    impl<const LANES: usize> InterpQuintic for Simd<f32, LANES>
-    where
-        LaneCount<LANES>: SupportedLaneCount,
-    {
-        #[inline(always)]
-        fn interp_quintic(self) -> Self {
-            self * self * self * (self * (self * splat(6.0) - splat(15.0)) + splat(10.0))
-        }
-    }
-
-    impl<const LANES: usize> InterpHermite for Simd<f32, LANES>
-    where
-        LaneCount<LANES>: SupportedLaneCount,
-    {
-        #[inline(always)]
-        fn interp_hermite(self) -> Self {
-            self * self * (splat(3.0) - splat(2.0) * self)
-        }
-    }
 
     impl Dot for f32x2 {
         type Output = f32;

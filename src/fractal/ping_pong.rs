@@ -2,9 +2,12 @@
 use core::simd::{LaneCount, Simd, SupportedLaneCount};
 
 use crate::{
-    math::{lerp, splat, trunc},
+    math::{lerp, trunc},
     Frequency, Sample, Seeded, Weighted,
 };
+
+#[cfg(feature = "nightly-simd")]
+use crate::math::splat;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PingPong<Noise> {
