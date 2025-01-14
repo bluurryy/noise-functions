@@ -44,82 +44,82 @@ pub use perlin::Perlin;
 pub use simplex::Simplex;
 pub use value::Value;
 
-mod primes {
-    pub(super) const X: i32 = 501125321;
-    pub(super) const Y: i32 = 1136930381;
-    pub(super) const Z: i32 = 1720413743;
-    pub(super) const W: i32 = 1066037191;
+pub(crate) mod primes {
+    pub(crate) const X: i32 = 501125321;
+    pub(crate) const Y: i32 = 1136930381;
+    pub(crate) const Z: i32 = 1720413743;
+    pub(crate) const W: i32 = 1066037191;
 }
 
-const ROOT2: f32 = 1.4142135623730950488;
-const ROOT3: f32 = 1.7320508075688772935;
+pub(crate) const ROOT2: f32 = 1.4142135623730950488;
+pub(crate) const ROOT3: f32 = 1.7320508075688772935;
 
-use crate::{interp_hermite, interp_quintic, lerp};
+pub(crate) use crate::{interp_hermite, interp_quintic, lerp, max, min, mul_add};
 
-fn hash_primes2(seed: i32, x: i32, y: i32) -> i32 {
+pub(crate) fn hash_primes2(seed: i32, x: i32, y: i32) -> i32 {
     let mut hash = seed;
     hash ^= x ^ y;
     hash = hash.wrapping_mul(0x27d4eb2d);
     (hash >> 15) ^ hash
 }
 
-fn hash_primes3(seed: i32, x: i32, y: i32, z: i32) -> i32 {
+pub(crate) fn hash_primes3(seed: i32, x: i32, y: i32, z: i32) -> i32 {
     let mut hash = seed;
     hash ^= x ^ y ^ z;
     hash = hash.wrapping_mul(0x27d4eb2d);
     (hash >> 15) ^ hash
 }
 
-fn hash_primes4(seed: i32, x: i32, y: i32, z: i32, w: i32) -> i32 {
+pub(crate) fn hash_primes4(seed: i32, x: i32, y: i32, z: i32, w: i32) -> i32 {
     let mut hash = seed;
     hash ^= x ^ y ^ z ^ w;
     hash = hash.wrapping_mul(0x27d4eb2d);
     (hash >> 15) ^ hash
 }
 
-fn hash_primes2_hb(seed: i32, x: i32, y: i32) -> i32 {
+pub(crate) fn hash_primes2_hb(seed: i32, x: i32, y: i32) -> i32 {
     let mut hash = seed;
     hash ^= x ^ y;
     hash = hash.wrapping_mul(0x27d4eb2d);
     hash
 }
 
-fn hash_primes3_hb(seed: i32, x: i32, y: i32, z: i32) -> i32 {
+pub(crate) fn hash_primes3_hb(seed: i32, x: i32, y: i32, z: i32) -> i32 {
     let mut hash = seed;
     hash ^= x ^ y ^ z;
     hash = hash.wrapping_mul(0x27d4eb2d);
     hash
 }
 
-fn hash_primes4_hb(seed: i32, x: i32, y: i32, z: i32, w: i32) -> i32 {
+pub(crate) fn hash_primes4_hb(seed: i32, x: i32, y: i32, z: i32, w: i32) -> i32 {
     let mut hash = seed;
     hash ^= x ^ y ^ z ^ w;
     hash = hash.wrapping_mul(0x27d4eb2d);
     hash
 }
 
-fn value_coord2(seed: i32, x: i32, y: i32) -> f32 {
+pub(crate) fn value_coord2(seed: i32, x: i32, y: i32) -> f32 {
     let mut hash = seed;
     hash ^= x ^ y;
     hash = hash.wrapping_mul(hash.wrapping_mul(0x27d4eb2d));
     hash as f32 * (1.0 / i32::MAX as f32)
 }
 
-fn value_coord3(seed: i32, x: i32, y: i32, z: i32) -> f32 {
+pub(crate) fn value_coord3(seed: i32, x: i32, y: i32, z: i32) -> f32 {
     let mut hash = seed;
     hash ^= x ^ y ^ z;
     hash = hash.wrapping_mul(hash.wrapping_mul(0x27d4eb2d));
     hash as f32 * (1.0 / i32::MAX as f32)
 }
 
-fn value_coord4(seed: i32, x: i32, y: i32, z: i32, w: i32) -> f32 {
+pub(crate) fn value_coord4(seed: i32, x: i32, y: i32, z: i32, w: i32) -> f32 {
     let mut hash = seed;
     hash ^= x ^ y ^ z ^ w;
     hash = hash.wrapping_mul(hash.wrapping_mul(0x27d4eb2d));
     hash as f32 * (1.0 / i32::MAX as f32)
 }
 
-fn gradient_dot2(hash: i32, x: f32, y: f32) -> f32 {
+pub(crate) fn gradient_dot2(hash: i32, x: f32, y: f32) -> f32 {
     // ( 1+R2, 1 ) ( -1-R2, 1 ) ( 1+R2, -1 ) ( -1-R2, -1 )
     // ( 1, 1+R2 ) ( 1, -1-R2 ) ( -1, 1+R2 ) ( -1, -1-R2 )
 
@@ -136,7 +136,7 @@ fn gradient_dot2(hash: i32, x: f32, y: f32) -> f32 {
     (1.0 + ROOT2) * a + b
 }
 
-fn gradient_dot3(hash: i32, x: f32, y: f32, z: f32) -> f32 {
+pub(crate) fn gradient_dot3(hash: i32, x: f32, y: f32, z: f32) -> f32 {
     let hasha13 = hash & 13;
 
     // if h < 8 then x, else y
@@ -155,7 +155,7 @@ fn gradient_dot3(hash: i32, x: f32, y: f32, z: f32) -> f32 {
     f32::from_bits(u.to_bits() ^ h1 as u32) + f32::from_bits(v.to_bits() ^ h2 as u32)
 }
 
-fn gradient_dot4(hash: i32, x: f32, y: f32, z: f32, w: f32) -> f32 {
+pub(crate) fn gradient_dot4(hash: i32, x: f32, y: f32, z: f32, w: f32) -> f32 {
     let p = hash & (3 << 3);
 
     let a = if p > 0 { x } else { y };
@@ -169,7 +169,7 @@ fn gradient_dot4(hash: i32, x: f32, y: f32, z: f32, w: f32) -> f32 {
     f32::from_bits(a.to_bits() ^ a_sign) + f32::from_bits(b.to_bits() ^ b_sign) + f32::from_bits(c.to_bits() ^ c_sign)
 }
 
-fn gradient_dot2_fancy(hash: i32, x: f32, y: f32) -> f32 {
+pub(crate) fn gradient_dot2_fancy(hash: i32, x: f32, y: f32) -> f32 {
     let index = (((hash & 0x3FFFFF) as f32) * 1.3333333333333333) as i32;
 
     let xy = index & (1 << 2) != 0;
@@ -191,20 +191,20 @@ fn gradient_dot2_fancy(hash: i32, x: f32, y: f32) -> f32 {
     f32::from_bits((a + b).to_bits() ^ ((index >> 3) << 31) as u32)
 }
 
-fn inv_sqrt(mut a: f32) -> f32 {
+pub(crate) fn inv_sqrt(mut a: f32) -> f32 {
     let x_half = 0.5 * a;
     a = f32::from_bits((0x5f3759dfi32.wrapping_sub(a.to_bits() as i32 >> 1)) as u32);
     a *= 1.5 - x_half * a * a;
     a
 }
 
-fn reciprocal(mut a: f32) -> f32 {
+pub(crate) fn reciprocal(mut a: f32) -> f32 {
     // pow( pow(x,-0.5), 2 ) = pow( x, -1 ) = 1.0 / x
     a = f32::from_bits(0xbe6eb3beu32.wrapping_sub(a.to_bits()) >> 1);
     a * a
 }
 
-fn nmul_add(a: f32, b: f32, c: f32) -> f32 {
+pub(crate) fn nmul_add(a: f32, b: f32, c: f32) -> f32 {
     -(a * b) + c
 }
 
@@ -231,7 +231,7 @@ impl WrappingOps for f32 {
     }
 }
 
-fn select<T>(m: bool, a: T, b: T) -> T {
+pub(crate) fn select<T>(m: bool, a: T, b: T) -> T {
     if m {
         a
     } else {
@@ -239,7 +239,7 @@ fn select<T>(m: bool, a: T, b: T) -> T {
     }
 }
 
-fn mask<T: From<u8>>(a: T, m: bool) -> T {
+pub(crate) fn mask<T: From<u8>>(a: T, m: bool) -> T {
     if m {
         a
     } else {
@@ -247,7 +247,7 @@ fn mask<T: From<u8>>(a: T, m: bool) -> T {
     }
 }
 
-fn masked_inc<T: WrappingOps + From<u8>>(a: T, m: bool) -> T {
+pub(crate) fn masked_inc<T: WrappingOps + From<u8>>(a: T, m: bool) -> T {
     if m {
         a.wrapping_add(1.into())
     } else {
@@ -255,7 +255,7 @@ fn masked_inc<T: WrappingOps + From<u8>>(a: T, m: bool) -> T {
     }
 }
 
-fn masked_add<T: WrappingOps>(a: T, b: T, m: bool) -> T {
+pub(crate) fn masked_add<T: WrappingOps>(a: T, b: T, m: bool) -> T {
     if m {
         a.wrapping_add(b)
     } else {
@@ -263,7 +263,7 @@ fn masked_add<T: WrappingOps>(a: T, b: T, m: bool) -> T {
     }
 }
 
-fn nmasked_add<T: WrappingOps>(a: T, b: T, m: bool) -> T {
+pub(crate) fn nmasked_add<T: WrappingOps>(a: T, b: T, m: bool) -> T {
     if m {
         a
     } else {
@@ -271,7 +271,7 @@ fn nmasked_add<T: WrappingOps>(a: T, b: T, m: bool) -> T {
     }
 }
 
-fn masked_sub<T: WrappingOps>(a: T, b: T, m: bool) -> T {
+pub(crate) fn masked_sub<T: WrappingOps>(a: T, b: T, m: bool) -> T {
     if m {
         a.wrapping_sub(b)
     } else {
@@ -279,7 +279,7 @@ fn masked_sub<T: WrappingOps>(a: T, b: T, m: bool) -> T {
     }
 }
 
-fn nmasked_sub<T: WrappingOps>(a: T, b: T, m: bool) -> T {
+pub(crate) fn nmasked_sub<T: WrappingOps>(a: T, b: T, m: bool) -> T {
     if m {
         a
     } else {
@@ -288,7 +288,9 @@ fn nmasked_sub<T: WrappingOps>(a: T, b: T, m: bool) -> T {
 }
 
 pub mod cell {
-    use crate::{abs, max, mul_add, simple_enum};
+    use crate::{abs, max, mul_add};
+
+    pub use crate::base::cell::{CellIndex, DistanceFn, DistanceReturnType};
 
     use super::inv_sqrt;
 
@@ -297,38 +299,6 @@ pub mod cell {
     pub(crate) const JITTER_4D: f32 = 0.366025;
 
     pub(crate) const MAX_DISTANCE_COUNT: usize = 4;
-
-    simple_enum! {
-        enum DistanceFn {
-            #[default]
-            Euclidean,
-            EuclideanSquared,
-            Manhattan,
-            Hybrid,
-            MaxAxis,
-        }
-    }
-
-    simple_enum! {
-        enum CellIndex {
-            #[default]
-            I0 = 0,
-            I1 = 1,
-            I2 = 2,
-            I3 = 3,
-        }
-    }
-
-    simple_enum! {
-        enum DistanceReturnType {
-            #[default]
-            Index0,
-            Index0Add1,
-            Index0Sub1,
-            Index0Mul1,
-            Index0Div1,
-        }
-    }
 
     pub(crate) fn calc_distance2(distance_fn: DistanceFn, x: f32, y: f32) -> f32 {
         match distance_fn {

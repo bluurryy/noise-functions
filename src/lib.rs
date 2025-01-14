@@ -81,6 +81,8 @@ mod noise_fn;
 #[doc(hidden)]
 pub mod from_fast_noise_2;
 
+pub mod base;
+mod from_fast_noise_lite;
 /// OpenSimplex2 noise functions and combinators.
 pub mod open_simplex_2;
 mod sample;
