@@ -334,15 +334,6 @@ macro_rules! sampler4 {
     };
 }
 
-pub trait AnySample: Sample<2> + Sample<3> {}
-impl<T> AnySample for T where T: Sample<2> + Sample<3> {}
-
-#[cfg(feature = "nightly-simd")]
-pub trait AnySampleA: Sample<2> + Sample<3> + Sample<2, f32x2> + Sample<3, f32x4> {}
-
-#[cfg(feature = "nightly-simd")]
-impl<T> AnySampleA for T where T: Sample<2> + Sample<3> + Sample<2, f32x2> + Sample<3, f32x4> {}
-
 impl Config {
     fn new_cell_value(&self) -> CellValue {
         CellValue {
@@ -359,15 +350,6 @@ impl Config {
             distance_indices: self.distance_indices,
             return_type: self.distance_return_type,
         }
-    }
-
-    pub fn sampler(&self) -> Option<Box<dyn AnySample>> {
-        sampler3!(self)
-    }
-
-    #[cfg(feature = "nightly-simd")]
-    pub fn sampler_a(&self) -> Option<Box<dyn AnySampleA>> {
-        sampler3!(self)
     }
 
     pub fn sampler2(&self) -> Option<Box<dyn Sample<2>>> {
