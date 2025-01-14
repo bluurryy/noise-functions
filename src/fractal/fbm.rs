@@ -1,4 +1,10 @@
-use crate::private_prelude::*;
+#[cfg(feature = "nightly-simd")]
+use core::simd::{LaneCount, Simd, SupportedLaneCount};
+
+use crate::{
+    math::{fast_min, lerp, splat},
+    Frequency, Sample, Seeded, Weighted,
+};
 
 /// Fractal Brownian motion (fBm) noise.
 ///

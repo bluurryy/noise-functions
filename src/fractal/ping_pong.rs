@@ -1,4 +1,10 @@
-use crate::private_prelude::*;
+#[cfg(feature = "nightly-simd")]
+use core::simd::{LaneCount, Simd, SupportedLaneCount};
+
+use crate::{
+    math::{lerp, splat, trunc},
+    Frequency, Sample, Seeded, Weighted,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PingPong<Noise> {

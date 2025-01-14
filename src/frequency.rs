@@ -31,7 +31,7 @@ where
     LaneCount<LANES>: SupportedLaneCount,
 {
     fn sample(&self, mut point: Simd<f32, LANES>) -> f32 {
-        point *= splat(self.frequency);
+        point *= Simd::splat(self.frequency);
         self.noise.sample(point)
     }
 }

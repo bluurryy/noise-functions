@@ -1,3 +1,6 @@
+#[cfg(feature = "nightly-simd")]
+use core::simd::{LaneCount, Simd, SimdElement, SupportedLaneCount};
+
 pub trait Dot {
     type Output;
     fn dot(lhs: Self, rhs: Self) -> Self::Output;
@@ -113,6 +116,39 @@ impl Lerp for f32 {
 #[inline(always)]
 pub fn lerp<T, V: Lerp<T>>(a: V, b: V, t: T) -> V::Output {
     Lerp::lerp(a, b, t)
+}
+
+impl<const LANES: usize> Lerp for Simd<f32, LANES>
+where
+    LaneCount<LANES>: SupportedLaneCount,
+{
+    type Output = Self;
+
+    #[inline(always)]
+    fn lerp(a: Self, b: Self, t: Self) -> Self::Output {
+        a + t * (b - a)
+    }
+}
+
+impl<const LANES: usize> Lerp<f32> for Simd<f32, LANES>
+where
+    LaneCount<LANES>: SupportedLaneCount,
+{
+    type Output = Self;
+
+    #[inline(always)]
+    fn lerp(a: Self, b: Self, t: f32) -> Self::Output {
+        a + Simd::splat(t) * (b - a)
+    }
+}
+
+#[cfg(feature = "nightly-simd")]
+pub(crate) fn splat<T, const LANES: usize>(value: T) -> Simd<T, LANES>
+where
+    T: SimdElement,
+    LaneCount<LANES>: SupportedLaneCount,
+{
+    Simd::splat(value)
 }
 
 #[inline(always)]

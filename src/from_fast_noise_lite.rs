@@ -9,6 +9,8 @@ pub(crate) use lookup::*;
 pub(crate) use table2::*;
 pub(crate) use table4::*;
 
+pub(crate) use crate::math::splat;
+
 pub trait Dot {
     type Output;
     fn dot(lhs: Self, rhs: Self) -> Self::Output;
@@ -105,25 +107,6 @@ impl InterpHermite for f32 {
 #[inline(always)]
 pub fn interp_hermite<T: InterpHermite>(value: T) -> T {
     InterpHermite::interp_hermite(value)
-}
-
-pub trait Lerp<T = Self> {
-    type Output;
-    fn lerp(a: Self, b: Self, t: T) -> Self::Output;
-}
-
-impl Lerp for f32 {
-    type Output = Self;
-
-    #[inline(always)]
-    fn lerp(a: Self, b: Self, t: Self) -> Self::Output {
-        a + t * (b - a)
-    }
-}
-
-#[inline(always)]
-pub fn lerp<T, V: Lerp<T>>(a: V, b: V, t: T) -> V::Output {
-    Lerp::lerp(a, b, t)
 }
 
 #[inline(always)]
@@ -246,9 +229,9 @@ pub(crate) mod open_simplex_2 {
 
 #[cfg(feature = "nightly-simd")]
 mod simd {
-    use core::simd::{cmp::SimdPartialOrd, f32x2, f32x4, i32x2, i32x4, num::SimdFloat, simd_swizzle, LaneCount, Simd, SimdElement, SupportedLaneCount};
+    use core::simd::{cmp::SimdPartialOrd, f32x2, f32x4, i32x2, i32x4, num::SimdFloat, simd_swizzle, LaneCount, Simd, SupportedLaneCount};
 
-    use super::{dot, Dot, FloorToInt, Index2, Index3, InterpHermite, InterpQuintic, Lerp, RoundToInt, GRADIENTS_2D, GRADIENTS_3D, PRIME_X, PRIME_Y, PRIME_Z};
+    use super::{dot, splat, Dot, FloorToInt, Index2, Index3, InterpHermite, InterpQuintic, RoundToInt, GRADIENTS_2D, GRADIENTS_3D, PRIME_X, PRIME_Y, PRIME_Z};
 
     pub(crate) const PRIME_XY: i32x2 = i32x2::from_array([PRIME_X, PRIME_Y]);
     pub(crate) const PRIME_XYZ: i32x4 = i32x4::from_array([PRIME_X, PRIME_Y, PRIME_Z, 0]);
@@ -299,30 +282,6 @@ mod simd {
         }
     }
 
-    impl<const LANES: usize> Lerp for Simd<f32, LANES>
-    where
-        LaneCount<LANES>: SupportedLaneCount,
-    {
-        type Output = Self;
-
-        #[inline(always)]
-        fn lerp(a: Self, b: Self, t: Self) -> Self::Output {
-            a + t * (b - a)
-        }
-    }
-
-    impl<const LANES: usize> Lerp<f32> for Simd<f32, LANES>
-    where
-        LaneCount<LANES>: SupportedLaneCount,
-    {
-        type Output = Self;
-
-        #[inline(always)]
-        fn lerp(a: Self, b: Self, t: f32) -> Self::Output {
-            a + Simd::splat(t) * (b - a)
-        }
-    }
-
     impl Dot for f32x2 {
         type Output = f32;
 
@@ -345,14 +304,6 @@ mod simd {
             let dot3 = x2y2_0_0_0 + z2_0_0_0;
             dot3[0]
         }
-    }
-
-    pub(crate) fn splat<T, const LANES: usize>(value: T) -> Simd<T, LANES>
-    where
-        T: SimdElement,
-        LaneCount<LANES>: SupportedLaneCount,
-    {
-        Simd::splat(value)
     }
 
     #[inline(always)]

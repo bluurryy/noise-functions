@@ -17,6 +17,7 @@ pub use fast_cell_distance::FastCellDistance;
 pub use fast_cell_distance_sq::FastCellDistanceSq;
 pub use fast_cell_value::FastCellValue;
 pub use open_simplex_2::OpenSimplex2;
+pub use open_simplex_2s::OpenSimplex2s;
 pub use perlin::Perlin;
 pub use simplex::Simplex;
 pub use value::Value;
@@ -28,12 +29,14 @@ macro_rules! if_has_dim_4 {
 }
 
 macro_rules! impl_noise {
-    ($dims:tt $struct:ident) => {
+    ($dims:tt $struct:ident $(; $($extra:tt)*)?) => {
         impl $struct {
             #[inline(always)]
             pub const fn seed(self, seed: i32) -> $crate::Seeded<Self> {
                 $crate::Seeded { noise: self, seed }
             }
+
+            $($($extra)*)?
 
             #[inline(always)]
             pub const fn frequency(self, frequency: f32) -> $crate::Frequency<Self> {
