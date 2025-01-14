@@ -1,4 +1,4 @@
-use crate::{base::impl_noise, from_fast_noise_lite::cell_distance_euclidean_squared, sqrt};
+use crate::{base::impl_noise, from_fast_noise_lite::cell_distance_euclidean_squared, math::sqrt};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};

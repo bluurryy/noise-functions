@@ -101,20 +101,6 @@ pub use cellular::{CellIndex, DistanceFn, DistanceReturnType};
 #[cfg(feature = "nightly-simd")]
 pub use sample::{Sample2a, Sample3a, Sample4a};
 
-mod private_prelude {
-    pub(crate) use crate::fractal::*;
-    pub(crate) use crate::math::*;
-    pub(crate) use crate::*;
-
-    #[cfg(feature = "nightly-simd")]
-    pub(crate) use core::simd::{LaneCount, SupportedLaneCount};
-
-    #[cfg(feature = "nightly-simd")]
-    pub(crate) use core::simd::prelude::*;
-}
-
-use crate::private_prelude::*;
-
 macro_rules! impl_modifiers {
     () => {
         #[inline(always)]
@@ -133,35 +119,35 @@ macro_rules! impl_modifiers {
         }
 
         #[inline(always)]
-        pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Fbm<Self> {
-            $crate::Fbm {
+        pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::fractal::Fbm<Self> {
+            $crate::fractal::Fbm {
                 noise: self,
                 octaves,
                 gain,
                 lacunarity,
-                fractal_bounding: $crate::fractal_bounding(octaves, gain),
+                fractal_bounding: $crate::fractal::fractal_bounding(octaves, gain),
             }
         }
 
         #[inline(always)]
-        pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Ridged<Self> {
-            $crate::Ridged {
+        pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::fractal::Ridged<Self> {
+            $crate::fractal::Ridged {
                 noise: self,
                 octaves,
                 gain,
                 lacunarity,
-                fractal_bounding: $crate::fractal_bounding(octaves, gain),
+                fractal_bounding: $crate::fractal::fractal_bounding(octaves, gain),
             }
         }
 
         #[inline(always)]
-        pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> $crate::PingPong<Self> {
-            $crate::PingPong {
+        pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> $crate::fractal::PingPong<Self> {
+            $crate::fractal::PingPong {
                 noise: self,
                 octaves,
                 gain,
                 lacunarity,
-                fractal_bounding: $crate::fractal_bounding(octaves, gain),
+                fractal_bounding: $crate::fractal::fractal_bounding(octaves, gain),
                 strength,
             }
         }
@@ -252,18 +238,18 @@ macro_rules! impl_modifier_methods {
         }
 
         #[inline(always)]
-        pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Fbm<Self> {
-            $crate::Fbm::new(self, octaves, gain, lacunarity)
+        pub const fn fbm(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::fractal::Fbm<Self> {
+            $crate::fractal::Fbm::new(self, octaves, gain, lacunarity)
         }
 
         #[inline(always)]
-        pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::Ridged<Self> {
-            $crate::Ridged::new(self, octaves, gain, lacunarity)
+        pub const fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> $crate::fractal::Ridged<Self> {
+            $crate::fractal::Ridged::new(self, octaves, gain, lacunarity)
         }
 
         #[inline(always)]
-        pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> $crate::PingPong<Self> {
-            $crate::PingPong::new(self, octaves, gain, lacunarity, strength)
+        pub const fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> $crate::fractal::PingPong<Self> {
+            $crate::fractal::PingPong::new(self, octaves, gain, lacunarity, strength)
         }
     };
 }

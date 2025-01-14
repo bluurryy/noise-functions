@@ -39,7 +39,7 @@ pub(crate) mod primes {
 
 pub(crate) const ROOT2: f32 = 1.4142135623730950488;
 
-pub(crate) use crate::{interp_hermite, interp_quintic, max, min, mul_add};
+pub(crate) use crate::math::{interp_hermite, interp_quintic, max, min, mul_add};
 
 pub(crate) fn hash_primes2(seed: i32, x: i32, y: i32) -> i32 {
     let mut hash = seed;
@@ -221,7 +221,7 @@ pub(crate) fn nmasked_sub<T: WrappingOps>(a: T, b: T, m: bool) -> T {
 }
 
 pub mod cell {
-    use crate::{abs, max, mul_add};
+    use crate::math::{abs, max, mul_add};
 
     pub use crate::cellular::{CellIndex, DistanceFn, DistanceReturnType};
 

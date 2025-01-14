@@ -2,8 +2,9 @@
 use core::simd::{LaneCount, Simd, SupportedLaneCount};
 
 use crate::{
+    fractal::Weighted,
     math::{lerp, trunc},
-    Frequency, Sample, Seeded, Weighted,
+    Frequency, Sample, Seeded,
 };
 
 #[cfg(feature = "nightly-simd")]

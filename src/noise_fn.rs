@@ -1,4 +1,4 @@
-use crate::private_prelude::*;
+use crate::{impl_modifiers, Sample, Seeded};
 
 /// Wraps a function to make it implement [`Sample`].
 ///

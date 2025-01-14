@@ -1,5 +1,5 @@
 #[cfg(feature = "nightly-simd")]
-use crate::private_prelude::*;
+use core::simd::{f32x2, f32x4};
 
 /// Trait for sampling noises.
 pub trait Sample<const DIM: usize, Point = [f32; DIM]> {

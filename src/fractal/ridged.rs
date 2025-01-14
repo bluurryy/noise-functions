@@ -1,12 +1,12 @@
 #[cfg(feature = "nightly-simd")]
 use core::simd::{LaneCount, Simd, SupportedLaneCount};
 
-use crate::{math::lerp, Frequency, Sample, Seeded, Weighted};
+use crate::{math::lerp, Frequency, Sample, Seeded};
 
 #[cfg(feature = "nightly-simd")]
 use crate::math::splat;
 
-use super::{fast_abs, fractal_bounding};
+use super::{fast_abs, fractal_bounding, Weighted};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Ridged<Noise> {

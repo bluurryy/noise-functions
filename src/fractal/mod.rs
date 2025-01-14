@@ -6,7 +6,7 @@ pub use fbm::Fbm;
 pub use ping_pong::PingPong;
 pub use ridged::Ridged;
 
-use crate::private_prelude::*;
+use crate::{Frequency, Seeded};
 
 /// Wraps a fractal noise to
 #[derive(Debug, Clone, Copy, PartialEq)]

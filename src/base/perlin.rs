@@ -1,4 +1,7 @@
-use crate::{base::impl_noise, floor, lerp};
+use crate::{
+    base::impl_noise,
+    math::{floor, lerp},
+};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
