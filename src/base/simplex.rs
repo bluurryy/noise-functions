@@ -1,4 +1,8 @@
-use crate::{base::impl_noise, math::floor};
+use crate::{
+    base::impl_noise,
+    from_fast_noise_2::{masked_add, nmasked_add},
+    math::floor,
+};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
@@ -56,11 +60,7 @@ impl Simplex {
         t2 *= t2;
 
         let n0 = gradient_dot2(hash_primes2(seed, i, j), x0, y0);
-        let n1 = gradient_dot2(
-            hash_primes2(seed, if i1 { i.wrapping_add(primes::X) } else { i }, if i1 { j } else { j.wrapping_add(primes::Y) }),
-            x1,
-            y1,
-        );
+        let n1 = gradient_dot2(hash_primes2(seed, masked_add(i, primes::X, i1), nmasked_add(j, primes::Y, i1)), x1, y1);
         let n2 = gradient_dot2(hash_primes2(seed, i.wrapping_add(primes::X), j.wrapping_add(primes::Y)), x2, y2);
 
         38.283687591552734375 * mul_add(n0, t0, mul_add(n1, t1, n2 * t2))
