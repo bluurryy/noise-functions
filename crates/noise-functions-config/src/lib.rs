@@ -84,8 +84,7 @@ impl core::fmt::Display for EnumFromStrError {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for EnumFromStrError {}
+impl core::error::Error for EnumFromStrError {}
 
 simple_enum! {
     enum Noise {
