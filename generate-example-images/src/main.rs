@@ -24,27 +24,12 @@ fn noise_to_image(noise: impl Sample2) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     image
 }
 
-fn noise_to_image_tileable(noise: impl Sample2) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
-    let mut image = ImageBuffer::new(WIDTH as u32, HEIGHT as u32);
-    let scalar = 1.0 / WIDTH.max(HEIGHT) as f32;
-
-    for (x, y, pixel) in image.enumerate_pixels_mut() {
-        let x = (x as f32 * scalar) * FREQUENCY;
-        let y = (y as f32 * scalar) * FREQUENCY;
-        let value = noise.sample2([x, y]);
-        let value = ((value * 0.5 + 0.5) * 255.0) as u8;
-        *pixel = Rgb([value, value, value]);
-    }
-
-    image
-}
-
 fn save_jpg(name: &str, noise: impl Sample2) {
     noise_to_image(noise).save(format!("example-images/{name}.jpg")).unwrap();
 }
 
-fn save_jpg_tileable(name: &str, noise: impl Sample2) {
-    noise_to_image_tileable(noise).save(format!("example-images/{name}.jpg")).unwrap();
+fn coords_01(noise: impl Sample2) -> impl Sample2 {
+    NoiseFn(move |point: [f32; 2]| noise.sample2(point.map(|x| x * 0.5)))
 }
 
 fn from_01(noise: impl Sample2) -> impl Sample2 {
@@ -91,17 +76,17 @@ fn main() {
         .fbm(3, 0.5, 1.5),
     );
 
-    save_jpg_tileable("tileable_perlin", Perlin.tileable(FREQUENCY, FREQUENCY).frequency(2.0));
+    save_jpg("tileable_perlin", coords_01(Perlin.tileable(FREQUENCY, FREQUENCY).frequency(2.0)));
 
-    save_jpg_tileable("tileable_value", Value.seed(12).tileable(FREQUENCY, FREQUENCY).frequency(2.0));
+    save_jpg("tileable_value", coords_01(Value.seed(12).tileable(FREQUENCY, FREQUENCY).frequency(2.0)));
 
-    save_jpg_tileable("tileable_cell_value", CellValue::default().seed(12).tileable(2.15, 2.15).frequency(2.15 * 2.0 / FREQUENCY));
+    save_jpg("tileable_cell_value", coords_01(CellValue::default().seed(12).tileable(2.15, 2.15).frequency(2.15 * 2.0 / FREQUENCY)));
 
-    save_jpg_tileable(
+    save_jpg(
         "tileable_cell_distance_sq",
-        from_01(NoiseFn(|point: [f32; 2]| {
+        from_01(coords_01(NoiseFn(|point: [f32; 2]| {
             let value = FastCellDistanceSq::default().seed(12).tileable(2.0, 2.0).frequency(2.0 * 2.0 / FREQUENCY).sample2(point);
             value * 1.25
-        })),
+        }))),
     );
 }
