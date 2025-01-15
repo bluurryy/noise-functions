@@ -6,6 +6,8 @@ const WIDTH: usize = SIZE;
 const HEIGHT: usize = SIZE;
 const FREQUENCY: f32 = 3.0;
 
+/// Creates an image from the coordinates x and y in the range of -1..+1.
+/// Maps values in a range of -1..+1 to black..white.
 fn noise_to_image(noise: impl Sample2) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let mut image = ImageBuffer::new(WIDTH as u32, HEIGHT as u32);
     let scalar = 1.0 / WIDTH.max(HEIGHT) as f32;
@@ -45,9 +47,18 @@ fn save_jpg_tileable(name: &str, noise: impl Sample2) {
     noise_to_image_tileable(noise).save(format!("example-images/{name}.jpg")).unwrap();
 }
 
+fn from_01(noise: impl Sample2) -> impl Sample2 {
+    NoiseFn(move |point| noise.sample2(point) * 2.0 - 1.0)
+}
+
 fn main() {
-    save_jpg("cell_distance_sq", FastCellDistanceSq::default());
-    save_jpg("cell_distance", FastCellDistance::default());
+    // Cell distances start at 0 unlike the others that are in the -1..+1 range.
+    // So we use `from_01` to modify their output to be in closer to that range
+    // to be able to use the same `save_jpg` function.
+
+    save_jpg("cell_distance_sq", from_01(FastCellDistanceSq::default()));
+    save_jpg("cell_distance", from_01(FastCellDistance::default()));
+
     save_jpg("cell_value", FastCellValue::default());
     save_jpg("perlin", Perlin);
     save_jpg("open_simplex_2", OpenSimplex2);
@@ -80,14 +91,17 @@ fn main() {
         .fbm(3, 0.5, 1.5),
     );
 
-    save_jpg_tileable("tileable_perlin", Perlin.tileable(3.0, 3.0).frequency(2.0));
+    save_jpg_tileable("tileable_perlin", Perlin.tileable(FREQUENCY, FREQUENCY).frequency(2.0));
 
-    save_jpg_tileable("tileable_value", Value.seed(12).tileable(3.0, 3.0).frequency(2.0));
+    save_jpg_tileable("tileable_value", Value.seed(12).tileable(FREQUENCY, FREQUENCY).frequency(2.0));
 
-    save_jpg_tileable("tileable_cell_value", CellValue::default().seed(12).tileable(2.15, 2.15).frequency(2.15 * 2.0 / 3.0));
+    save_jpg_tileable("tileable_cell_value", CellValue::default().seed(12).tileable(2.15, 2.15).frequency(2.15 * 2.0 / FREQUENCY));
 
     save_jpg_tileable(
         "tileable_cell_distance_sq",
-        NoiseFn(|point: [f32; 2]| (CellDistance::default().seed(12).tileable(2.0, 2.0).frequency(2.0 * 2.0 / 3.0).sample2(point) - 0.4) * 2.5),
+        from_01(NoiseFn(|point: [f32; 2]| {
+            let value = FastCellDistanceSq::default().seed(12).tileable(2.0, 2.0).frequency(2.0 * 2.0 / FREQUENCY).sample2(point);
+            value * 1.25
+        })),
     );
 }
