@@ -259,23 +259,23 @@ macro_rules! tileable {
 }
 
 macro_rules! base {
-    ($dim:tt, $self:ident, $macro:ident) => {
+    ($dim:tt, $self:ident) => {
         match $self.noise {
-            Noise::Value => $macro!($dim, $self, Value),
-            Noise::ValueCubic => $macro!($dim, $self, ValueCubic),
-            Noise::Perlin => $macro!($dim, $self, Perlin),
-            Noise::Simplex => $macro!($dim, $self, Simplex),
+            Noise::Value => tileable!($dim, $self, Value),
+            Noise::ValueCubic => tileable!($dim, $self, ValueCubic),
+            Noise::Perlin => tileable!($dim, $self, Perlin),
+            Noise::Simplex => tileable!($dim, $self, Simplex),
             Noise::OpenSimplex2 => match $self.improve {
-                Improve::None => $macro!($dim, $self, OpenSimplex2),
-                Improve::Xy => $macro!($dim, $self, OpenSimplex2.improve_xy()),
-                Improve::Xz => $macro!($dim, $self, OpenSimplex2.improve_xz()),
+                Improve::None => tileable!($dim, $self, OpenSimplex2),
+                Improve::Xy => tileable!($dim, $self, OpenSimplex2.improve_xy()),
+                Improve::Xz => tileable!($dim, $self, OpenSimplex2.improve_xz()),
             },
             Noise::OpenSimplex2s => match $self.improve {
-                Improve::None => $macro!($dim, $self, OpenSimplex2s),
-                Improve::Xy => $macro!($dim, $self, OpenSimplex2s.improve_xy()),
-                Improve::Xz => $macro!($dim, $self, OpenSimplex2s.improve_xz()),
+                Improve::None => tileable!($dim, $self, OpenSimplex2s),
+                Improve::Xy => tileable!($dim, $self, OpenSimplex2s.improve_xy()),
+                Improve::Xz => tileable!($dim, $self, OpenSimplex2s.improve_xz()),
             },
-            Noise::CellValue => $macro!(
+            Noise::CellValue => tileable!(
                 $dim,
                 $self,
                 CellValue {
@@ -284,7 +284,7 @@ macro_rules! base {
                     value_index: $self.value_index,
                 }
             ),
-            Noise::CellDistance => $macro!(
+            Noise::CellDistance => tileable!(
                 $dim,
                 $self,
                 CellDistance {
@@ -294,16 +294,16 @@ macro_rules! base {
                     return_type: $self.distance_return_type,
                 }
             ),
-            Noise::FastCellValue => $macro!($dim, $self, FastCellValue::default().jitter($self.jitter)),
-            Noise::FastCellDistance => $macro!($dim, $self, FastCellDistance::default().jitter($self.jitter)),
-            Noise::FastCellDistanceSq => $macro!($dim, $self, FastCellDistanceSq::default().jitter($self.jitter)),
+            Noise::FastCellValue => tileable!($dim, $self, FastCellValue::default().jitter($self.jitter)),
+            Noise::FastCellDistance => tileable!($dim, $self, FastCellDistance::default().jitter($self.jitter)),
+            Noise::FastCellDistanceSq => tileable!($dim, $self, FastCellDistanceSq::default().jitter($self.jitter)),
         }
     };
 }
 
 macro_rules! sampler {
     ($dim:tt, $self:ident) => {
-        base!($dim, $self, tileable)
+        base!($dim, $self)
     };
 }
 
