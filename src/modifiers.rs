@@ -32,6 +32,132 @@ impl<Fractal> Weighted<Fractal> {
     }
 }
 
+macro_rules! modifier_map {
+    (
+        struct $struct:ident {
+            $($fields:tt)*
+        }
+
+        fn map($self:ident, $value:ident: f32) {
+            $($map:tt)*
+        }
+    ) => {
+        pub struct $struct<Noise> {
+            pub noise: Noise,
+            $($fields)*
+        }
+
+        const _: () = {
+            use crate::{ Noise, Sample, SampleWithSeed };
+
+            #[cfg(feature = "nightly-simd")]
+            use core::simd::{ Simd, LaneCount, SupportedLaneCount };
+
+            impl<N> Noise for $struct<N> {}
+
+            impl<Noise, const DIM: usize> Sample<DIM, [f32; DIM]> for $struct<Noise>
+            where
+                Noise: SampleWithSeed<DIM, [f32; DIM]>,
+            {
+                #[inline]
+                fn sample(&$self, point: [f32; DIM]) -> f32 {
+                    let $value = $self.noise.sample(point);
+                    $($map)*
+                }
+            }
+
+            impl<Noise, const DIM: usize> SampleWithSeed<DIM, [f32; DIM]> for $struct<Noise>
+            where
+                Noise: SampleWithSeed<DIM, [f32; DIM]>,
+            {
+                #[inline]
+                fn sample_with_seed(&$self, point: [f32; DIM], seed: i32) -> f32 {
+                    let $value = $self.noise.sample_with_seed(point, seed);
+                    $($map)*
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl<Noise, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for $struct<Noise>
+            where
+                Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
+                LaneCount<LANES>: SupportedLaneCount,
+            {
+                #[inline]
+                fn sample(&$self, point: Simd<f32, LANES>) -> f32 {
+                    let $value = $self.noise.sample(point);
+                    $($map)*
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl<Noise, const DIM: usize, const LANES: usize> SampleWithSeed<DIM, Simd<f32, LANES>> for $struct<Noise>
+            where
+                Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
+                LaneCount<LANES>: SupportedLaneCount,
+            {
+                #[inline]
+                fn sample_with_seed(&$self, point: Simd<f32, LANES>, seed: i32) -> f32 {
+                    let $value = $self.noise.sample_with_seed(point, seed);
+                    $($map)*
+                }
+            }
+        };
+    };
+}
+
+pub(crate) use modifier_map;
+
+modifier_map! {
+    struct Add {
+        pub value: f32,
+    }
+
+    fn map(self, value: f32) {
+        value + self.value
+    }
+}
+
+modifier_map! {
+    struct Sub {
+        pub value: f32,
+    }
+
+    fn map(self, value: f32) {
+        value - self.value
+    }
+}
+
+modifier_map! {
+    struct Mul {
+        pub value: f32,
+    }
+
+    fn map(self, value: f32) {
+        value * self.value
+    }
+}
+
+modifier_map! {
+    struct Div {
+        pub value: f32,
+    }
+
+    fn map(self, value: f32) {
+        value / self.value
+    }
+}
+
+modifier_map! {
+    struct Rem {
+        pub value: f32,
+    }
+
+    fn map(self, value: f32) {
+        value % self.value
+    }
+}
+
 /// Calculates the `fractal_bounding` property for [`Fbm`], [`Ridged`] and [`PingPong`].
 ///
 #[inline(always)]
