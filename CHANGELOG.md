@@ -10,6 +10,7 @@
 - **added:** `Perlin`, `Value` and `Cell*` noises now support 4D sampling
 - **added:** a new 2, 3 and 4 dimensional `Simplex` noise
 - **added:** `tileable` modifier to create a 2D tileable noise from a 4D noise
+- **added:** `mul_seed` modifier to avoid sampling with the same seed multiple times when composing noises
 
 ## 0.3.0 (2024-11-29)
 - **breaking:** removed `"nightly-const-fn-float"` feature; those functions are now always const

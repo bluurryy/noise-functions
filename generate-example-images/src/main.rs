@@ -68,11 +68,12 @@ fn main() {
     save_jpg(
         "warped_fbm",
         NoiseFn(|point: [f32; 2], seed: i32| {
-            let warp_x = OpenSimplex2s.seed(seed + 100).sample(point);
-            let warp_y = OpenSimplex2s.seed(seed + 200).sample(point);
+            let warp_x = OpenSimplex2s.seed(seed + 1).sample(point);
+            let warp_y = OpenSimplex2s.seed(seed + 2).sample(point);
             let warped = [point[0] + warp_x, point[1] + warp_y];
             OpenSimplex2s.sample(warped)
         })
+        .mul_seed(100)
         .fbm(3, 0.5, 1.5),
     );
 

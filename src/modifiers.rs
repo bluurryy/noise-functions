@@ -28,6 +28,11 @@ impl<Fractal> Weighted<Fractal> {
     }
 }
 
+macro_rules! or_else {
+    ({ } else { $($else:tt)* }) => { $($else)* };
+    ({ $($tokens:tt)+ } else { $($else:tt)* }) => { $($tokens)* };
+}
+
 macro_rules! modifier_map {
     (
         $(#[$attr:meta])*
@@ -35,9 +40,9 @@ macro_rules! modifier_map {
             $($fields:tt)*
         }
 
-        fn map($self:ident, $value:ident: f32) {
-            $($map:tt)*
-        }
+        $self:ident, $seed:ident, $point:ident, $value:ident;
+        $(map_seed: { $($map_seed:tt)* })?
+        $(map_value: { $($map_value:tt)* })?
     ) => {
         $(#[$attr])*
         pub struct $struct<Noise> {
@@ -58,9 +63,9 @@ macro_rules! modifier_map {
                 Noise: SampleWithSeed<DIM, [f32; DIM]>,
             {
                 #[inline]
-                fn sample(&$self, point: [f32; DIM]) -> f32 {
-                    let $value = $self.noise.sample(point);
-                    $($map)*
+                fn sample(&$self, $point: [f32; DIM]) -> f32 {
+                    let $value = $self.noise.sample($point);
+                    or_else!({$({$($map_value)*})?} else { $value })
                 }
             }
 
@@ -69,9 +74,9 @@ macro_rules! modifier_map {
                 Noise: SampleWithSeed<DIM, [f32; DIM]>,
             {
                 #[inline]
-                fn sample_with_seed(&$self, point: [f32; DIM], seed: i32) -> f32 {
-                    let $value = $self.noise.sample_with_seed(point, seed);
-                    $($map)*
+                fn sample_with_seed(&$self, $point: [f32; DIM], $seed: i32) -> f32 {
+                    let $value = $self.noise.sample_with_seed($point, or_else!({$({$($map_seed)*})?} else { $seed }));
+                    or_else!({$({$($map_value)*})?} else { $value })
                 }
             }
 
@@ -82,9 +87,9 @@ macro_rules! modifier_map {
                 LaneCount<LANES>: SupportedLaneCount,
             {
                 #[inline]
-                fn sample(&$self, point: Simd<f32, LANES>) -> f32 {
-                    let $value = $self.noise.sample(point);
-                    $($map)*
+                fn sample(&$self, $point: Simd<f32, LANES>) -> f32 {
+                    let $value = $self.noise.sample($point);
+                    or_else!({$({$($map_value)*})?} else { $value })
                 }
             }
 
@@ -95,9 +100,9 @@ macro_rules! modifier_map {
                 LaneCount<LANES>: SupportedLaneCount,
             {
                 #[inline]
-                fn sample_with_seed(&$self, point: Simd<f32, LANES>, seed: i32) -> f32 {
-                    let $value = $self.noise.sample_with_seed(point, seed);
-                    $($map)*
+                fn sample_with_seed(&$self, $point: Simd<f32, LANES>, $seed: i32) -> f32 {
+                    let $value = $self.noise.sample_with_seed($point, or_else!({$({$($map_seed)*})?} else { $seed }));
+                    or_else!({$({$($map_value)*})?} else { $value })
                 }
             }
         };
@@ -117,7 +122,9 @@ modifier_map! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     pub struct Ridged {}
 
-    fn map(self, value: f32) {
+    self, seed, point, value;
+
+    map_value: {
         fast_abs(value) * -2.0 + 1.0
     }
 }
@@ -133,7 +140,9 @@ modifier_map! {
         pub frequency: f32,
     }
 
-    fn map(self, value: f32) {
+    self, seed, point, value;
+
+    map_value: {
         let v = (value + 1.0) * self.frequency;
         let v = v - floor(v * 0.5) * 2.0;
         let v = if v < 1.0 {
@@ -142,6 +151,20 @@ modifier_map! {
             2.0 - v
         };
         (v - 0.5) * 2.0
+    }
+}
+
+modifier_map! {
+    /// Multiplies the seed by `self.mul`.
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    pub struct MulSeed {
+        pub value: i32,
+    }
+
+    self, seed, point, value;
+
+    map_seed: {
+        seed * self.value
     }
 }
 
