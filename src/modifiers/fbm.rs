@@ -3,8 +3,7 @@ use core::simd::{LaneCount, Simd, SupportedLaneCount};
 
 use crate::{
     math::{fast_min, lerp},
-    modifiers::{Frequency, Seeded},
-    Sample, SampleWithSeed,
+    Noise, Sample, SampleWithSeed,
 };
 
 #[cfg(feature = "nightly-simd")]
@@ -26,6 +25,8 @@ pub struct Fbm<Noise> {
     pub fractal_bounding: f32,
 }
 
+impl<N> Noise for Fbm<N> {}
+
 impl<Noise> Fbm<Noise> {
     #[inline(always)]
     pub const fn new(noise: Noise, octaves: u32, gain: f32, lacunarity: f32) -> Self {
@@ -36,16 +37,6 @@ impl<Noise> Fbm<Noise> {
             lacunarity,
             fractal_bounding: fractal_bounding(octaves, gain),
         }
-    }
-
-    #[inline(always)]
-    pub const fn seed(self, seed: i32) -> Seeded<Self> {
-        Seeded { noise: self, seed }
-    }
-
-    #[inline(always)]
-    pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
-        Frequency { noise: self, frequency }
     }
 
     #[inline(always)]
