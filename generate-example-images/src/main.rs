@@ -28,10 +28,6 @@ fn save_jpg(name: &str, noise: impl Sample2) {
     noise_to_image(noise).save(format!("example-images/{name}.jpg")).unwrap();
 }
 
-fn coords_01(noise: impl Sample2) -> impl Sample2 {
-    NoiseFn(move |point: [f32; 2]| noise.sample2(point.map(|x| x * 0.5)))
-}
-
 fn main() {
     // Cell distances start at 0 unlike the others that are in the -1..+1 range.
     // So we use `from_01` to modify their output to be in closer to that range
@@ -73,14 +69,11 @@ fn main() {
         .fbm(3, 0.5, 1.5),
     );
 
-    save_jpg("tileable_perlin", coords_01(Perlin.tileable(FREQUENCY, FREQUENCY).frequency(2.0)));
+    save_jpg("tileable_perlin", Perlin.tileable(FREQUENCY, FREQUENCY));
 
-    save_jpg("tileable_value", coords_01(Value.seed(12).tileable(FREQUENCY, FREQUENCY).frequency(2.0)));
+    save_jpg("tileable_value", Value.seed(12).tileable(FREQUENCY, FREQUENCY));
 
-    save_jpg("tileable_cell_value", coords_01(CellValue::default().seed(12).tileable(2.15, 2.15).frequency(2.15 * 2.0 / FREQUENCY)));
+    save_jpg("tileable_cell_value", CellValue::default().seed(12).tileable(2.15, 2.15).frequency(2.15 / FREQUENCY));
 
-    save_jpg(
-        "tileable_cell_distance_sq",
-        coords_01(CellDistanceSq::default().seed(12).tileable(2.0, 2.0).frequency(2.0 * 2.0 / FREQUENCY)),
-    );
+    save_jpg("tileable_cell_distance_sq", CellDistanceSq::default().seed(12).tileable(2.0, 2.0).frequency(2.0 / FREQUENCY));
 }
