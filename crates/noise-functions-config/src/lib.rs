@@ -15,8 +15,7 @@ extern crate alloc;
 
 use alloc::boxed::Box;
 
-use from_fast_noise_2::cell::{CellIndex, DistanceFn, DistanceReturnType};
-use noise_functions::*;
+use noise_functions::{Noise as _, *};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::*;

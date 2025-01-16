@@ -1,7 +1,6 @@
 use crate::{
-    impl_modifier_methods, impl_modifier_methods_tileable,
     math::{cos, sin},
-    Sample, SampleWithSeed,
+    Noise, Sample, SampleWithSeed,
 };
 
 use core::f32::consts::{PI, TAU};
@@ -32,9 +31,6 @@ impl<Noise> Tileable<Noise> {
         }
     }
 
-    impl_modifier_methods!();
-    impl_modifier_methods_tileable!();
-
     fn map_point(&self, [x, y]: [f32; 2]) -> [f32; 4] {
         let nx = cos(x * self.tau_div_width) * self.width_div_pi;
         let ny = cos(y * self.tau_div_height) * self.height_div_pi;
@@ -43,6 +39,8 @@ impl<Noise> Tileable<Noise> {
         [nx, ny, nz, nw]
     }
 }
+
+impl<N> Noise for Tileable<N> {}
 
 impl<Noise> Sample<2> for Tileable<Noise>
 where

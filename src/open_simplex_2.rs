@@ -101,7 +101,7 @@ macro_rules! impl_improve {
 
 pub(crate) use impl_improve;
 
-use crate::impl_modifier_methods;
+use crate::Noise;
 
 /// Improves 3D orientation for the `XY` plane.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -111,13 +111,8 @@ pub struct ImproveXy<OpenSimplexNoise>(pub OpenSimplexNoise);
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ImproveXz<OpenSimplexNoise>(pub OpenSimplexNoise);
 
-impl<OpenSimplexNoise> ImproveXy<OpenSimplexNoise> {
-    impl_modifier_methods!();
-}
-
-impl<OpenSimplexNoise> ImproveXz<OpenSimplexNoise> {
-    impl_modifier_methods!();
-}
+impl<OpenSimplexNoise> Noise for ImproveXy<OpenSimplexNoise> {}
+impl<OpenSimplexNoise> Noise for ImproveXz<OpenSimplexNoise> {}
 
 #[inline]
 pub(crate) fn improve3([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {

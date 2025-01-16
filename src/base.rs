@@ -33,13 +33,7 @@ macro_rules! if_has_dim {
 
 macro_rules! impl_noise {
     ($dims:tt $struct:ident) => {
-        impl $struct {
-            $crate::impl_modifier_methods!();
-
-            $crate::base::if_has_dim! { 4 in $dims;
-                $crate::impl_modifier_methods_tileable!();
-            }
-        }
+        impl $crate::Noise for $struct {}
 
         impl $crate::Sample<2> for $struct {
             #[inline(always)]

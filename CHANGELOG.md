@@ -3,6 +3,7 @@
 ## Unreleased
 - **breaking:** `CellValue`, `CellDistance` and `CellDistanceSq` now have the `Fast*` prefix. They also have a `jitter` field. There is no more `Jitter` wrapper struct.
 - **breaking:** sampling with a seed is now expressed by the trait `SampleWithSeed` instead of `Seeded<T>`/`Seeded<&T>`; this brings with it better error messages, less boilerplate and extensibility
+- **breaking:** moved modifier methods like `seed`, `frequency`, `fbm` and the like to the `Noise` trait
 - **breaking:** cell distance now starts at 0 instead of -1
 - **added:** `Sample4` and `Sample4a` helper trait
 - **added:** `Perlin`, `Value` and `Cell*` noises now support 4D sampling

@@ -1,4 +1,4 @@
-use crate::{impl_modifier_methods, impl_modifier_methods_tileable, Sample, SampleWithSeed};
+use crate::{Noise, Sample, SampleWithSeed};
 
 /// Wraps a function to make it implement [`Sample`].
 ///
@@ -22,10 +22,7 @@ use crate::{impl_modifier_methods, impl_modifier_methods_tileable, Sample, Sampl
 /// ```
 pub struct NoiseFn<F, const WITH_SEED: bool>(pub F);
 
-impl<F, const WITH_SEED: bool> NoiseFn<F, WITH_SEED> {
-    impl_modifier_methods!();
-    impl_modifier_methods_tileable!();
-}
+impl<F, const WITH_SEED: bool> Noise for NoiseFn<F, WITH_SEED> {}
 
 impl<const DIM: usize, Point, F> Sample<DIM, Point> for NoiseFn<F, false>
 where
