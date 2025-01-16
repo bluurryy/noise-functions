@@ -1,5 +1,6 @@
 mod fbm;
 mod frequency;
+pub mod open_simplex_2;
 mod ping_pong;
 mod ridged;
 mod seeded;

@@ -10,8 +10,8 @@ use crate::open_simplex_2::improve3a;
 ///
 /// When sampling in 3 Dimensions you can improve the visual isotropy in a the respective planes via [`improve_xy`] or [`improve_xz`].
 ///
-/// [`improve_xy`]: Self::improve_xy
-/// [`improve_xz`]: Self::improve_xz
+/// [`improve_xy`]: crate::OpenSimplexNoise::improve_xy
+/// [`improve_xz`]: crate::OpenSimplexNoise::improve_xz
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OpenSimplex2;
 

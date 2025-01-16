@@ -76,8 +76,7 @@ mod math;
 pub mod modifiers;
 mod noise;
 mod noise_fn;
-/// OpenSimplex2 noise functions and combinators.
-pub mod open_simplex_2;
+mod open_simplex_2;
 mod sample;
 
 pub use base::{CellDistance, CellValue, FastCellDistance, FastCellDistanceSq, FastCellValue, OpenSimplex2, OpenSimplex2s, Perlin, Simplex, Value, ValueCubic};
