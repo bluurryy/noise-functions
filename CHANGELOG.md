@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.0 (2025-01-16)
 - **breaking:** `CellValue`, `CellDistance` and `CellDistanceSq` now have a `jitter` field. There is no more `Jitter` wrapper struct.
 - **breaking:** sampling with a seed is now expressed by the trait `SampleWithSeed` instead of `Seeded<T>`/`Seeded<&T>`; this brings with it better error messages, less boilerplate and extensibility
 - **breaking:** moved modifier methods like `seed`, `frequency`, `fbm` and the like to the `Noise` trait
