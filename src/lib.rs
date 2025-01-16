@@ -5,7 +5,7 @@
 //!
 //! ## Examples
 //! ```
-//! use noise_functions::{ Perlin, CellDistance, OpenSimplex2s, Sample2, Sample3, NoiseFn };
+//! use noise_functions::{ Noise, OpenSimplexNoise, Perlin, CellDistance, OpenSimplex2s, Sample2, Sample3, NoiseFn };
 //!
 //! let point = [1.0, 2.0];
 //!
@@ -91,6 +91,7 @@ pub use cellular::{CellIndex, DistanceFn, DistanceReturnType};
 pub use frequency::Frequency;
 pub use noise::Noise;
 pub use noise_fn::NoiseFn;
+pub use open_simplex_2::OpenSimplexNoise;
 pub use sample::{Sample, Sample2, Sample3, Sample4, SampleWithSeed};
 #[cfg(feature = "nightly-simd")]
 pub use sample::{Sample2a, Sample3a, Sample4a};

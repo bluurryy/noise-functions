@@ -3,9 +3,7 @@ use core::simd::f32x4;
 
 macro_rules! impl_open_simplex_2 {
     ($noise:ident) => {
-        impl $noise {
-            $crate::open_simplex_2::impl_open_simplex_2_modifiers!();
-        }
+        impl $crate::open_simplex_2::OpenSimplexNoise for $noise {}
 
         $crate::open_simplex_2::impl_improve! {
             improve3_xy | improve3a_xy as ImproveXy for $noise
@@ -18,22 +16,6 @@ macro_rules! impl_open_simplex_2 {
 }
 
 pub(crate) use impl_open_simplex_2;
-
-macro_rules! impl_open_simplex_2_modifiers {
-    () => {
-        /// Improves 3D orientation for the `XY` plane.
-        pub const fn improve_xy(self) -> $crate::open_simplex_2::ImproveXy<Self> {
-            $crate::open_simplex_2::ImproveXy(self)
-        }
-
-        /// Improves 3D orientation for the `XZ` plane.
-        pub const fn improve_xz(self) -> $crate::open_simplex_2::ImproveXz<Self> {
-            $crate::open_simplex_2::ImproveXz(self)
-        }
-    };
-}
-
-pub(crate) use impl_open_simplex_2_modifiers;
 
 macro_rules! impl_improve {
     ($improve_fn:ident | $improve_simd_fn:ident as $improve:ident for $noise:ident) => {
@@ -103,6 +85,18 @@ pub(crate) use impl_improve;
 
 use crate::Noise;
 
+pub trait OpenSimplexNoise: Noise {
+    /// Improves 3D orientation for the `XY` plane.
+    fn improve_xy(self) -> ImproveXy<Self> {
+        ImproveXy(self)
+    }
+
+    /// Improves 3D orientation for the `XZ` plane.
+    fn improve_xz(self) -> ImproveXz<Self> {
+        ImproveXz(self)
+    }
+}
+
 /// Improves 3D orientation for the `XY` plane.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ImproveXy<OpenSimplexNoise>(pub OpenSimplexNoise);
@@ -111,8 +105,10 @@ pub struct ImproveXy<OpenSimplexNoise>(pub OpenSimplexNoise);
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ImproveXz<OpenSimplexNoise>(pub OpenSimplexNoise);
 
-impl<OpenSimplexNoise> Noise for ImproveXy<OpenSimplexNoise> {}
-impl<OpenSimplexNoise> Noise for ImproveXz<OpenSimplexNoise> {}
+impl<N> Noise for ImproveXy<N> {}
+impl<N> Noise for ImproveXz<N> {}
+impl<N> OpenSimplexNoise for ImproveXy<N> {}
+impl<N> OpenSimplexNoise for ImproveXz<N> {}
 
 #[inline]
 pub(crate) fn improve3([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {

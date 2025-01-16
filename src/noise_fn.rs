@@ -7,7 +7,7 @@ use crate::{Noise, Sample, SampleWithSeed};
 /// With a seed parameter it can be used for fractals:
 ///
 /// ```rust
-/// use noise_functions::{ NoiseFn, Sample2, OpenSimplex2s };
+/// use noise_functions::{ Noise, NoiseFn, Sample2, OpenSimplex2s };
 ///
 /// let warped = NoiseFn(|point: [f32; 2], seed: i32| {
 ///     let warp_x = OpenSimplex2s.seed(seed + 100).sample2(point);
