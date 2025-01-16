@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 (2025-01-16)
 - **breaking:** `Sample*` helper traits now require `Sample` which in turn now requires `Noise`; this is useful for generic code so you don't need to specify those additional bounds if you need them; every type that implements `Sample*` should implement `Sample` and `Noise` anyway
 - **added:** missing `Noise` implementations for `Weighted` and `Frequency` modifiers
 - **added:** blanket `Noise` impl for every `&N` where `N: Noise`
