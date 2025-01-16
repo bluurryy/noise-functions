@@ -1,8 +1,4 @@
-use crate::{
-    base::impl_noise,
-    open_simplex_2::{impl_open_simplex_2, improve3},
-    Sample, SampleWithSeed,
-};
+use crate::{base::impl_noise, open_simplex_2::improve3, Sample, SampleWithSeed};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
@@ -50,8 +46,6 @@ impl SampleWithSeed<3, core::simd::f32x4> for OpenSimplex2s {
         self.gen3a(improve3a(point), seed)
     }
 }
-
-impl_open_simplex_2!(OpenSimplex2s);
 
 impl OpenSimplex2s {
     #[inline]

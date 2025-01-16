@@ -1,114 +1,109 @@
 #[cfg(feature = "nightly-simd")]
-use core::simd::f32x4;
+use core::simd::{f32x2, f32x4};
 
-macro_rules! impl_open_simplex_2 {
-    ($noise:ident) => {
-        impl $crate::open_simplex_2::OpenSimplexNoise for $noise {}
+use crate::{Noise, OpenSimplex2, OpenSimplex2s, Sample, SampleWithSeed};
 
-        $crate::open_simplex_2::impl_improve! {
-            improve3_xy | improve3a_xy as ImproveXy for $noise
+macro_rules! impl_improves {
+    (
+        $trait:ident for $($noise:ident),*;
+        $(
+            $(#[$improve_attrs:meta])*
+            $improve_struct:ident $improve_fn:ident use $improve:ident $improve_a:ident;
+        )*
+    ) => {
+        pub trait $trait: Noise {
+            $(
+                $(#[$improve_attrs])*
+                fn $improve_fn(self) -> $improve_struct<Self> {
+                    $improve_struct(self)
+                }
+            )*
         }
 
-        $crate::open_simplex_2::impl_improve! {
-            improve3_xz | improve3a_xz as ImproveXz for $noise
-        }
+        $(
+            impl $trait for $noise {}
+        )*
+
+        $(
+            $(#[$improve_attrs])*
+            #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+            pub struct $improve_struct<OpenSimplexNoise>(pub OpenSimplexNoise);
+
+            impl<N> Noise for $improve_struct<N> {}
+            impl<N> $trait for $improve_struct<N> {}
+
+            impl<N: Sample<2>> Sample<2> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 2]) -> f32 {
+                    self.0.sample(point)
+                }
+            }
+
+            impl<N: SampleWithSeed<2>> SampleWithSeed<2> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
+                    self.0.sample_with_seed(point, seed)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl<N: Sample<2, f32x2>> Sample<2, f32x2> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample(&self, point: f32x2) -> f32 {
+                    self.0.sample(point)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl<N: SampleWithSeed<2, f32x2>> SampleWithSeed<2, core::simd::f32x2> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample_with_seed(&self, point: f32x2, seed: i32) -> f32 {
+                    self.0.sample_with_seed(point, seed)
+                }
+            }
+
+            impl<N: Sample<3>> Sample<3> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 3]) -> f32 {
+                    self.0.sample($improve(point))
+                }
+            }
+
+            impl<N: SampleWithSeed<3>> SampleWithSeed<3> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample_with_seed(&self, point: [f32; 3], seed: i32) -> f32 {
+                    self.0.sample_with_seed($improve(point), seed)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl<N: Sample<3, f32x4>> Sample<3, f32x4> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample(&self, point: f32x4) -> f32 {
+                    self.0.sample($improve_a(point))
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl<N: SampleWithSeed<3, f32x4>> SampleWithSeed<3, f32x4> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample_with_seed(&self, point: f32x4, seed: i32) -> f32 {
+                    self.0.sample_with_seed($improve_a(point), seed)
+                }
+            }
+        )*
     };
 }
 
-pub(crate) use impl_open_simplex_2;
+impl_improves! {
+    OpenSimplexNoise for OpenSimplex2, OpenSimplex2s;
 
-macro_rules! impl_improve {
-    ($improve_fn:ident | $improve_simd_fn:ident as $improve:ident for $noise:ident) => {
-        impl $crate::Sample<2> for $crate::open_simplex_2::$improve<$noise> {
-            #[inline(always)]
-            fn sample(&self, point: [f32; 2]) -> f32 {
-                self.0.gen2(point, 0)
-            }
-        }
-
-        impl $crate::SampleWithSeed<2> for $crate::open_simplex_2::$improve<$noise> {
-            #[inline(always)]
-            fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
-                self.0.gen2(point, seed)
-            }
-        }
-
-        #[cfg(feature = "nightly-simd")]
-        impl $crate::Sample<2, f32x2> for $crate::open_simplex_2::$improve<$noise> {
-            #[inline(always)]
-            fn sample(&self, point: f32x2) -> f32 {
-                self.0.gen2a(point, 0)
-            }
-        }
-
-        #[cfg(feature = "nightly-simd")]
-        impl $crate::SampleWithSeed<2, f32x2> for $crate::open_simplex_2::$improve<$noise> {
-            #[inline(always)]
-            fn sample_with_seed(&self, point: f32x2, seed: i32) -> f32 {
-                self.0.gen2a(point, seed)
-            }
-        }
-
-        impl $crate::Sample<3> for $crate::open_simplex_2::$improve<$noise> {
-            #[inline(always)]
-            fn sample(&self, point: [f32; 3]) -> f32 {
-                self.0.gen3($crate::open_simplex_2::$improve_fn(point), 0)
-            }
-        }
-
-        impl $crate::SampleWithSeed<3> for $crate::open_simplex_2::$improve<$noise> {
-            #[inline(always)]
-            fn sample_with_seed(&self, point: [f32; 3], seed: i32) -> f32 {
-                self.0.gen3($crate::open_simplex_2::$improve_fn(point), seed)
-            }
-        }
-
-        #[cfg(feature = "nightly-simd")]
-        impl $crate::Sample<3, f32x4> for $crate::open_simplex_2::$improve<$noise> {
-            #[inline(always)]
-            fn sample(&self, point: f32x4) -> f32 {
-                self.0.gen3a($crate::open_simplex_2::$improve_simd_fn(point), 0)
-            }
-        }
-
-        #[cfg(feature = "nightly-simd")]
-        impl $crate::SampleWithSeed<3, f32x4> for $crate::open_simplex_2::$improve<$noise> {
-            #[inline(always)]
-            fn sample_with_seed(&self, point: f32x4, seed: i32) -> f32 {
-                self.0.gen3a($crate::open_simplex_2::$improve_simd_fn(point), seed)
-            }
-        }
-    };
-}
-
-pub(crate) use impl_improve;
-
-use crate::Noise;
-
-pub trait OpenSimplexNoise: Noise {
     /// Improves 3D orientation for the `XY` plane.
-    fn improve_xy(self) -> ImproveXy<Self> {
-        ImproveXy(self)
-    }
+    ImproveXy improve_xy use improve3_xy improve3a_xy;
 
     /// Improves 3D orientation for the `XZ` plane.
-    fn improve_xz(self) -> ImproveXz<Self> {
-        ImproveXz(self)
-    }
+    ImproveXz improve_xz use improve3_xz improve3a_xz;
 }
-
-/// Improves 3D orientation for the `XY` plane.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ImproveXy<OpenSimplexNoise>(pub OpenSimplexNoise);
-
-/// Improves 3D orientation for the `XY` plane.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ImproveXz<OpenSimplexNoise>(pub OpenSimplexNoise);
-
-impl<N> Noise for ImproveXy<N> {}
-impl<N> Noise for ImproveXz<N> {}
-impl<N> OpenSimplexNoise for ImproveXy<N> {}
-impl<N> OpenSimplexNoise for ImproveXz<N> {}
 
 #[inline]
 pub(crate) fn improve3([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
