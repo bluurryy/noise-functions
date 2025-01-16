@@ -13,7 +13,7 @@ pub use ridged::Ridged;
 pub use seeded::Seeded;
 pub use tileable::Tileable;
 
-/// Wraps a fractal noise to
+/// Modifies a fractal noise to make successive octaves have less impact the lower the output value of the previous one was.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Weighted<Fractal> {
     pub fractal: Fractal,

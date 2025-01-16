@@ -12,6 +12,9 @@ use crate::math::splat;
 
 use super::{fast_abs, fractal_bounding, Weighted};
 
+/// Generates fractal noise and creates a peak at value 0.
+///
+/// **Note:** This modifier assumes the base noise to return values in the [-1, 1] range.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Ridged<Noise> {
     pub noise: Noise,

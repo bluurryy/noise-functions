@@ -12,6 +12,9 @@ use crate::math::splat;
 
 use super::fractal_bounding;
 
+/// Generates fractal noise and applies a triangle wave to the output of a base noise function.
+///
+/// **Note:** This modifier assumes the base noise to return values in the [-1, 1] range.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PingPong<Noise> {
     pub noise: Noise,

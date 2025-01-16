@@ -3,7 +3,7 @@ use core::simd::{LaneCount, Simd, SupportedLaneCount};
 
 use crate::Sample;
 
-/// Wraps a noise and modifies its frequency.
+/// Modifies a noise with a frequency multiplier.
 ///
 /// This multiplies the point by the provided `frequency` before sampling.
 #[derive(Debug, Clone, Copy, PartialEq)]
