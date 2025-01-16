@@ -109,7 +109,7 @@ pub(crate) use modifier_map;
 use crate::math::floor;
 
 modifier_map! {
-    // Adds to the base noise's output value.
+    /// Adds to the noise's output value.
     #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct Add {
         pub value: f32,
@@ -121,7 +121,7 @@ modifier_map! {
 }
 
 modifier_map! {
-    // Subtracts from the base noise's output value.
+    /// Subtracts from the noise's output value.
     #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct Sub {
         pub value: f32,
@@ -133,7 +133,7 @@ modifier_map! {
 }
 
 modifier_map! {
-    // Multiplies the base noise's output value.
+    /// Multiplies the noise's output value.
     #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct Mul {
         pub value: f32,
@@ -145,7 +145,7 @@ modifier_map! {
 }
 
 modifier_map! {
-    // Divides the base noise's output value.
+    ///  Divides the noise's output value.
     #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct Div {
         pub value: f32,
@@ -157,7 +157,7 @@ modifier_map! {
 }
 
 modifier_map! {
-    // Calculates the remainder the base noise's output value.
+    /// Calculates the remainder the noise's output value.
     #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct Rem {
         pub value: f32,

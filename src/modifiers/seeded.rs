@@ -1,6 +1,10 @@
 use crate::{Noise, Sample, SampleWithSeed};
 
 /// Wraps a noise with a seed.
+///
+/// This structs' [`Sample`] implementation will call [`sample_with_seed`] on the base noise with `self.seed`.
+///
+/// [`sample_with_seed`]: SampleWithSeed::sample_with_seed
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Seeded<Noise> {
     pub noise: Noise,
