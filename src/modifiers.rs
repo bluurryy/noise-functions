@@ -1,13 +1,11 @@
 mod fbm;
 mod frequency;
 pub mod open_simplex_2;
-mod ping_pong;
 mod seeded;
 mod tileable;
 
 pub use fbm::Fbm;
 pub use frequency::Frequency;
-pub use ping_pong::PingPong;
 pub use seeded::Seeded;
 pub use tileable::Tileable;
 
@@ -108,6 +106,8 @@ macro_rules! modifier_map {
 
 pub(crate) use modifier_map;
 
+use crate::math::floor;
+
 modifier_map! {
     // Adds to the base noise's output value.
     #[derive(Debug, Clone, Copy, PartialEq)]
@@ -179,6 +179,29 @@ modifier_map! {
 
     fn map(self, value: f32) {
         fast_abs(value) * -2.0 + 1.0
+    }
+}
+
+modifier_map! {
+    /// Generates fractal noise and applies a triangle wave to the output of a base noise function.
+    ///
+    /// The output value is in the [-1, 1] range.
+    ///
+    /// **Note:** This modifier assumes the base noise to return values in the [-1, 1] range.
+    #[derive(Debug, Clone, Copy, PartialEq)]
+    pub struct TriangleWave {
+        pub frequency: f32,
+    }
+
+    fn map(self, value: f32) {
+        let v = (value + 1.0) * self.frequency;
+        let v = v - floor(v * 0.5) * 2.0;
+        let v = if v < 1.0 {
+            v
+        } else {
+            2.0 - v
+        };
+        (v - 0.5) * 2.0
     }
 }
 

@@ -53,7 +53,7 @@ fn main() {
 
     save_jpg("fbm", OpenSimplex2.fbm(3, 0.5, 2.0));
     save_jpg("ridged", OpenSimplex2.ridged().fbm(3, 0.5, 2.0));
-    save_jpg("ping_pong", OpenSimplex2.ping_pong(3, 0.5, 2.0, 2.0));
+    save_jpg("ping_pong", OpenSimplex2.triangle_wave(2.0).fbm(3, 0.5, 2.0).weighted(1.0));
 
     save_jpg(
         "warped",

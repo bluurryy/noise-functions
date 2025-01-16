@@ -11,11 +11,6 @@ mod libm_math {
     }
 
     #[inline(always)]
-    pub(crate) fn trunc(f: f32) -> f32 {
-        libm::truncf(f)
-    }
-
-    #[inline(always)]
     pub(crate) fn floor(f: f32) -> f32 {
         libm::floorf(f)
     }
@@ -56,11 +51,6 @@ mod std_math {
     #[inline(always)]
     pub(crate) fn sqrt(f: f32) -> f32 {
         f32::sqrt(f)
-    }
-
-    #[inline(always)]
-    pub(crate) fn trunc(f: f32) -> f32 {
-        f32::trunc(f)
     }
 
     #[inline(always)]

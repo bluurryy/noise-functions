@@ -1,4 +1,4 @@
-use crate::modifiers::{Add, Div, Fbm, Frequency, Mul, PingPong, Rem, Ridged, Seeded, Sub, Tileable};
+use crate::modifiers::{Add, Div, Fbm, Frequency, Mul, Rem, Ridged, Seeded, Sub, Tileable, TriangleWave};
 
 pub trait Noise: Sized {
     #[inline(always)]
@@ -22,8 +22,8 @@ pub trait Noise: Sized {
     }
 
     #[inline(always)]
-    fn ping_pong(self, octaves: u32, gain: f32, lacunarity: f32, strength: f32) -> PingPong<Self> {
-        PingPong::new(self, octaves, gain, lacunarity, strength)
+    fn triangle_wave(self, frequency: f32) -> TriangleWave<Self> {
+        TriangleWave { noise: self, frequency }
     }
 
     #[inline(always)]

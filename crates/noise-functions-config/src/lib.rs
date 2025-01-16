@@ -196,7 +196,8 @@ macro_rules! make_ping_pong {
         make!(
             $self,
             $noise
-                .ping_pong($self.octaves, $self.gain, $self.lacunarity, $self.ping_pong_strength)
+                .triangle_wave($self.ping_pong_strength)
+                .fbm($self.octaves, $self.gain, $self.lacunarity)
                 .weighted($self.weighted_strength)
         )
     };
