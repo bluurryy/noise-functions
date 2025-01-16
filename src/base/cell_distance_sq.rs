@@ -30,37 +30,37 @@ impl CellDistanceSq {
     #[inline]
     fn gen2(self, point: [f32; 2], seed: i32) -> f32 {
         // implementation from FastNoiseLite
-        cell_distance_euclidean_squared::gen2(self.jitter, point, seed) - 1.0
+        cell_distance_euclidean_squared::gen2(self.jitter, point, seed) * 2.0 - 1.0
     }
 
     #[inline]
     fn gen3(self, point: [f32; 3], seed: i32) -> f32 {
         // implementation from FastNoiseLite
-        cell_distance_euclidean_squared::gen3(self.jitter, point, seed) - 1.0
+        cell_distance_euclidean_squared::gen3(self.jitter, point, seed) * 2.0 - 1.0
     }
 
     #[inline]
     fn gen4(self, point: [f32; 4], seed: i32) -> f32 {
-        CustomCellDistance::default().jitter(self.jitter).distance_fn(DistanceFn::EuclideanSquared).gen4(point, seed) - 1.0
+        CustomCellDistance::default().jitter(self.jitter).distance_fn(DistanceFn::EuclideanSquared).gen4(point, seed) * 2.0 - 1.0
     }
 
     #[inline]
     #[cfg(feature = "nightly-simd")]
     fn gen2a(self, point: f32x2, seed: i32) -> f32 {
         // implementation from FastNoiseLite
-        cell_distance_euclidean_squared::gen2a(self.jitter, point, seed) - 1.0
+        cell_distance_euclidean_squared::gen2a(self.jitter, point, seed) * 2.0 - 1.0
     }
 
     #[inline]
     #[cfg(feature = "nightly-simd")]
     fn gen3a(self, point: f32x4, seed: i32) -> f32 {
         // implementation from FastNoiseLite
-        cell_distance_euclidean_squared::gen3a(self.jitter, point, seed) - 1.0
+        cell_distance_euclidean_squared::gen3a(self.jitter, point, seed) * 2.0 - 1.0
     }
 
     #[inline]
     #[cfg(feature = "nightly-simd")]
     fn gen4a(self, point: f32x4, seed: i32) -> f32 {
-        CustomCellDistance::default().jitter(self.jitter).distance_fn(DistanceFn::EuclideanSquared).gen4a(point, seed) - 1.0
+        CustomCellDistance::default().jitter(self.jitter).distance_fn(DistanceFn::EuclideanSquared).gen4a(point, seed) * 2.0 - 1.0
     }
 }
