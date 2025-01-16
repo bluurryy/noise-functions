@@ -67,9 +67,7 @@ compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature mu
 
 mod base;
 mod cellular;
-/// This is experimental and not part of the public api.
-#[doc(hidden)]
-pub mod from_fast_noise_2;
+mod from_fast_noise_2;
 mod from_fast_noise_lite;
 mod math;
 /// Noise modifiers.
@@ -122,6 +120,7 @@ macro_rules! simple_enum {
 		}
 
 		impl $name {
+            #[expect(dead_code)]
 			pub const VARIANTS: &'static [Self] = &[
 				$(Self::$variant,)*
 			];
