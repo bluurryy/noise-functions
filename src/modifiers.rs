@@ -2,14 +2,12 @@ mod fbm;
 mod frequency;
 pub mod open_simplex_2;
 mod ping_pong;
-mod ridged;
 mod seeded;
 mod tileable;
 
 pub use fbm::Fbm;
 pub use frequency::Frequency;
 pub use ping_pong::PingPong;
-pub use ridged::Ridged;
 pub use seeded::Seeded;
 pub use tileable::Tileable;
 
@@ -34,7 +32,8 @@ impl<Fractal> Weighted<Fractal> {
 
 macro_rules! modifier_map {
     (
-        struct $struct:ident {
+        $(#[$attr:meta])*
+        pub struct $struct:ident {
             $($fields:tt)*
         }
 
@@ -42,6 +41,7 @@ macro_rules! modifier_map {
             $($map:tt)*
         }
     ) => {
+        $(#[$attr])*
         pub struct $struct<Noise> {
             pub noise: Noise,
             $($fields)*
@@ -109,7 +109,7 @@ macro_rules! modifier_map {
 pub(crate) use modifier_map;
 
 modifier_map! {
-    struct Add {
+    pub struct Add {
         pub value: f32,
     }
 
@@ -119,7 +119,7 @@ modifier_map! {
 }
 
 modifier_map! {
-    struct Sub {
+    pub struct Sub {
         pub value: f32,
     }
 
@@ -129,7 +129,7 @@ modifier_map! {
 }
 
 modifier_map! {
-    struct Mul {
+    pub struct Mul {
         pub value: f32,
     }
 
@@ -139,7 +139,7 @@ modifier_map! {
 }
 
 modifier_map! {
-    struct Div {
+    pub struct Div {
         pub value: f32,
     }
 
@@ -149,12 +149,26 @@ modifier_map! {
 }
 
 modifier_map! {
-    struct Rem {
+    pub struct Rem {
         pub value: f32,
     }
 
     fn map(self, value: f32) {
         value % self.value
+    }
+}
+
+modifier_map! {
+    /// Modifies a noise to create a peak at value 0.
+    ///
+    /// Equal to `abs(x) * 2 - 1`.
+    ///
+    /// **Note:** This modifier assumes the base noise to return values in the [-1, 1] range.
+    #[derive(Debug, Clone, Copy, PartialEq)]
+    pub struct Ridged {}
+
+    fn map(self, value: f32) {
+        fast_abs(value) * -2.0 + 1.0
     }
 }
 
