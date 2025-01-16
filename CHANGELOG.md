@@ -4,7 +4,6 @@
 - **breaking:** `CellValue`, `CellDistance` and `CellDistanceSq` now have a `jitter` field. There is no more `Jitter` wrapper struct.
 - **breaking:** sampling with a seed is now expressed by the trait `SampleWithSeed` instead of `Seeded<T>`/`Seeded<&T>`; this brings with it better error messages, less boilerplate and extensibility
 - **breaking:** moved modifier methods like `seed`, `frequency`, `fbm` and the like to the `Noise` trait
-- **breaking:** cell distance now starts at 0 instead of -1
 - **breaking:** `ridged` modifier is no longer a fractal to migrate, replace `.ridged(...)` with `.ridged().fbm(...)`
 - **breaking:** `ping_pong` modifier is gone; to migrate, replace `.ping_pong(...)` with `.triangle_wave().fbm(...).weighted(1.0)`
 - **added:** `Sample4` and `Sample4a` helper trait
