@@ -41,10 +41,10 @@ fn main() {
     // So we use `from_01` to modify their output to be in closer to that range
     // to be able to use the same `save_jpg` function.
 
-    save_jpg("cell_distance_sq", from_01(FastCellDistanceSq::default()));
-    save_jpg("cell_distance", from_01(FastCellDistance::default()));
+    save_jpg("cell_distance_sq", from_01(CellDistanceSq::default()));
+    save_jpg("cell_distance", from_01(CellDistance::default()));
 
-    save_jpg("cell_value", FastCellValue::default());
+    save_jpg("cell_value", CellValue::default());
     save_jpg("perlin", Perlin);
     save_jpg("open_simplex_2", OpenSimplex2);
     save_jpg("open_simplex_2s", OpenSimplex2s);
@@ -88,7 +88,7 @@ fn main() {
     save_jpg(
         "tileable_cell_distance_sq",
         from_01(coords_01(NoiseFn(|point: [f32; 2]| {
-            let value = FastCellDistanceSq::default().seed(12).tileable(2.0, 2.0).frequency(2.0 * 2.0 / FREQUENCY).sample2(point);
+            let value = CellDistanceSq::default().seed(12).tileable(2.0, 2.0).frequency(2.0 * 2.0 / FREQUENCY).sample2(point);
             value * 1.25
         }))),
     );

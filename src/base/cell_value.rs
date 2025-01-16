@@ -5,26 +5,26 @@ use core::simd::{f32x2, f32x4};
 
 /// 2/3/4 dimensional noise of the random value of the closest cell.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct FastCellValue {
+pub struct CellValue {
     pub jitter: f32,
 }
 
-impl FastCellValue {
+impl CellValue {
     pub const fn jitter(mut self, jitter: f32) -> Self {
         self.jitter = jitter;
         self
     }
 }
 
-impl_noise!(234 FastCellValue);
+impl_noise!(234 CellValue);
 
-impl Default for FastCellValue {
+impl Default for CellValue {
     fn default() -> Self {
         Self { jitter: 1.0 }
     }
 }
 
-impl FastCellValue {
+impl CellValue {
     #[inline]
     fn gen2(self, [x, y]: [f32; 2], seed: i32) -> f32 {
         // implementation from FastNoiseLite

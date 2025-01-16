@@ -1,8 +1,8 @@
+mod cell_distance;
+mod cell_distance_sq;
+mod cell_value;
 mod custom_cell_distance;
 mod custom_cell_value;
-mod fast_cell_distance;
-mod fast_cell_distance_sq;
-mod fast_cell_value;
 mod open_simplex_2;
 mod open_simplex_2s;
 mod perlin;
@@ -10,11 +10,11 @@ mod simplex;
 mod value;
 mod value_cubic;
 
+pub use cell_distance::CellDistance;
+pub use cell_distance_sq::CellDistanceSq;
+pub use cell_value::CellValue;
 pub use custom_cell_distance::CustomCellDistance;
 pub use custom_cell_value::CustomCellValue;
-pub use fast_cell_distance::FastCellDistance;
-pub use fast_cell_distance_sq::FastCellDistanceSq;
-pub use fast_cell_value::FastCellValue;
 pub use open_simplex_2::OpenSimplex2;
 pub use open_simplex_2s::OpenSimplex2s;
 pub use perlin::Perlin;
