@@ -5,7 +5,7 @@ use core::simd::{f32x2, f32x4};
 
 use super::CellDistance;
 
-/// 2/3/4 dimensional noise of the squared distance to the closest cell
+/// 2/3/4 dimensional noise of the squared distance to the closest cell.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct FastCellDistanceSq {
     pub jitter: f32,

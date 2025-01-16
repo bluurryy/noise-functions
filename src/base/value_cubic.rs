@@ -3,7 +3,7 @@ use crate::base::impl_noise;
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
-/// 2/3 dimensional Cubic Value noise
+/// 2/3 dimensional Cubic Value noise.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ValueCubic;
 

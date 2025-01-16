@@ -6,6 +6,7 @@ use crate::{
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
+/// 2/3/4 dimensional noise of the random value of the closest cell.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct CellValue {
     pub jitter: f32,

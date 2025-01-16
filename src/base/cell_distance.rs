@@ -7,7 +7,7 @@ use crate::{
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
-/// 2/3/4 dimensional noise of the distance to a cell
+/// 2/3/4 dimensional noise of the distance to a cell.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct CellDistance {
     pub jitter: f32,
