@@ -1,5 +1,6 @@
 use crate::modifiers::{Fbm, Frequency, MulSeed, Ridged, Seeded, Tileable, TriangleWave};
 
+/// Provides modifier methods for noise types.
 pub trait Noise: Sized {
     #[inline(always)]
     fn seed(self, seed: i32) -> Seeded<Self> {

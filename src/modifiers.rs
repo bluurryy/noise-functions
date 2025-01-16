@@ -155,7 +155,7 @@ modifier_map! {
 }
 
 modifier_map! {
-    /// Multiplies the seed by `self.mul`.
+    /// Multiplies the seed by `value`.
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     pub struct MulSeed {
         pub value: i32,

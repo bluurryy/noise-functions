@@ -5,12 +5,14 @@ use crate::{Noise, OpenSimplex2, OpenSimplex2s, Sample, SampleWithSeed};
 
 macro_rules! impl_improves {
     (
+        $(#[$trait_attrs:meta])*
         $trait:ident for $($noise:ident),*;
         $(
             $(#[$improve_attrs:meta])*
             $improve_struct:ident $improve_fn:ident use $improve:ident $improve_a:ident;
         )*
     ) => {
+        $(#[$trait_attrs])*
         pub trait $trait: Noise {
             $(
                 $(#[$improve_attrs])*
@@ -96,6 +98,7 @@ macro_rules! impl_improves {
 }
 
 impl_improves! {
+    /// Provides modifier methods for `OpenSimplex` noises.
     OpenSimplexNoise for OpenSimplex2, OpenSimplex2s;
 
     /// Improves 3D orientation for the `XY` plane.
