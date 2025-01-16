@@ -187,7 +187,7 @@ macro_rules! make_fbm {
 
 macro_rules! make_ridged {
     ($self:ident, $noise:expr) => {
-        make!($self, $noise.ridged($self.octaves, $self.gain, $self.lacunarity).weighted($self.weighted_strength))
+        make!($self, $noise.ridged().fbm($self.octaves, $self.gain, $self.lacunarity).weighted($self.weighted_strength))
     };
 }
 

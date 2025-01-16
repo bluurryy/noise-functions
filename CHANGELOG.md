@@ -5,6 +5,7 @@
 - **breaking:** sampling with a seed is now expressed by the trait `SampleWithSeed` instead of `Seeded<T>`/`Seeded<&T>`; this brings with it better error messages, less boilerplate and extensibility
 - **breaking:** moved modifier methods like `seed`, `frequency`, `fbm` and the like to the `Noise` trait
 - **breaking:** cell distance now starts at 0 instead of -1
+- **breaking:** `ridged` modifier is no longer a fractal to migrate, replace `.ridged(...)` with `.ridged().fbm(...)`
 - **added:** `Sample4` and `Sample4a` helper trait
 - **added:** `Perlin`, `Value` and `Cell*` noises now support 4D sampling
 - **added:** a new 2, 3 and 4 dimensional `Simplex` noise

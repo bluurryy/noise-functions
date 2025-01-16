@@ -17,8 +17,8 @@ pub trait Noise: Sized {
     }
 
     #[inline(always)]
-    fn ridged(self, octaves: u32, gain: f32, lacunarity: f32) -> Ridged<Self> {
-        Ridged::new(self, octaves, gain, lacunarity)
+    fn ridged(self) -> Ridged<Self> {
+        Ridged { noise: self }
     }
 
     #[inline(always)]
