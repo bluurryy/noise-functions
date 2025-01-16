@@ -1,6 +1,7 @@
 //! Code ported from [FastNoise2](https://github.com/Auburn/FastNoise2).
+//!
 //! This includes just the functions we actually use for this library.
-//! For a more complete port (of the scalar algorithms) have a look at <https://github.com/bluurryy/fast-noise2-port/>.
+//! For a complete port (of the scalar algorithms) have a look at <https://github.com/bluurryy/fast-noise2-port/>.
 //!
 //! FastNoise2 is licensed under the following MIT License:
 //!
