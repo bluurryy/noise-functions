@@ -1,7 +1,4 @@
-use crate::{
-    fractal::{Fbm, PingPong, Ridged},
-    Frequency, Seeded, Tileable,
-};
+use crate::modifiers::{Fbm, Frequency, PingPong, Ridged, Seeded, Tileable};
 
 pub trait Noise: Sized {
     #[inline(always)]

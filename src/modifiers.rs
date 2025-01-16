@@ -1,12 +1,16 @@
 mod fbm;
+mod frequency;
 mod ping_pong;
 mod ridged;
+mod seeded;
+mod tileable;
 
 pub use fbm::Fbm;
+pub use frequency::Frequency;
 pub use ping_pong::PingPong;
 pub use ridged::Ridged;
-
-use crate::{Frequency, Seeded};
+pub use seeded::Seeded;
+pub use tileable::Tileable;
 
 /// Wraps a fractal noise to
 #[derive(Debug, Clone, Copy, PartialEq)]

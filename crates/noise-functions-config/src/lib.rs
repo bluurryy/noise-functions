@@ -15,7 +15,7 @@ extern crate alloc;
 
 use alloc::boxed::Box;
 
-use noise_functions::{Noise as _, *};
+use noise_functions::{open_simplex_2::OpenSimplexNoise as _, Noise as _, *};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::*;

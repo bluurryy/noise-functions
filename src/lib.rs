@@ -65,38 +65,29 @@ extern crate std;
 #[cfg(all(not(feature = "std"), not(feature = "libm")))]
 compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature must be enabled"#);
 
-/// Fractal noise combinators.
-pub mod fractal;
-mod frequency;
-mod math;
-mod noise_fn;
-
+mod base;
+mod cellular;
 /// This is experimental and not part of the public api.
 #[doc(hidden)]
 pub mod from_fast_noise_2;
-
-mod base;
-mod cellular;
 mod from_fast_noise_lite;
+mod math;
+/// Noise modifiers.
+pub mod modifiers;
 mod noise;
+mod noise_fn;
 /// OpenSimplex2 noise functions and combinators.
 pub mod open_simplex_2;
 mod sample;
-mod seeded;
-mod tileable;
 
 pub use base::{CellDistance, CellValue, FastCellDistance, FastCellDistanceSq, FastCellValue, OpenSimplex2, OpenSimplex2s, Perlin, Simplex, Value, ValueCubic};
 pub use cellular::{CellIndex, DistanceFn, DistanceReturnType};
-#[doc(inline)]
-pub use frequency::Frequency;
 pub use noise::Noise;
 pub use noise_fn::NoiseFn;
 pub use open_simplex_2::OpenSimplexNoise;
 pub use sample::{Sample, Sample2, Sample3, Sample4, SampleWithSeed};
 #[cfg(feature = "nightly-simd")]
 pub use sample::{Sample2a, Sample3a, Sample4a};
-pub use seeded::Seeded;
-pub use tileable::Tileable;
 
 #[inline(always)]
 #[cfg(feature = "nightly-simd")]
