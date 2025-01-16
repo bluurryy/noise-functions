@@ -205,7 +205,7 @@ modifier_map! {
     }
 }
 
-/// Calculates the `fractal_bounding` property for [`Fbm`], [`Ridged`] and [`PingPong`].
+/// Calculates the `fractal_bounding` property for [`Fbm`].
 ///
 #[inline(always)]
 pub const fn fractal_bounding(octaves: u32, gain: f32) -> f32 {
