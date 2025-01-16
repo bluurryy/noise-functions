@@ -112,12 +112,12 @@ macro_rules! simple_enum {
 		}
 
 		impl core::str::FromStr for $name {
-			type Err = $crate::EnumFromStrError;
+			type Err = $crate::errors::EnumFromStrError;
 
 			fn from_str(s: &str) -> Result<Self, Self::Err> {
 				Ok(match s {
 					$(stringify!($variant) => Self::$variant,)*
-					_ => return Err($crate::EnumFromStrError),
+					_ => return Err($crate::errors::EnumFromStrError),
 				})
 			}
 		}
@@ -148,12 +148,15 @@ macro_rules! simple_enum {
 
 pub(crate) use simple_enum;
 
-#[derive(Debug, Clone, Copy)]
-pub struct EnumFromStrError;
+/// Error types.
+pub mod errors {
+    #[derive(Debug, Clone, Copy)]
+    pub struct EnumFromStrError;
 
-impl core::fmt::Display for EnumFromStrError {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.write_str("can't convert string to enum")
+    impl core::fmt::Display for EnumFromStrError {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            f.write_str("can't convert string to enum")
+        }
     }
 }
 
