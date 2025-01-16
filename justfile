@@ -8,9 +8,7 @@ pre-release:
   just doc
   just test
   cargo +stable clippy --all
-  cargo ('+' + (open Cargo.toml).package.rust-version) check
-  cargo ('+' + (open Cargo.toml).package.rust-version) check -p noise-functions-config
-  cspell lint --gitignore "**" --exclude "*.asm"
+  cspell lint --gitignore "**"
   cargo semver-checks
 
 check:
@@ -26,6 +24,8 @@ check:
 check-msrv:
   cargo ('+' + (open Cargo.toml).package.rust-version) check
   cargo ('+' + (open Cargo.toml).package.rust-version) check --no-default-features --features libm
+  cargo ('+' + (open Cargo.toml).package.rust-version) check -p noise-functions-config
+  cargo ('+' + (open Cargo.toml).package.rust-version) check -p noise-functions-config --no-default-features --features libm
 
 test:
   cargo test
