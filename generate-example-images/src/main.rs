@@ -32,17 +32,13 @@ fn coords_01(noise: impl Sample2) -> impl Sample2 {
     NoiseFn(move |point: [f32; 2]| noise.sample2(point.map(|x| x * 0.5)))
 }
 
-fn from_01(noise: impl Sample2) -> impl Sample2 {
-    NoiseFn(move |point| noise.sample2(point) * 2.0 - 1.0)
-}
-
 fn main() {
     // Cell distances start at 0 unlike the others that are in the -1..+1 range.
     // So we use `from_01` to modify their output to be in closer to that range
     // to be able to use the same `save_jpg` function.
 
-    save_jpg("cell_distance_sq", from_01(CellDistanceSq::default()));
-    save_jpg("cell_distance", from_01(CellDistance::default()));
+    save_jpg("cell_distance_sq", CellDistanceSq::default());
+    save_jpg("cell_distance", CellDistance::default());
 
     save_jpg("cell_value", CellValue::default());
     save_jpg("perlin", Perlin);
@@ -85,9 +81,6 @@ fn main() {
 
     save_jpg(
         "tileable_cell_distance_sq",
-        from_01(coords_01(NoiseFn(|point: [f32; 2]| {
-            let value = CellDistanceSq::default().seed(12).tileable(2.0, 2.0).frequency(2.0 * 2.0 / FREQUENCY).sample2(point);
-            value * 1.25
-        }))),
+        coords_01(CellDistanceSq::default().seed(12).tileable(2.0, 2.0).frequency(2.0 * 2.0 / FREQUENCY)),
     );
 }
