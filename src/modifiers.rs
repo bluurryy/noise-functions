@@ -58,9 +58,9 @@ macro_rules! modifier_map {
 
             impl<N> Noise for $struct<N> {}
 
-            impl<Noise, const DIM: usize> Sample<DIM, [f32; DIM]> for $struct<Noise>
+            impl<Noise, const DIM: usize> Sample<DIM> for $struct<Noise>
             where
-                Noise: SampleWithSeed<DIM, [f32; DIM]>,
+                Noise: SampleWithSeed<DIM>,
             {
                 #[inline]
                 fn sample(&$self, $point: [f32; DIM]) -> f32 {
@@ -69,9 +69,9 @@ macro_rules! modifier_map {
                 }
             }
 
-            impl<Noise, const DIM: usize> SampleWithSeed<DIM, [f32; DIM]> for $struct<Noise>
+            impl<Noise, const DIM: usize> SampleWithSeed<DIM> for $struct<Noise>
             where
-                Noise: SampleWithSeed<DIM, [f32; DIM]>,
+                Noise: SampleWithSeed<DIM>,
             {
                 #[inline]
                 fn sample_with_seed(&$self, $point: [f32; DIM], $seed: i32) -> f32 {

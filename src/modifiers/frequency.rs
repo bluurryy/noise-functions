@@ -12,9 +12,9 @@ pub struct Frequency<Noise> {
     pub frequency: f32,
 }
 
-impl<const DIM: usize, Noise> Sample<DIM, [f32; DIM]> for Frequency<Noise>
+impl<const DIM: usize, Noise> Sample<DIM> for Frequency<Noise>
 where
-    Noise: Sample<DIM, [f32; DIM]>,
+    Noise: Sample<DIM>,
 {
     fn sample(&self, mut point: [f32; DIM]) -> f32 {
         let frequency = self.frequency;

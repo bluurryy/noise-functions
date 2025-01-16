@@ -45,9 +45,9 @@ impl<Noise> Fbm<Noise> {
     }
 }
 
-impl<Noise, const DIM: usize> Sample<DIM, [f32; DIM]> for Fbm<Noise>
+impl<Noise, const DIM: usize> Sample<DIM> for Fbm<Noise>
 where
-    Noise: SampleWithSeed<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM>,
 {
     #[inline]
     fn sample(&self, point: [f32; DIM]) -> f32 {
@@ -62,9 +62,9 @@ where
     }
 }
 
-impl<Noise, const DIM: usize> SampleWithSeed<DIM, [f32; DIM]> for Fbm<Noise>
+impl<Noise, const DIM: usize> SampleWithSeed<DIM> for Fbm<Noise>
 where
-    Noise: SampleWithSeed<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM>,
 {
     #[inline]
     fn sample_with_seed(&self, point: [f32; DIM], seed: i32) -> f32 {
@@ -79,9 +79,9 @@ where
     }
 }
 
-impl<Noise, const DIM: usize> Sample<DIM, [f32; DIM]> for Weighted<Fbm<Noise>>
+impl<Noise, const DIM: usize> Sample<DIM> for Weighted<Fbm<Noise>>
 where
-    Noise: SampleWithSeed<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM>,
 {
     #[inline]
     fn sample(&self, point: [f32; DIM]) -> f32 {
@@ -100,9 +100,9 @@ where
     }
 }
 
-impl<Noise, const DIM: usize> SampleWithSeed<DIM, [f32; DIM]> for Weighted<Fbm<Noise>>
+impl<Noise, const DIM: usize> SampleWithSeed<DIM> for Weighted<Fbm<Noise>>
 where
-    Noise: SampleWithSeed<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM>,
 {
     #[inline]
     fn sample_with_seed(&self, point: [f32; DIM], seed: i32) -> f32 {
@@ -207,7 +207,7 @@ where
 #[inline(always)]
 fn fbm<Noise, const DIM: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, mut seed: i32, mut point: [f32; DIM]) -> f32
 where
-    Noise: SampleWithSeed<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM>,
 {
     let mut sum = 0.0;
     let mut amp = fractal_bounding;
@@ -252,7 +252,7 @@ where
 #[inline(always)]
 fn weighted_fbm<Noise, const DIM: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, weighted_strength: f32, mut seed: i32, mut point: [f32; DIM]) -> f32
 where
-    Noise: SampleWithSeed<DIM, [f32; DIM]>,
+    Noise: SampleWithSeed<DIM>,
 {
     let mut sum = 0.0;
     let mut amp = fractal_bounding;
