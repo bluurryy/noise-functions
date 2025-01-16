@@ -80,7 +80,10 @@ fn main() {
 
     save_jpg("tileable_value", coords_01(Value.seed(12).tileable(FREQUENCY, FREQUENCY).frequency(2.0)));
 
-    save_jpg("tileable_cell_value", coords_01(CellValue::default().seed(12).tileable(2.15, 2.15).frequency(2.15 * 2.0 / FREQUENCY)));
+    save_jpg(
+        "tileable_cell_value",
+        coords_01(CustomCellValue::default().seed(12).tileable(2.15, 2.15).frequency(2.15 * 2.0 / FREQUENCY)),
+    );
 
     save_jpg(
         "tileable_cell_distance_sq",

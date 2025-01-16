@@ -1,20 +1,22 @@
 use crate::{
     base::impl_noise,
-    cellular::{CellIndex, DistanceFn},
+    cellular::{CellIndex, DistanceFn, DistanceReturnType},
+    from_fast_noise_2::cell::MAX_DISTANCE_COUNT,
 };
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
-/// 2/3/4 dimensional noise of the random value of the closest cell.
+/// 2/3/4 dimensional noise of the distance to a cell.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct CellValue {
+pub struct CustomCellDistance {
     pub jitter: f32,
     pub distance_fn: DistanceFn,
-    pub value_index: CellIndex,
+    pub distance_indices: [CellIndex; 2],
+    pub return_type: DistanceReturnType,
 }
 
-impl CellValue {
+impl CustomCellDistance {
     pub const fn jitter(mut self, jitter: f32) -> Self {
         self.jitter = jitter;
         self
@@ -25,36 +27,61 @@ impl CellValue {
         self
     }
 
-    pub const fn value_index(mut self, value_index: CellIndex) -> Self {
-        self.value_index = value_index;
+    pub const fn distance_indices(mut self, distance_indices: [CellIndex; 2]) -> Self {
+        self.distance_indices = distance_indices;
+        self
+    }
+
+    pub const fn return_type(mut self, return_type: DistanceReturnType) -> Self {
+        self.return_type = return_type;
         self
     }
 }
 
-impl Default for CellValue {
+impl Default for CustomCellDistance {
     fn default() -> Self {
         Self {
             jitter: 1.0,
             distance_fn: Default::default(),
-            value_index: Default::default(),
+            distance_indices: Default::default(),
+            return_type: Default::default(),
         }
     }
 }
 
-impl_noise!(234 CellValue);
+impl_noise!(234 CustomCellDistance);
 
-impl CellValue {
+impl CustomCellDistance {
+    fn get_return(self, distance: &mut [f32; MAX_DISTANCE_COUNT]) -> f32 {
+        use crate::from_fast_noise_2::{inv_sqrt, reciprocal};
+
+        let i0 = self.distance_indices[0] as usize;
+        let i1 = self.distance_indices[1] as usize;
+
+        if self.distance_fn == DistanceFn::Euclidean {
+            distance[i0] *= inv_sqrt(distance[i0]);
+            distance[i1] *= inv_sqrt(distance[i1]);
+        }
+
+        match self.return_type {
+            DistanceReturnType::Index0 => distance[i0],
+            DistanceReturnType::Index0Add1 => distance[i0] + distance[i1],
+            DistanceReturnType::Index0Sub1 => distance[i0] - distance[i1],
+            DistanceReturnType::Index0Mul1 => distance[i0] * distance[i1],
+            DistanceReturnType::Index0Div1 => distance[i0] * reciprocal(distance[i1]),
+        }
+    }
+
     #[inline]
     fn gen2(self, [x, y]: [f32; 2], seed: i32) -> f32 {
         // implementation from FastNoise2
         use crate::from_fast_noise_2::{
             cell::{calc_distance2, JITTER_2D, MAX_DISTANCE_COUNT},
-            hash_primes2_hb, inv_sqrt, mul_add, primes,
+            hash_primes2_hb, inv_sqrt, max, min, mul_add, primes,
         };
 
         let jitter = self.jitter * JITTER_2D;
 
-        let mut value = [f32::INFINITY; MAX_DISTANCE_COUNT];
         let mut distance = [f32::INFINITY; MAX_DISTANCE_COUNT];
 
         let mut xc = (x as i32).wrapping_sub(1);
@@ -79,33 +106,21 @@ impl CellValue {
                 xd = mul_add(xd, inv_mag, xcf);
                 yd = mul_add(yd, inv_mag, ycf);
 
-                let mut new_value = (1.0 / i32::MAX as f32) * hash as f32;
-                let mut new_distance = calc_distance2(self.distance_fn, xd, yd);
+                let new_distance = calc_distance2(self.distance_fn, xd, yd);
 
-                let mut i = 0usize;
+                let mut i = MAX_DISTANCE_COUNT - 1;
 
                 loop {
-                    let closer = new_distance < distance[i];
+                    distance[i] = max(min(distance[i], new_distance), distance[i.wrapping_sub(1)]);
 
-                    let local_distance = distance[i];
-                    let local_value = value[i];
+                    i = i.wrapping_sub(1);
 
-                    distance[i] = if closer { new_distance } else { distance[i] };
-                    value[i] = if closer { new_value } else { value[i] };
-
-                    // TODO: the reference implementation just has `i > value_index`
-                    //       but if i were > value_index that would have clearly
-                    //       resulted in an out of bounds index access above;
-                    //       so what is going on in the original code?
-                    if i >= self.value_index as usize {
+                    if i == 0 {
                         break;
                     }
-
-                    new_distance = if closer { local_distance } else { new_distance };
-                    new_value = if closer { local_value } else { new_value };
-
-                    i = i.wrapping_add(1);
                 }
+
+                distance[0] = min(distance[0], new_distance);
 
                 ycf += 1.0;
                 yc = yc.wrapping_add(primes::Y);
@@ -115,7 +130,7 @@ impl CellValue {
             xc = xc.wrapping_add(primes::X);
         }
 
-        value[self.value_index as usize]
+        self.get_return(&mut distance)
     }
 
     #[inline]
@@ -123,12 +138,11 @@ impl CellValue {
         // implementation from FastNoise2
         use crate::from_fast_noise_2::{
             cell::{calc_distance3, JITTER_3D, MAX_DISTANCE_COUNT},
-            hash_primes3_hb, inv_sqrt, mul_add, primes,
+            hash_primes3_hb, inv_sqrt, max, min, mul_add, primes,
         };
 
         let jitter = self.jitter * JITTER_3D;
 
-        let mut value = [f32::INFINITY; MAX_DISTANCE_COUNT];
         let mut distance = [f32::INFINITY; MAX_DISTANCE_COUNT];
 
         let mut xc = (x as i32).wrapping_sub(1);
@@ -162,29 +176,21 @@ impl CellValue {
                     yd = mul_add(yd, inv_mag, ycf);
                     zd = mul_add(zd, inv_mag, zcf);
 
-                    let mut new_value = (1.0 / i32::MAX as f32) * hash as f32;
-                    let mut new_distance = calc_distance3(self.distance_fn, xd, yd, zd);
+                    let new_distance = calc_distance3(self.distance_fn, xd, yd, zd);
 
-                    let mut i = 0;
+                    let mut i = MAX_DISTANCE_COUNT - 1;
 
                     loop {
-                        let closer = new_distance < distance[i];
+                        distance[i] = max(min(distance[i], new_distance), distance[i.wrapping_sub(1)]);
 
-                        let local_distance = distance[i];
-                        let local_value = value[i];
+                        i = i.wrapping_sub(1);
 
-                        distance[i] = if closer { new_distance } else { distance[i] };
-                        value[i] = if closer { new_value } else { value[i] };
-
-                        if i >= self.value_index as usize {
+                        if i == 0 {
                             break;
                         }
-
-                        new_distance = if closer { local_distance } else { new_distance };
-                        new_value = if closer { local_value } else { new_value };
-
-                        i = i.wrapping_add(1);
                     }
+
+                    distance[0] = min(distance[0], new_distance);
 
                     zcf += 1.0;
                     zc = zc.wrapping_add(primes::Z);
@@ -198,7 +204,7 @@ impl CellValue {
             xc = xc.wrapping_add(primes::X);
         }
 
-        value[self.value_index as usize]
+        self.get_return(&mut distance)
     }
 
     #[inline]
@@ -206,12 +212,11 @@ impl CellValue {
         // implementation from FastNoise2
         use crate::from_fast_noise_2::{
             cell::{calc_distance4, JITTER_4D, MAX_DISTANCE_COUNT},
-            hash_primes4_hb, inv_sqrt, mul_add, primes,
+            hash_primes4_hb, inv_sqrt, max, min, mul_add, primes,
         };
 
         let jitter = self.jitter * JITTER_4D;
 
-        let mut value = [f32::INFINITY; MAX_DISTANCE_COUNT];
         let mut distance = [f32::INFINITY; MAX_DISTANCE_COUNT];
 
         let mut xc = (x as i32).wrapping_sub(1);
@@ -254,29 +259,21 @@ impl CellValue {
                         zd = mul_add(zd, inv_mag, zcf);
                         wd = mul_add(wd, inv_mag, wcf);
 
-                        let mut new_value = (1.0 / i32::MAX as f32) * hash as f32;
-                        let mut new_distance = calc_distance4(self.distance_fn, xd, yd, zd, wd);
+                        let new_distance = calc_distance4(self.distance_fn, xd, yd, zd, wd);
 
-                        let mut i = 0;
+                        let mut i = MAX_DISTANCE_COUNT - 1;
 
                         loop {
-                            let closer = new_distance < distance[i];
+                            distance[i] = max(min(distance[i], new_distance), distance[i.wrapping_sub(1)]);
 
-                            let local_distance = distance[i];
-                            let local_value = value[i];
+                            i = i.wrapping_sub(1);
 
-                            distance[i] = if closer { new_distance } else { distance[i] };
-                            value[i] = if closer { new_value } else { value[i] };
-
-                            if i >= self.value_index as usize {
+                            if i == 0 {
                                 break;
                             }
-
-                            new_distance = if closer { local_distance } else { new_distance };
-                            new_value = if closer { local_value } else { new_value };
-
-                            i = i.wrapping_add(1);
                         }
+
+                        distance[0] = min(distance[0], new_distance);
 
                         wcf += 1.0;
                         wc = wc.wrapping_add(primes::W);
@@ -294,7 +291,7 @@ impl CellValue {
             xc = xc.wrapping_add(primes::X);
         }
 
-        value[self.value_index as usize]
+        self.get_return(&mut distance)
     }
 
     #[inline]

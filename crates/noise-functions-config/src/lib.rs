@@ -231,8 +231,8 @@ macro_rules! if_supports_4d {
     (Simplex { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (OpenSimplex2 { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
     (OpenSimplex2s { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
-    (CellValue { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
-    (CellDistance { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
+    (CustomCellValue { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
+    (CustomCellDistance { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (FastCellValue { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (FastCellDistance { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (FastCellDistanceSq { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
@@ -278,7 +278,7 @@ macro_rules! base {
             Noise::CellValue => tileable!(
                 $dim,
                 $self,
-                CellValue {
+                CustomCellValue {
                     jitter: $self.jitter,
                     distance_fn: $self.distance_fn,
                     value_index: $self.value_index,
@@ -287,7 +287,7 @@ macro_rules! base {
             Noise::CellDistance => tileable!(
                 $dim,
                 $self,
-                CellDistance {
+                CustomCellDistance {
                     jitter: $self.jitter,
                     distance_fn: $self.distance_fn,
                     distance_indices: $self.distance_indices,

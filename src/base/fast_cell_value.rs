@@ -1,4 +1,4 @@
-use crate::base::{impl_noise, CellValue};
+use crate::base::{impl_noise, CustomCellValue};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
@@ -117,7 +117,7 @@ impl FastCellValue {
 
     #[inline]
     fn gen4(self, point: [f32; 4], seed: i32) -> f32 {
-        CellValue::default().jitter(self.jitter).gen4(point, seed)
+        CustomCellValue::default().jitter(self.jitter).gen4(point, seed)
     }
 
     #[inline]
@@ -206,6 +206,6 @@ impl FastCellValue {
     #[inline]
     #[cfg(feature = "nightly-simd")]
     fn gen4a(self, point: f32x4, seed: i32) -> f32 {
-        CellValue::default().jitter(self.jitter).gen4a(point, seed)
+        CustomCellValue::default().jitter(self.jitter).gen4a(point, seed)
     }
 }
