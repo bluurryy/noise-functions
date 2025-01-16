@@ -86,8 +86,6 @@ simple_enum! {
         CellValue,
         CellDistance,
         CellDistanceSq,
-        CustomCellValue,
-        CustomCellDistance,
     }
 }
 
@@ -131,10 +129,6 @@ pub struct Config {
 
     // cell
     pub jitter: f32,
-    pub value_index: CellIndex,
-    pub distance_fn: DistanceFn,
-    pub distance_indices: [CellIndex; 2],
-    pub distance_return_type: DistanceReturnType,
 
     // tiling
     pub tileable: bool,
@@ -165,10 +159,6 @@ impl Default for Config {
 
             // cell
             jitter: 1.0,
-            value_index: CellIndex::I0,
-            distance_fn: Default::default(),
-            distance_indices: [CellIndex::I0, CellIndex::I1],
-            distance_return_type: Default::default(),
 
             // tiling
             tileable: false,
@@ -234,8 +224,6 @@ macro_rules! if_supports_4d {
     (CellValue { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (CellDistance { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (CellDistanceSq { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
-    (CustomCellValue { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
-    (CustomCellDistance { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
 }
 
 macro_rules! tileable {
@@ -277,25 +265,6 @@ macro_rules! base {
             },
             Noise::CellValue => tileable!($dim, $self, CellValue::default().jitter($self.jitter)),
             Noise::CellDistance => tileable!($dim, $self, CellDistance::default().jitter($self.jitter)),
-            Noise::CustomCellValue => tileable!(
-                $dim,
-                $self,
-                CustomCellValue {
-                    jitter: $self.jitter,
-                    distance_fn: $self.distance_fn,
-                    value_index: $self.value_index,
-                }
-            ),
-            Noise::CustomCellDistance => tileable!(
-                $dim,
-                $self,
-                CustomCellDistance {
-                    jitter: $self.jitter,
-                    distance_fn: $self.distance_fn,
-                    distance_indices: $self.distance_indices,
-                    return_type: $self.distance_return_type,
-                }
-            ),
             Noise::CellDistanceSq => tileable!($dim, $self, CellDistanceSq::default().jitter($self.jitter)),
         }
     };

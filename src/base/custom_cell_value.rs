@@ -20,11 +20,13 @@ impl CustomCellValue {
         self
     }
 
+    #[expect(dead_code)]
     pub const fn distance_fn(mut self, distance_fn: DistanceFn) -> Self {
         self.distance_fn = distance_fn;
         self
     }
 
+    #[expect(dead_code)]
     pub const fn value_index(mut self, value_index: CellIndex) -> Self {
         self.value_index = value_index;
         self

@@ -79,8 +79,7 @@ mod noise_fn;
 mod open_simplex_2;
 mod sample;
 
-pub use base::{CellDistance, CellDistanceSq, CellValue, CustomCellDistance, CustomCellValue, OpenSimplex2, OpenSimplex2s, Perlin, Simplex, Value, ValueCubic};
-pub use cellular::{CellIndex, DistanceFn, DistanceReturnType};
+pub use base::{CellDistance, CellDistanceSq, CellValue, OpenSimplex2, OpenSimplex2s, Perlin, Simplex, Value, ValueCubic};
 pub use noise::Noise;
 pub use noise_fn::NoiseFn;
 pub use open_simplex_2::OpenSimplexNoise;

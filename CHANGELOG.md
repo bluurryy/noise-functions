@@ -9,7 +9,6 @@
 - **added:** `Sample4` and `Sample4a` helper trait
 - **added:** `Perlin`, `Value` and `Cell*` noises now support 4D sampling
 - **added:** a new 2, 3 and 4 dimensional `Simplex` noise
-- **added:** new `CellValue` and `CellDistance` noises with configurable distance function, cell indices and add/sub/mul/div return options
 - **added:** `tileable` modifier to create a 2D tileable noise from a 4D noise
 - **added:** `add`, `sub`, `mul`, `div`, `rem` modifiers
 

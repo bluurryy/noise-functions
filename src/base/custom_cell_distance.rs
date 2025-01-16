@@ -27,11 +27,13 @@ impl CustomCellDistance {
         self
     }
 
+    #[expect(dead_code)]
     pub const fn distance_indices(mut self, distance_indices: [CellIndex; 2]) -> Self {
         self.distance_indices = distance_indices;
         self
     }
 
+    #[expect(dead_code)]
     pub const fn return_type(mut self, return_type: DistanceReturnType) -> Self {
         self.return_type = return_type;
         self
