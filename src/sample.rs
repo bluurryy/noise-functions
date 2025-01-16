@@ -1,18 +1,20 @@
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
+use crate::Noise;
+
 /// Trait for sampling noises.
-pub trait Sample<const DIM: usize, Point = [f32; DIM]> {
+pub trait Sample<const DIM: usize, Point = [f32; DIM]>: Noise {
     fn sample(&self, point: Point) -> f32;
 }
 
-impl<const DIM: usize, Point, Noise> Sample<DIM, Point> for &Noise
+impl<const DIM: usize, Point, N> Sample<DIM, Point> for &N
 where
-    Noise: Sample<DIM, Point>,
+    N: Sample<DIM, Point>,
 {
     #[inline(always)]
     fn sample(&self, point: Point) -> f32 {
-        Noise::sample(self, point)
+        N::sample(self, point)
     }
 }
 
@@ -33,18 +35,18 @@ macro_rules! helper_trait {
 			">`.",
 		)]
 		$(#[$attr])*
-		pub trait $trait {
+		pub trait $trait: Sample<$dim $(, $ty_param)?> {
 			fn $fn(&self, point: impl Into<$ty>) -> f32;
 		}
 
 		$(#[$attr])*
-		impl<Noise> $trait for Noise
+		impl<N> $trait for N
 		where
-			Noise: Sample<$dim $(, $ty_param)?>,
+			N: Sample<$dim $(, $ty_param)?>,
 		{
 			#[inline(always)]
 			fn $fn(&self, point: impl Into<$ty>) -> f32 {
-				Noise::sample(self, point.into())
+				N::sample(self, point.into())
 			}
 		}
 	};

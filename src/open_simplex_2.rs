@@ -16,7 +16,10 @@ macro_rules! impl_improves {
         pub trait $trait: Noise {
             $(
                 $(#[$improve_attrs])*
-                fn $improve_fn(self) -> $improve_struct<Self> {
+                fn $improve_fn(self) -> $improve_struct<Self>
+                where
+                    Self: Sized,
+                {
                     $improve_struct(self)
                 }
             )*

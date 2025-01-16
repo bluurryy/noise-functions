@@ -9,12 +9,16 @@ pub use frequency::Frequency;
 pub use seeded::Seeded;
 pub use tileable::Tileable;
 
+use crate::Noise;
+
 /// Modifies a fractal noise to make successive octaves have less impact the lower the output value of the previous one was.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Weighted<Fractal> {
     pub fractal: Fractal,
     pub strength: f32,
 }
+
+impl<Fractal> Noise for Weighted<Fractal> {}
 
 impl<Fractal> Weighted<Fractal> {
     #[inline(always)]

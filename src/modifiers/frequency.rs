@@ -1,7 +1,7 @@
 #[cfg(feature = "nightly-simd")]
 use core::simd::{LaneCount, Simd, SupportedLaneCount};
 
-use crate::Sample;
+use crate::{Noise, Sample};
 
 /// Modifies a noise with a frequency multiplier.
 ///
@@ -11,6 +11,8 @@ pub struct Frequency<Noise> {
     pub noise: Noise,
     pub frequency: f32,
 }
+
+impl<N> Noise for Frequency<N> {}
 
 impl<const DIM: usize, Noise> Sample<DIM> for Frequency<Noise>
 where
