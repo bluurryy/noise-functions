@@ -109,6 +109,8 @@ macro_rules! modifier_map {
 pub(crate) use modifier_map;
 
 modifier_map! {
+    // Adds to the base noise's output value.
+    #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct Add {
         pub value: f32,
     }
@@ -119,6 +121,8 @@ modifier_map! {
 }
 
 modifier_map! {
+    // Subtracts from the base noise's output value.
+    #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct Sub {
         pub value: f32,
     }
@@ -129,6 +133,8 @@ modifier_map! {
 }
 
 modifier_map! {
+    // Multiplies the base noise's output value.
+    #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct Mul {
         pub value: f32,
     }
@@ -139,6 +145,8 @@ modifier_map! {
 }
 
 modifier_map! {
+    // Divides the base noise's output value.
+    #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct Div {
         pub value: f32,
     }
@@ -149,6 +157,8 @@ modifier_map! {
 }
 
 modifier_map! {
+    // Calculates the remainder the base noise's output value.
+    #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct Rem {
         pub value: f32,
     }
@@ -164,7 +174,7 @@ modifier_map! {
     /// Equal to `abs(x) * 2 - 1`.
     ///
     /// **Note:** This modifier assumes the base noise to return values in the [-1, 1] range.
-    #[derive(Debug, Clone, Copy, PartialEq)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     pub struct Ridged {}
 
     fn map(self, value: f32) {
