@@ -109,66 +109,6 @@ pub(crate) use modifier_map;
 use crate::math::floor;
 
 modifier_map! {
-    /// Adds to the noise's output value.
-    #[derive(Debug, Clone, Copy, PartialEq)]
-    pub struct Add {
-        pub value: f32,
-    }
-
-    fn map(self, value: f32) {
-        value + self.value
-    }
-}
-
-modifier_map! {
-    /// Subtracts from the noise's output value.
-    #[derive(Debug, Clone, Copy, PartialEq)]
-    pub struct Sub {
-        pub value: f32,
-    }
-
-    fn map(self, value: f32) {
-        value - self.value
-    }
-}
-
-modifier_map! {
-    /// Multiplies the noise's output value.
-    #[derive(Debug, Clone, Copy, PartialEq)]
-    pub struct Mul {
-        pub value: f32,
-    }
-
-    fn map(self, value: f32) {
-        value * self.value
-    }
-}
-
-modifier_map! {
-    ///  Divides the noise's output value.
-    #[derive(Debug, Clone, Copy, PartialEq)]
-    pub struct Div {
-        pub value: f32,
-    }
-
-    fn map(self, value: f32) {
-        value / self.value
-    }
-}
-
-modifier_map! {
-    /// Calculates the remainder the noise's output value.
-    #[derive(Debug, Clone, Copy, PartialEq)]
-    pub struct Rem {
-        pub value: f32,
-    }
-
-    fn map(self, value: f32) {
-        value % self.value
-    }
-}
-
-modifier_map! {
     /// Modifies a noise to create a peak at value 0.
     ///
     /// Equal to `abs(x) * 2 - 1`.

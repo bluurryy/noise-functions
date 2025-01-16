@@ -1,4 +1,4 @@
-use crate::modifiers::{Add, Div, Fbm, Frequency, Mul, Rem, Ridged, Seeded, Sub, Tileable, TriangleWave};
+use crate::modifiers::{Fbm, Frequency, Ridged, Seeded, Tileable, TriangleWave};
 
 pub trait Noise: Sized {
     #[inline(always)]
@@ -29,30 +29,5 @@ pub trait Noise: Sized {
     #[inline(always)]
     fn tileable(self, width: f32, height: f32) -> Tileable<Self> {
         Tileable::new(self, width, height)
-    }
-
-    #[inline(always)]
-    fn add(self, value: f32) -> Add<Self> {
-        Add { noise: self, value }
-    }
-
-    #[inline(always)]
-    fn sub(self, value: f32) -> Sub<Self> {
-        Sub { noise: self, value }
-    }
-
-    #[inline(always)]
-    fn mul(self, value: f32) -> Mul<Self> {
-        Mul { noise: self, value }
-    }
-
-    #[inline(always)]
-    fn div(self, value: f32) -> Div<Self> {
-        Div { noise: self, value }
-    }
-
-    #[inline(always)]
-    fn rem(self, value: f32) -> Rem<Self> {
-        Rem { noise: self, value }
     }
 }
