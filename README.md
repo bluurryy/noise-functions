@@ -5,7 +5,7 @@
 [![Rust](https://img.shields.io/crates/msrv/noise-functions)](#)
 [![License](https://img.shields.io/crates/l/noise_functions)](#license)
 
-Fast and lightweight noise functions.
+A collection of fast and lightweight noise functions.
 
 Check out the [live demo][demo]!
 
@@ -38,21 +38,18 @@ Click on the images to view the code that created them.
 [![](/example-images/tileable_cell_distance_sq.jpg "Tileable (CellDistanceSq)")](https://github.com/bluurryy/noise-functions/blob/ef7d9d31b55db3b8847accdd8772d3b9e28d886c/generate-example-images/src/main.rs#L78)
 
 # Motivation
-Noise libraries like [`noise`](https://docs.rs/noise) or [`libnoise`](https://docs.rs/libnoise) create a permutation table at runtime for each instance of `Perlin` and the like. This library uses static permutation tables / hashing instead. As such, there is no need to store and reuse noise structs for the sake of efficiency. For example:
+Noise libraries like [`noise`](https://docs.rs/noise) or [`libnoise`](https://docs.rs/libnoise) create a permutation table at runtime for each instance of `Perlin` and the like. This library uses static permutation tables / hashing instead. As such, there is no need to store and reuse noise structs for the sake of efficiency. There is no downside to writing code like this:
 ```rust
 fn my_noise(point: Vec2) -> f32 {
     Perlin.fbm(3, 0.5, 2.0).seed(42).frequency(3.0).sample2(point)
 }
 ```
-In this example, the whole `Perlin.fbm(3, 0.5, 2.0).seed(42).frequency(3.0)` expression is evaluated at compile time.
 
 > [!NOTE]
 > This library uses `f32` instead of `f64`.
 
 ## Why not [`fastnoise-lite`](https://docs.rs/fastnoise-lite)?
-`fastnoise-lite` provides its noise generation via a big struct that you are to mutate to get the noise you want. If you already know what noise you want or you want to compose multiple noises in a custom way then this design is less efficient and less convenient. There is the [`noise-functions-config`](https://docs.rs/noise-functions-config) crate that provides a similar configurable struct (the [demo] is powered by it). It opts to return a trait object like `Box<dyn Sample<2>>` instead of branching on each sample call.
+`fastnoise-lite` provides its noise generation via a big struct that you are to mutate to get the noise you want. If you already know what noise you want or you want to compose multiple noises in a custom way then this design is less efficient and less convenient. There is the [`noise-functions-config`][config] crate that provides a similar configurable struct (the [demo] is powered by it). It opts to return a trait object like `Box<dyn Sample<2>>` instead of branching on each sample call.
 
-> [!NOTE]
-> The implementation of the current noise functions are from [FastNoiseLite](https://github.com/Auburn/FastNoiseLite). The simd versions were created by me.
-
+[config]: https://docs.rs/noise-functions-config
 [demo]: https://bluurryy.github.io/noise-functions-demo/
