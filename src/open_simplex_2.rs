@@ -1,10 +1,7 @@
 #[cfg(feature = "nightly-simd")]
-use core::simd::{f32x2, f32x4, num::SimdFloat};
+use core::simd::{f32x2, f32x4};
 
 use crate::{Noise, Sample, SampleWithSeed};
-
-#[cfg(feature = "nightly-simd")]
-use crate::math::splat;
 
 macro_rules! impl_improves {
     (
@@ -240,79 +237,4 @@ impl_improves! {
 
     /// Improves 3D orientation for the `XZ` plane.
     ImproveXz improve_xz use raw_improve3_xz raw_improve3a_xz;
-}
-
-#[inline]
-pub(crate) fn improve2([mut x, mut y]: [f32; 2]) -> [f32; 2] {
-    const SQRT3: f32 = 1.7320508075688772935274463415059;
-    const F2: f32 = 0.5 * (SQRT3 - 1.0);
-    let t: f32 = (x + y) * F2;
-    x += t;
-    y += t;
-    [x, y]
-}
-
-#[inline]
-#[cfg(feature = "nightly-simd")]
-pub(crate) fn improve2a(point: f32x2) -> f32x2 {
-    const SQRT3: f32 = 1.7320508075688772935274463415059;
-    const F2: f32 = 0.5 * (SQRT3 - 1.0);
-    let t: f32 = (point[0] + point[1]) * F2;
-    point + splat(t)
-}
-
-#[inline]
-pub(crate) fn improve3([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
-    const R3: f32 = 2.0 / 3.0;
-    let r: f32 = (x + y + z) * R3; // Rotation, not skew
-    x = r - x;
-    y = r - y;
-    z = r - z;
-    [x, y, z]
-}
-
-#[inline]
-#[cfg(feature = "nightly-simd")]
-pub(crate) fn improve3a(point: f32x4) -> f32x4 {
-    const R3: f32 = 2.0 / 3.0;
-    let r: f32 = (point[0] + point[1] + point[2]) * R3; // Rotation, not skew
-    f32x4::splat(r) - point
-}
-
-#[inline]
-pub(crate) fn improve4([mut x, mut y, mut z, mut w]: [f32; 4]) -> [f32; 4] {
-    const SKEW_4D: f32 = -0.138196601125011;
-    let s = SKEW_4D * (x + y + z + w);
-    x += s;
-    y += s;
-    z += s;
-    w += s;
-    [x, y, z, w]
-}
-
-#[inline]
-#[cfg(feature = "nightly-simd")]
-pub(crate) fn improve4a(point: f32x4) -> f32x4 {
-    const SKEW_4D: f32 = -0.138196601125011;
-    let s = SKEW_4D * point.reduce_sum();
-    point + splat(s)
-}
-
-#[inline]
-pub(crate) fn improve4_smooth([mut x, mut y, mut z, mut w]: [f32; 4]) -> [f32; 4] {
-    const SKEW_4D: f32 = 0.309016994374947;
-    let s = SKEW_4D * (x + y + z + w);
-    x += s;
-    y += s;
-    z += s;
-    w += s;
-    [x, y, z, w]
-}
-
-#[inline]
-#[cfg(feature = "nightly-simd")]
-pub(crate) fn improve4a_smooth(point: f32x4) -> f32x4 {
-    const SKEW_4D: f32 = 0.309016994374947;
-    let s = SKEW_4D * point.reduce_sum();
-    point + splat(s)
 }

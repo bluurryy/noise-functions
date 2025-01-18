@@ -1,13 +1,10 @@
-use crate::{
-    open_simplex_2::{improve2, improve3, improve4_smooth},
-    Noise, OpenSimplexNoise, Sample, SampleWithSeed,
-};
+#[cfg(feature = "nightly-simd")]
+use core::simd::{f32x2, f32x4, num::SimdFloat};
+
+use crate::{Noise, OpenSimplexNoise, Sample, SampleWithSeed};
 
 #[cfg(feature = "nightly-simd")]
-use core::simd::{f32x2, f32x4};
-
-#[cfg(feature = "nightly-simd")]
-use crate::open_simplex_2::{improve2a, improve3a, improve4a_smooth};
+use crate::math::splat;
 
 /// 2/3/4 dimensional OpenSimplex2 noise. Smooth variant.
 ///
@@ -83,14 +80,14 @@ impl SampleWithSeed<3, core::simd::f32x4> for OpenSimplex2s {
 impl Sample<4> for OpenSimplex2s {
     #[inline(always)]
     fn sample(&self, point: [f32; 4]) -> f32 {
-        self.raw_sample4(improve4_smooth(point), 0)
+        self.raw_sample4(improve4(point), 0)
     }
 }
 
 impl SampleWithSeed<4> for OpenSimplex2s {
     #[inline(always)]
     fn sample_with_seed(&self, point: [f32; 4], seed: i32) -> f32 {
-        self.raw_sample4(improve4_smooth(point), seed)
+        self.raw_sample4(improve4(point), seed)
     }
 }
 
@@ -98,7 +95,7 @@ impl SampleWithSeed<4> for OpenSimplex2s {
 impl Sample<4, f32x4> for OpenSimplex2s {
     #[inline(always)]
     fn sample(&self, point: f32x4) -> f32 {
-        self.raw_sample4a(improve4a_smooth(point), 0)
+        self.raw_sample4a(improve4a(point), 0)
     }
 }
 
@@ -106,7 +103,7 @@ impl Sample<4, f32x4> for OpenSimplex2s {
 impl SampleWithSeed<4, f32x4> for OpenSimplex2s {
     #[inline(always)]
     fn sample_with_seed(&self, point: f32x4, seed: i32) -> f32 {
-        self.raw_sample4a(improve4a_smooth(point), seed)
+        self.raw_sample4a(improve4a(point), seed)
     }
 }
 
@@ -546,4 +543,60 @@ impl OpenSimplexNoise for OpenSimplex2s {
         let [x, y, z] = self.raw_improve3_xz([x, y, z]);
         f32x4::from_array([x, y, z, z])
     }
+}
+
+#[inline]
+pub(crate) fn improve2([mut x, mut y]: [f32; 2]) -> [f32; 2] {
+    const SQRT3: f32 = 1.7320508075688772935274463415059;
+    const F2: f32 = 0.5 * (SQRT3 - 1.0);
+    let t: f32 = (x + y) * F2;
+    x += t;
+    y += t;
+    [x, y]
+}
+
+#[inline]
+#[cfg(feature = "nightly-simd")]
+pub(crate) fn improve2a(point: f32x2) -> f32x2 {
+    const SQRT3: f32 = 1.7320508075688772935274463415059;
+    const F2: f32 = 0.5 * (SQRT3 - 1.0);
+    let t: f32 = (point[0] + point[1]) * F2;
+    point + splat(t)
+}
+
+#[inline]
+pub(crate) fn improve3([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
+    const R3: f32 = 2.0 / 3.0;
+    let r: f32 = (x + y + z) * R3; // Rotation, not skew
+    x = r - x;
+    y = r - y;
+    z = r - z;
+    [x, y, z]
+}
+
+#[inline]
+#[cfg(feature = "nightly-simd")]
+pub(crate) fn improve3a(point: f32x4) -> f32x4 {
+    const R3: f32 = 2.0 / 3.0;
+    let r: f32 = (point[0] + point[1] + point[2]) * R3; // Rotation, not skew
+    f32x4::splat(r) - point
+}
+
+#[inline]
+pub(crate) fn improve4([mut x, mut y, mut z, mut w]: [f32; 4]) -> [f32; 4] {
+    const SKEW_4D: f32 = 0.309016994374947;
+    let s = SKEW_4D * (x + y + z + w);
+    x += s;
+    y += s;
+    z += s;
+    w += s;
+    [x, y, z, w]
+}
+
+#[inline]
+#[cfg(feature = "nightly-simd")]
+pub(crate) fn improve4a(point: f32x4) -> f32x4 {
+    const SKEW_4D: f32 = 0.309016994374947;
+    let s = SKEW_4D * point.reduce_sum();
+    point + splat(s)
 }
