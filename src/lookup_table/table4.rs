@@ -57,7 +57,7 @@ pub(crate) struct Table4<const TABLE_SIZE: usize>([Entry<4>; TABLE_SIZE]);
 
 impl<const TABLE_SIZE: usize> Table4<TABLE_SIZE> {
     pub const fn new(values: [Entry<4>; TABLE_SIZE]) -> Self {
-        assert!(TABLE_SIZE.is_power_of_two());
+        assert!(TABLE_SIZE % 4 == 0 && TABLE_SIZE.is_power_of_two());
         Self(values)
     }
 }
