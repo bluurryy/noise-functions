@@ -1,5 +1,5 @@
 #[rustfmt::skip]
-pub(super) const GRADIENTS_2D: &[f32] = &[
+pub(super) const GRADIENTS_2D: &[f32; 256] = &[
     38.20591, 92.23723, 
     92.23723, 38.20591, 
     92.23723, -38.20591, 
@@ -131,7 +131,7 @@ pub(super) const GRADIENTS_2D: &[f32] = &[
 ];
 
 #[rustfmt::skip]
-pub(super) const GRADIENTS_3D: &[f32] = &[
+pub(super) const GRADIENTS_3D: &[f32; 1024] = &[
     27.914557, 27.914557, -12.547307, 
     0.0, 27.914557, 27.914557, 
     12.547307, 0.0, 38.724335, 
@@ -477,7 +477,7 @@ pub(super) const GRADIENTS_3D: &[f32] = &[
 ];
 
 #[rustfmt::skip]
-pub(super) const GRADIENTS_4D: &[f32] = &[
+pub(super) const GRADIENTS_4D: &[f32; 2048] = &[
     -30.627455, -14.722169, -14.722169, 26.331585, 
     -34.102886, -18.197601, 6.9508653, 22.856152, 
     -34.102886, 6.9508653, -18.197601, 22.856152, 
