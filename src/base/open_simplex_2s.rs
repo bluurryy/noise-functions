@@ -496,8 +496,8 @@ impl OpenSimplexNoise for OpenSimplex2s {
     }
 
     #[inline]
-    fn raw_sample4(&self, [x, y, z, w]: [f32; 4], seed: i32) -> f32 {
-        crate::from_open_simplex_2::smooth::noise4_UnskewedBase(seed as i64, x, y, z, w)
+    fn raw_sample4(&self, point: [f32; 4], seed: i32) -> f32 {
+        crate::from_open_simplex_2::smooth::noise4_UnskewedBase(point, seed as i64)
     }
 
     #[inline]
