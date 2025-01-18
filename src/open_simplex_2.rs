@@ -9,15 +9,14 @@ use crate::math::splat;
 macro_rules! impl_improves {
     (
         $(#[$trait_attrs:meta])*
-        $trait:ident for $($noise:ident),*;
+        trait $trait:ident {
+            $($trait_members:tt)*
+        }
+
         $(
             $(#[$improve_attrs:meta])*
             $improve_struct:ident $improve_fn:ident use $improve:ident $improve_a:ident;
         )*
-
-        {
-            $($trait_members:tt)*
-        }
     ) => {
         $(#[$trait_attrs])*
         pub trait $trait: Noise {
@@ -171,15 +170,7 @@ macro_rules! impl_improves {
 
 impl_improves! {
     /// Provides modifier methods for `OpenSimplex` noises.
-    OpenSimplexNoise for OpenSimplex2, OpenSimplex2s, NewOpenSimplex2, NewOpenSimplex2s;
-
-    /// Improves 3D orientation for the `XY` plane.
-    ImproveXy improve_xy use improve3_xy improve3a_xy;
-
-    /// Improves 3D orientation for the `XZ` plane.
-    ImproveXz improve_xz use improve3_xz improve3a_xz;
-
-    {
+    trait OpenSimplexNoise {
         /// Sample this OpenSimplexNoise unskewed.
         #[doc(hidden)]
         fn raw_sample2(&self, point: [f32; 2], seed: i32) -> f32;
@@ -207,6 +198,12 @@ impl_improves! {
         #[cfg(feature = "nightly-simd")]
         fn raw_sample4a(&self, point: f32x4, seed: i32) -> f32;
     }
+
+    /// Improves 3D orientation for the `XY` plane.
+    ImproveXy improve_xy use improve3_xy improve3a_xy;
+
+    /// Improves 3D orientation for the `XZ` plane.
+    ImproveXz improve_xz use improve3_xz improve3a_xz;
 }
 
 #[inline]
