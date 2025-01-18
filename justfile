@@ -8,7 +8,7 @@ pre-release:
   just doc
   just test
   cargo +stable clippy --all
-  cspell lint --gitignore "**"
+  cspell lint --gitignore "**" --exclude "from_open_simplex_2"
   cargo semver-checks
 
 check:
