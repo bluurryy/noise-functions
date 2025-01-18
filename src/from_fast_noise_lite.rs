@@ -32,7 +32,6 @@ mod lookup;
 
 use core::ops::RangeInclusive;
 
-pub(crate) use crate::lookup_table::{Index2, Index4};
 pub(crate) use lookup::*;
 
 pub(crate) use crate::math::{floor_to_int, interp_hermite, interp_quintic, round_to_int};
@@ -41,7 +40,7 @@ pub(crate) use crate::math::{floor_to_int, interp_hermite, interp_quintic, round
 pub(crate) use crate::math::splat;
 
 #[cfg(feature = "nightly-simd")]
-pub(crate) use crate::lookup_table::Index4x4;
+pub(crate) use crate::lookup_table::{Index4, Index4x4};
 
 pub trait Dot {
     type Output;
@@ -130,7 +129,7 @@ pub fn grad2(seed: i32, x_primed: i32, y_primed: i32, xd: f32, yd: f32) -> f32 {
     let mut hash = hash2(seed, x_primed, y_primed);
     hash ^= hash.wrapping_shr(15);
 
-    let [xg, yg] = GRADIENTS_2D[Index2::new(hash)].as_array();
+    let [xg, yg] = GRADIENTS_2D[hash].as_array();
     xd * xg + yd * yg
 }
 
@@ -139,7 +138,7 @@ pub fn grad3(seed: i32, x_primed: i32, y_primed: i32, z_primed: i32, xd: f32, yd
     let mut hash: i32 = hash3(seed, x_primed, y_primed, z_primed);
     hash ^= hash.wrapping_shr(15);
 
-    let &[xg, yg, zg, _] = GRADIENTS_3D[Index4::new(hash)].as_array();
+    let &[xg, yg, zg, _] = GRADIENTS_3D[hash].as_array();
     xd * xg + yd * yg + zd * zg
 }
 
@@ -152,7 +151,7 @@ pub fn cell_neighbours(cell: i32) -> RangeInclusive<i32> {
 mod simd {
     use core::simd::{f32x2, f32x4, i32x2, i32x4, simd_swizzle};
 
-    use super::{dot, Dot, Index2, Index4, GRADIENTS_2D, GRADIENTS_3D, PRIME_X, PRIME_Y, PRIME_Z};
+    use super::{dot, Dot, Index4, GRADIENTS_2D, GRADIENTS_3D, PRIME_X, PRIME_Y, PRIME_Z};
 
     pub(crate) const PRIME_XY: i32x2 = i32x2::from_array([PRIME_X, PRIME_Y]);
     pub(crate) const PRIME_XYZ: i32x4 = i32x4::from_array([PRIME_X, PRIME_Y, PRIME_Z, 0]);
@@ -196,7 +195,7 @@ mod simd {
         let mut hash = hash2_simd(seed, primed);
         hash ^= hash.wrapping_shr(15);
 
-        let gradient = GRADIENTS_2D[Index2::new(hash)].0;
+        let gradient = GRADIENTS_2D[hash].0;
         dot(delta, gradient)
     }
 
@@ -205,7 +204,7 @@ mod simd {
         let mut hash = hash3_simd(seed, primed);
         hash ^= hash.wrapping_shr(15);
 
-        let gradient = GRADIENTS_3D[Index4::new(hash)].0;
+        let gradient = GRADIENTS_3D[hash].0;
         dot(delta, gradient)
     }
 

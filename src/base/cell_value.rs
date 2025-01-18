@@ -28,7 +28,7 @@ impl CellValue {
     #[inline]
     fn gen2(self, [x, y]: [f32; 2], seed: i32) -> f32 {
         // implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{cell_neighbours, hash2, round_to_int, Index2, JITTER_2D, PRIME_X, PRIME_Y, RAND_VECS_2D};
+        use crate::from_fast_noise_lite::{cell_neighbours, hash2, round_to_int, JITTER_2D, PRIME_X, PRIME_Y, RAND_VECS_2D};
 
         let jitter = self.jitter * JITTER_2D;
 
@@ -46,7 +46,7 @@ impl CellValue {
 
             for yi in cell_neighbours(yr) {
                 let hash: i32 = hash2(seed, x_primed, y_primed);
-                let [rand_x, rand_y] = *RAND_VECS_2D[Index2::new(hash)].as_array();
+                let [rand_x, rand_y] = *RAND_VECS_2D[hash].as_array();
 
                 let vec_x: f32 = (xi as f32 - x) + rand_x * jitter;
                 let vec_y: f32 = (yi as f32 - y) + rand_y * jitter;
@@ -69,7 +69,7 @@ impl CellValue {
     #[inline]
     fn gen3(self, [x, y, z]: [f32; 3], seed: i32) -> f32 {
         // implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{cell_neighbours, hash3, round_to_int, Index4, JITTER_3D, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_3D};
+        use crate::from_fast_noise_lite::{cell_neighbours, hash3, round_to_int, JITTER_3D, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_3D};
 
         let jitter = self.jitter * JITTER_3D;
 
@@ -92,7 +92,7 @@ impl CellValue {
 
                 for zi in cell_neighbours(zr) {
                     let hash: i32 = hash3(seed, x_primed, y_primed, z_primed);
-                    let [rand_x, rand_y, rand_z, _] = *RAND_VECS_3D[Index4::new(hash)].as_array();
+                    let [rand_x, rand_y, rand_z, _] = *RAND_VECS_3D[hash].as_array();
 
                     let vec_x: f32 = (xi as f32 - x) + rand_x * jitter;
                     let vec_y: f32 = (yi as f32 - y) + rand_y * jitter;
@@ -124,7 +124,7 @@ impl CellValue {
     #[cfg(feature = "nightly-simd")]
     fn gen2a(self, point: f32x2, seed: i32) -> f32 {
         // based on the implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{cell_neighbours, hash2, length_squared, round_to_int, splat, Index2, JITTER_2D, PRIME_X, PRIME_Y, RAND_VECS_2D};
+        use crate::from_fast_noise_lite::{cell_neighbours, hash2, length_squared, round_to_int, splat, JITTER_2D, PRIME_X, PRIME_Y, RAND_VECS_2D};
 
         let jitter = self.jitter * JITTER_2D;
 
@@ -140,7 +140,7 @@ impl CellValue {
 
             for yi in cell_neighbours(rounded[1]) {
                 let hash = hash2(seed, x_primed, y_primed);
-                let rand = RAND_VECS_2D[Index2::new(hash)].0;
+                let rand = RAND_VECS_2D[hash].0;
                 let coor = f32x2::from_array([xi as f32, yi as f32]);
                 let vec = (coor - point) + rand * splat(jitter);
                 let new_distance = length_squared(vec);
@@ -162,7 +162,7 @@ impl CellValue {
     #[cfg(feature = "nightly-simd")]
     fn gen3a(self, point: f32x4, seed: i32) -> f32 {
         // based on the implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{cell_neighbours, hash3, length_squared, round_to_int, splat, Index4, JITTER_3D, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_3D};
+        use crate::from_fast_noise_lite::{cell_neighbours, hash3, length_squared, round_to_int, splat, JITTER_3D, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_3D};
 
         let jitter = self.jitter * JITTER_3D;
 
@@ -183,7 +183,7 @@ impl CellValue {
 
                 for zi in cell_neighbours(rounded[2]) {
                     let hash = hash3(seed, x_primed, y_primed, z_primed);
-                    let rand = RAND_VECS_3D[Index4::new(hash)].0;
+                    let rand = RAND_VECS_3D[hash].0;
                     let coor = f32x4::from_array([xi as f32, yi as f32, zi as f32, zi as f32]);
                     let vec = (coor - point) + rand * splat(jitter);
                     let new_distance = length_squared(vec);

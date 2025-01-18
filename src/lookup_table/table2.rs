@@ -39,3 +39,12 @@ impl<const TABLE_SIZE: usize> Index<Index2<TABLE_SIZE>> for Table2<TABLE_SIZE> {
         unsafe { &*self.0.as_ptr().cast::<f32>().add(index.into_usize()).cast::<Entry<2>>() }
     }
 }
+
+impl<const TABLE_SIZE: usize> Index<i32> for Table2<TABLE_SIZE> {
+    type Output = Entry<2>;
+
+    #[inline(always)]
+    fn index(&self, index: i32) -> &Self::Output {
+        &self[Index2::new(index)]
+    }
+}

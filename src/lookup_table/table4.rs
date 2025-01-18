@@ -73,6 +73,15 @@ impl<const TABLE_SIZE: usize> Index<Index4<TABLE_SIZE>> for Table4<TABLE_SIZE> {
     }
 }
 
+impl<const TABLE_SIZE: usize> Index<i32> for Table4<TABLE_SIZE> {
+    type Output = Entry<4>;
+
+    #[inline(always)]
+    fn index(&self, index: i32) -> &Self::Output {
+        &self[Index4::new(index)]
+    }
+}
+
 const _: () = {
     assert!(core::mem::size_of::<Entry<4>>() == 16);
     assert!(core::mem::align_of::<Entry<4>>() <= 16);
