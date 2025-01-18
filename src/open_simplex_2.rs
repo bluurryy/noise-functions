@@ -207,6 +207,25 @@ impl_improves! {
 }
 
 #[inline]
+pub(crate) fn improve2([mut x, mut y]: [f32; 2]) -> [f32; 2] {
+    const SQRT3: f32 = 1.7320508075688772935274463415059;
+    const F2: f32 = 0.5 * (SQRT3 - 1.0);
+    let t: f32 = (x + y) * F2;
+    x += t;
+    y += t;
+    [x, y]
+}
+
+#[inline]
+#[cfg(feature = "nightly-simd")]
+pub(crate) fn improve2a(point: f32x2) -> f32x2 {
+    const SQRT3: f32 = 1.7320508075688772935274463415059;
+    const F2: f32 = 0.5 * (SQRT3 - 1.0);
+    let t: f32 = (point[0] + point[1]) * F2;
+    point + splat(t)
+}
+
+#[inline]
 pub(crate) fn improve3([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
     const R3: f32 = 2.0 / 3.0;
     let r: f32 = (x + y + z) * R3; // Rotation, not skew

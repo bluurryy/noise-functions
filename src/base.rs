@@ -23,9 +23,15 @@ pub use value::Value;
 pub use value_cubic::ValueCubic;
 
 macro_rules! if_has_dim {
+    (2 in ; $($tt:tt)*) => {};
+    (2 in 2; $($tt:tt)*) => { $($tt)* };
+    (2 in 23; $($tt:tt)*) => { $($tt)* };
+    (2 in 234; $($tt:tt)*) => { $($tt)* };
+    (3 in ; $($tt:tt)*) => {};
     (3 in 2; $($tt:tt)*) => {};
     (3 in 23; $($tt:tt)*) => { $($tt)* };
     (3 in 234; $($tt:tt)*) => { $($tt)* };
+    (4 in ; $($tt:tt)*) => {};
     (4 in 2; $($tt:tt)*) => {};
     (4 in 23; $($tt:tt)*) => {};
     (4 in 234; $($tt:tt)*) => { $($tt)* };
@@ -35,33 +41,35 @@ macro_rules! impl_noise {
     ($dims:tt $struct:ident) => {
         impl $crate::Noise for $struct {}
 
-        impl $crate::Sample<2> for $struct {
-            #[inline(always)]
-            fn sample(&self, point: [f32; 2]) -> f32 {
-                self.gen2(point, 0)
+        $crate::base::if_has_dim! { 2 in $dims;
+            impl $crate::Sample<2> for $struct {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 2]) -> f32 {
+                    self.gen2(point, 0)
+                }
             }
-        }
 
-        impl $crate::SampleWithSeed<2> for $struct {
-            #[inline(always)]
-            fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
-                self.gen2(point, seed)
+            impl $crate::SampleWithSeed<2> for $struct {
+                #[inline(always)]
+                fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
+                    self.gen2(point, seed)
+                }
             }
-        }
 
-        #[cfg(feature = "nightly-simd")]
-        impl $crate::Sample<2, core::simd::f32x2> for $struct {
-            #[inline(always)]
-            fn sample(&self, point: core::simd::f32x2) -> f32 {
-                self.gen2a(point, 0)
+            #[cfg(feature = "nightly-simd")]
+            impl $crate::Sample<2, core::simd::f32x2> for $struct {
+                #[inline(always)]
+                fn sample(&self, point: core::simd::f32x2) -> f32 {
+                    self.gen2a(point, 0)
+                }
             }
-        }
 
-        #[cfg(feature = "nightly-simd")]
-        impl $crate::SampleWithSeed<2, core::simd::f32x2> for $struct {
-            #[inline(always)]
-            fn sample_with_seed(&self, point: core::simd::f32x2, seed: i32) -> f32 {
-                self.gen2a(point, seed)
+            #[cfg(feature = "nightly-simd")]
+            impl $crate::SampleWithSeed<2, core::simd::f32x2> for $struct {
+                #[inline(always)]
+                fn sample_with_seed(&self, point: core::simd::f32x2, seed: i32) -> f32 {
+                    self.gen2a(point, seed)
+                }
             }
         }
 
