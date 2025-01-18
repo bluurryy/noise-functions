@@ -12,7 +12,7 @@ use crate::math::splat;
 ///
 /// [`improve_xy`]: crate::OpenSimplexNoise::improve_xy
 /// [`improve_xz`]: crate::OpenSimplexNoise::improve_xz
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OpenSimplex2s;
 
 impl Noise for OpenSimplex2s {}

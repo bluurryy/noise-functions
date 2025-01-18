@@ -7,7 +7,7 @@ use crate::{
 use core::simd::{f32x2, f32x4};
 
 /// 2/3/4 dimensional Value noise.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Value;
 
 impl_noise!(234 Value);

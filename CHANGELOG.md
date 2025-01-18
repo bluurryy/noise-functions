@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- **added:** implemented `Default` for `OpenSimplex2(s)`, `Perlin`, `Simplex`, `ValueCubic` and `Value`
+
 ## 0.6.0 (2025-01-18)
 - **breaking:** fixed open simplex `Improve*` wrappers to apply the improvements on the base unrotated noise instead of the noise with the already improved rotation; this introduces new `#[doc(hidden)]` members on the `OpenSimplexNoise` trait and changes to the bounds required for `Improve*` to implement `Sample`
 - **added:** 4D OpenSimplex2s and OpenSimplex2s noise

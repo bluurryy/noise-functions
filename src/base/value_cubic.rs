@@ -4,7 +4,7 @@ use crate::base::impl_noise;
 use core::simd::{f32x2, f32x4};
 
 /// 2/3 dimensional Cubic Value noise.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ValueCubic;
 
 impl_noise!(23 ValueCubic);
