@@ -9,7 +9,7 @@ use core::simd::{f32x2, f32x4};
 #[cfg(feature = "nightly-simd")]
 use crate::open_simplex_2::{improve2a, improve3a, improve4a_smooth};
 
-/// 2/3 dimensional OpenSimplex2s noise. Smooth variant.
+/// 2/3/4 dimensional OpenSimplex2 noise. Smooth variant.
 ///
 /// When sampling in 3 Dimensions you can improve the visual isotropy in a the respective planes via [`improve_xy`] or [`improve_xz`].
 ///
