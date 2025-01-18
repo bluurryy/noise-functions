@@ -539,11 +539,9 @@ pub fn noise4_UnskewedBase([xs, ys, zs, ws]: [f32; 4], seed: i32) -> f32 {
 
     // Point contributions
     let mut value = 0.0;
-    let secondaryIndexStartAndStop = LOOKUP_4D_A[index as usize];
-    let secondaryIndexStart = secondaryIndexStartAndStop & 0xFFFF;
-    let secondaryIndexStop = secondaryIndexStartAndStop >> 16;
+    let [secondaryIndexStart, secondaryIndexStop] = LOOKUP_4D_A[index as usize];
     for i in secondaryIndexStart..secondaryIndexStop {
-        let c = &LOOKUP_4D_B[i];
+        let c = &LOOKUP_4D_B[usize::from(i)];
         let dx = xi + c.dx;
         let dy = yi + c.dy;
         let dz = zi + c.dz;
