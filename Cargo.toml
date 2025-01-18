@@ -37,10 +37,6 @@ document-features = { version = "0.2.8", optional = true }
 [package.metadata.docs.rs]
 all-features = true
 
-[dev-dependencies]
-fastnoise-lite = "1.1.1"
-rand = { version = "0.8.5", default-features = false, features = ["small_rng"] }
-
 [package.metadata.release]
 allow-branch = ["main"]
 pre-release-hook = ["just", "pre-release"]
