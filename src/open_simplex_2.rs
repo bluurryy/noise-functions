@@ -1,7 +1,10 @@
 #[cfg(feature = "nightly-simd")]
-use core::simd::{f32x2, f32x4};
+use core::simd::{f32x2, f32x4, num::SimdFloat};
 
 use crate::{Noise, Sample, SampleWithSeed};
+
+#[cfg(feature = "nightly-simd")]
+use crate::math::splat;
 
 macro_rules! impl_improves {
     (
@@ -59,6 +62,17 @@ macro_rules! impl_improves {
                 #[cfg(feature = "nightly-simd")]
                 fn raw_sample3a(&self, point: f32x4, seed: i32) -> f32 {
                     self.0.raw_sample3a(point, seed)
+                }
+
+                #[inline(always)]
+                fn raw_sample4(&self, point: [f32; 4], seed: i32) -> f32 {
+                    self.0.raw_sample4(point, seed)
+                }
+
+                #[inline(always)]
+                #[cfg(feature = "nightly-simd")]
+                fn raw_sample4a(&self, point: f32x4, seed: i32) -> f32 {
+                    self.0.raw_sample4a(point, seed)
                 }
             }
 
@@ -121,13 +135,43 @@ macro_rules! impl_improves {
                     self.0.raw_sample3a($improve_a(point), seed)
                 }
             }
+
+            impl<N: Sample<4>> Sample<4> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample(&self, point: [f32; 4]) -> f32 {
+                    self.0.sample(point)
+                }
+            }
+
+            impl<N: SampleWithSeed<4>> SampleWithSeed<4> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample_with_seed(&self, point: [f32; 4], seed: i32) -> f32 {
+                    self.0.sample_with_seed(point, seed)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl<N: Sample<4, f32x4>> Sample<4, f32x4> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample(&self, point: f32x4) -> f32 {
+                    self.0.sample(point)
+                }
+            }
+
+            #[cfg(feature = "nightly-simd")]
+            impl<N: SampleWithSeed<4, f32x4>> SampleWithSeed<4, f32x4> for $improve_struct<N> {
+                #[inline(always)]
+                fn sample_with_seed(&self, point: f32x4, seed: i32) -> f32 {
+                    self.0.sample_with_seed(point, seed)
+                }
+            }
         )*
     };
 }
 
 impl_improves! {
     /// Provides modifier methods for `OpenSimplex` noises.
-    OpenSimplexNoise for OpenSimplex2, OpenSimplex2s;
+    OpenSimplexNoise for OpenSimplex2, OpenSimplex2s, NewOpenSimplex2, NewOpenSimplex2s;
 
     /// Improves 3D orientation for the `XY` plane.
     ImproveXy improve_xy use improve3_xy improve3a_xy;
@@ -153,6 +197,15 @@ impl_improves! {
         #[doc(hidden)]
         #[cfg(feature = "nightly-simd")]
         fn raw_sample3a(&self, point: f32x4, seed: i32) -> f32;
+
+        /// Sample this OpenSimplexNoise unskewed.
+        #[doc(hidden)]
+        fn raw_sample4(&self, point: [f32; 4], seed: i32) -> f32;
+
+        /// Sample this OpenSimplexNoise unskewed.
+        #[doc(hidden)]
+        #[cfg(feature = "nightly-simd")]
+        fn raw_sample4a(&self, point: f32x4, seed: i32) -> f32;
     }
 }
 
@@ -167,6 +220,14 @@ pub(crate) fn improve3([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
 }
 
 #[inline]
+#[cfg(feature = "nightly-simd")]
+pub(crate) fn improve3a(point: f32x4) -> f32x4 {
+    const R3: f32 = 2.0 / 3.0;
+    let r: f32 = (point[0] + point[1] + point[2]) * R3; // Rotation, not skew
+    f32x4::splat(r) - point
+}
+
+#[inline]
 pub(crate) fn improve3_xy([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
     let xy: f32 = x + y;
     let s2: f32 = xy * -0.211324865405187;
@@ -175,25 +236,6 @@ pub(crate) fn improve3_xy([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
     y = y + s2 - z;
     z += xy * 0.577350269189626;
     [x, y, z]
-}
-
-#[inline]
-pub(crate) fn improve3_xz([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
-    let xz: f32 = x + z;
-    let s2: f32 = xz * -0.211324865405187;
-    y *= 0.577350269189626;
-    x += s2 - y;
-    z += s2 - y;
-    y += xz * 0.577350269189626;
-    [x, y, z]
-}
-
-#[inline]
-#[cfg(feature = "nightly-simd")]
-pub(crate) fn improve3a(point: f32x4) -> f32x4 {
-    const R3: f32 = 2.0 / 3.0;
-    let r: f32 = (point[0] + point[1] + point[2]) * R3; // Rotation, not skew
-    f32x4::splat(r) - point
 }
 
 #[inline]
@@ -210,4 +252,53 @@ pub(crate) fn improve3a_xz(point: f32x4) -> f32x4 {
     let &[x, y, z, _] = point.as_array();
     let [x, y, z] = improve3_xz([x, y, z]);
     f32x4::from_array([x, y, z, z])
+}
+
+#[inline]
+pub(crate) fn improve3_xz([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
+    let xz: f32 = x + z;
+    let s2: f32 = xz * -0.211324865405187;
+    y *= 0.577350269189626;
+    x += s2 - y;
+    z += s2 - y;
+    y += xz * 0.577350269189626;
+    [x, y, z]
+}
+
+#[inline]
+pub(crate) fn improve4([mut x, mut y, mut z, mut w]: [f32; 4]) -> [f32; 4] {
+    const SKEW_4D: f32 = -0.138196601125011;
+    let s = SKEW_4D * (x + y + z + w);
+    x += s;
+    y += s;
+    z += s;
+    w += s;
+    [x, y, z, w]
+}
+
+#[inline]
+#[cfg(feature = "nightly-simd")]
+pub(crate) fn improve4a(point: f32x4) -> f32x4 {
+    const SKEW_4D: f32 = -0.138196601125011;
+    let s = SKEW_4D * point.reduce_sum();
+    point + splat(s)
+}
+
+#[inline]
+pub(crate) fn improve4_smooth([mut x, mut y, mut z, mut w]: [f32; 4]) -> [f32; 4] {
+    const SKEW_4D: f32 = 0.309016994374947;
+    let s = SKEW_4D * (x + y + z + w);
+    x += s;
+    y += s;
+    z += s;
+    w += s;
+    [x, y, z, w]
+}
+
+#[inline]
+#[cfg(feature = "nightly-simd")]
+pub(crate) fn improve4a_smooth(point: f32x4) -> f32x4 {
+    const SKEW_4D: f32 = 0.309016994374947;
+    let s = SKEW_4D * point.reduce_sum();
+    point + splat(s)
 }
