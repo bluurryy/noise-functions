@@ -49,6 +49,21 @@ impl OpenSimplexNoise for OpenSimplex2 {
         self.raw_sample4(point.into(), seed)
     }
 
+    #[inline(always)]
+    fn raw_improve2_x(&self, [x, y]: [f32; 2]) -> [f32; 2] {
+        // Skew transform and rotation baked into one.
+        let xx = x * ROOT2OVER2;
+        let yy = y * (ROOT2OVER2 * (1.0 + 2.0 * SKEW_2D));
+
+        [yy + xx, yy - xx]
+    }
+
+    #[inline(always)]
+    #[cfg(feature = "nightly-simd")]
+    fn raw_improve2a_x(&self, point: f32x2) -> f32x2 {
+        self.raw_improve2_x(point.into()).into()
+    }
+
     #[doc(hidden)]
     fn raw_improve3_xy(&self, [x, y, z]: [f32; 3]) -> [f32; 3] {
         // Re-orient the cubic lattices without skewing, so Z points up the main lattice diagonal,
@@ -226,6 +241,7 @@ pub(crate) fn improve4a(point: f32x4) -> f32x4 {
     point + splat(s)
 }
 
+const ROOT2OVER2: f32 = 0.7071067811865476;
 const SKEW_2D: f32 = 0.366025403784439;
 const UNSKEW_2D: f32 = -0.21132486540518713;
 

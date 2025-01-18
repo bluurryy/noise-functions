@@ -6,8 +6,13 @@ use crate::{Noise, Sample, SampleWithSeed};
 pub(crate) trait Sealed {}
 
 macro_rules! r#if {
+    (if 2 == 2 { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
+    (if 2 == 3 { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
+    (if 2 == 4 { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
+    (if 3 == 2 { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
     (if 3 == 3 { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (if 3 == 4 { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
+    (if 4 == 2 { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
     (if 4 == 3 { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
     (if 4 == 4 { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
 }
@@ -86,6 +91,17 @@ macro_rules! impl_improves {
                 }
 
                 #[inline(always)]
+                fn raw_improve2_x(&self, point: [f32; 2]) -> [f32; 2] {
+                    self.0.raw_improve2_x(point)
+                }
+
+                #[inline(always)]
+                #[cfg(feature = "nightly-simd")]
+                fn raw_improve2a_x(&self, point: f32x2) -> f32x2 {
+                    self.0.raw_improve2a_x(point)
+                }
+
+                #[inline(always)]
                 fn raw_improve3_xy(&self, point: [f32; 3]) -> [f32; 3] {
                     self.0.raw_improve3_xy(point)
                 }
@@ -152,33 +168,67 @@ macro_rules! impl_improves {
                 }
             }
 
-            impl<N: Sample<2>> Sample<2> for $improve_struct<N> {
-                #[inline(always)]
-                fn sample(&self, point: [f32; 2]) -> f32 {
-                    self.0.sample(point)
-                }
-            }
+            $crate::open_simplex_2::r#if! {
+                if $improve_dim == 2 {
+                    impl<N: OpenSimplexNoise> Sample<2> for $improve_struct<N> {
+                        #[inline(always)]
+                        fn sample(&self, point: [f32; 2]) -> f32 {
+                            self.0.raw_sample2(self.0.$improve(point), 0)
+                        }
+                    }
 
-            impl<N: SampleWithSeed<2>> SampleWithSeed<2> for $improve_struct<N> {
-                #[inline(always)]
-                fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
-                    self.0.sample_with_seed(point, seed)
-                }
-            }
+                    impl<N: OpenSimplexNoise> SampleWithSeed<2> for $improve_struct<N> {
+                        #[inline(always)]
+                        fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
+                            self.0.raw_sample2(self.0.$improve(point), seed)
+                        }
+                    }
 
-            #[cfg(feature = "nightly-simd")]
-            impl<N: Sample<2, f32x2>> Sample<2, f32x2> for $improve_struct<N> {
-                #[inline(always)]
-                fn sample(&self, point: f32x2) -> f32 {
-                    self.0.sample(point)
-                }
-            }
+                    #[cfg(feature = "nightly-simd")]
+                    impl<N: OpenSimplexNoise> Sample<2, f32x2> for $improve_struct<N> {
+                        #[inline(always)]
+                        fn sample(&self, point: f32x2) -> f32 {
+                            self.0.raw_sample2a(self.0.$improve_a(point), 0)
+                        }
+                    }
 
-            #[cfg(feature = "nightly-simd")]
-            impl<N: SampleWithSeed<2, f32x2>> SampleWithSeed<2, core::simd::f32x2> for $improve_struct<N> {
-                #[inline(always)]
-                fn sample_with_seed(&self, point: f32x2, seed: i32) -> f32 {
-                    self.0.sample_with_seed(point, seed)
+                    #[cfg(feature = "nightly-simd")]
+                    impl<N: OpenSimplexNoise> SampleWithSeed<2, core::simd::f32x2> for $improve_struct<N> {
+                        #[inline(always)]
+                        fn sample_with_seed(&self, point: f32x2, seed: i32) -> f32 {
+                            self.0.raw_sample2a(self.0.$improve_a(point), seed)
+                        }
+                    }
+                } else {
+                    impl<N: Sample<2>> Sample<2> for $improve_struct<N> {
+                        #[inline(always)]
+                        fn sample(&self, point: [f32; 2]) -> f32 {
+                            self.0.sample(point)
+                        }
+                    }
+
+                    impl<N: SampleWithSeed<2>> SampleWithSeed<2> for $improve_struct<N> {
+                        #[inline(always)]
+                        fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
+                            self.0.sample_with_seed(point, seed)
+                        }
+                    }
+
+                    #[cfg(feature = "nightly-simd")]
+                    impl<N: Sample<2, f32x2>> Sample<2, f32x2> for $improve_struct<N> {
+                        #[inline(always)]
+                        fn sample(&self, point: f32x2) -> f32 {
+                            self.0.sample(point)
+                        }
+                    }
+
+                    #[cfg(feature = "nightly-simd")]
+                    impl<N: SampleWithSeed<2, f32x2>> SampleWithSeed<2, core::simd::f32x2> for $improve_struct<N> {
+                        #[inline(always)]
+                        fn sample_with_seed(&self, point: f32x2, seed: i32) -> f32 {
+                            self.0.sample_with_seed(point, seed)
+                        }
+                    }
                 }
             }
 
@@ -344,6 +394,13 @@ impl_improves! {
         fn raw_sample4a(&self, point: f32x4, seed: i32) -> f32;
 
         #[doc(hidden)]
+        fn raw_improve2_x(&self, point: [f32; 2]) -> [f32; 2];
+
+        #[doc(hidden)]
+        #[cfg(feature = "nightly-simd")]
+        fn raw_improve2a_x(&self, point: f32x2) -> f32x2;
+
+        #[doc(hidden)]
         fn raw_improve3_xy(&self, point: [f32; 3]) -> [f32; 3];
 
         #[doc(hidden)]
@@ -385,6 +442,14 @@ impl_improves! {
         #[cfg(feature = "nightly-simd")]
         fn raw_improve4a_xy_zw(&self, point: f32x4) -> f32x4;
     }
+
+    /// Improves 2D orientation with Y pointing down the main diagonal.
+    ///
+    /// This might be better for a 2D sandbox style where Y is vertical.
+    /// Probably slightly less optimal for heightmaps or continent maps,
+    /// unless your map is centered around an equator. It's a subtle
+    /// difference, but the option is here to make it an easy choice.
+    ImproveX 2 improve_x use raw_improve2_x raw_improve2a_x;
 
     /// Improves 3D orientation for the `XY` plane.
     ImproveXy 3 improve_xy use raw_improve3_xy raw_improve3a_xy;
