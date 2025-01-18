@@ -8,10 +8,8 @@ use crate::math::splat;
 
 /// 2/3/4 dimensional OpenSimplex2 noise. Smooth variant.
 ///
-/// When sampling in 3 Dimensions you can improve the visual isotropy in a the respective planes via [`improve_xy`] or [`improve_xz`].
-///
-/// [`improve_xy`]: crate::OpenSimplexNoise::improve_xy
-/// [`improve_xz`]: crate::OpenSimplexNoise::improve_xz
+/// You can improve the visual isotropy for certain orientations using the `improve_*` methods
+/// provided by the [`OpenSimplexNoise`] trait.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OpenSimplex2s;
 
