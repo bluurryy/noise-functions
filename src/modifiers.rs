@@ -120,7 +120,7 @@ use crate::math::floor;
 modifier_map! {
     /// Modifies a noise to create a peak at 0.
     ///
-    /// Equal to `abs(x) * 2 - 1`.
+    /// This outputs values is in the [-1, 1] range.
     ///
     /// **Note:** This modifier assumes the base noise returns values in the [-1, 1] range.
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -134,9 +134,9 @@ modifier_map! {
 }
 
 modifier_map! {
-    /// Generates fractal noise and applies a triangle wave to the output of a base noise function.
+    /// Applies a triangle wave to the output of a base noise function.
     ///
-    /// The output value is in the [-1, 1] range.
+    /// This outputs values is in the [-1, 1] range.
     ///
     /// **Note:** This modifier assumes the base noise returns values in the [-1, 1] range.
     #[derive(Debug, Clone, Copy, PartialEq)]
