@@ -88,13 +88,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "test-no_std"
-version = "0.0.0"
-dependencies = [
- "noise-functions",
-]
-
-[[package]]
 name = "zune-core"
 version = "0.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
