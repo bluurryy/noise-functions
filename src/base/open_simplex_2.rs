@@ -17,274 +17,25 @@ impl_open_simplex_noise!(234 OpenSimplex2);
 
 impl OpenSimplexNoise for OpenSimplex2 {
     #[inline]
-    fn raw_sample2(&self, [x, y]: [f32; 2], seed: i32) -> f32 {
-        // implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{floor_to_int, grad2, PRIME_X, PRIME_Y};
-
-        const SQRT3: f32 = 1.7320508075688772935274463415059;
-        const G2: f32 = (3.0 - SQRT3) / 6.0;
-
-        let mut i: i32 = floor_to_int(x);
-        let mut j: i32 = floor_to_int(y);
-
-        let xi: f32 = x - i as f32;
-        let yi: f32 = y - j as f32;
-
-        let t: f32 = (xi + yi) * G2;
-        let x0: f32 = xi - t;
-        let y0: f32 = yi - t;
-
-        i = i.wrapping_mul(PRIME_X);
-        j = j.wrapping_mul(PRIME_Y);
-
-        let n0: f32;
-        let n1: f32;
-        let n2: f32;
-
-        let a: f32 = 0.5 - x0 * x0 - y0 * y0;
-        if a <= 0.0 {
-            n0 = 0.0;
-        } else {
-            n0 = (a * a) * (a * a) * grad2(seed, i, j, x0, y0);
-        }
-
-        let c: f32 = (2.0 * (1.0 - 2.0 * G2) * (1.0 / G2 - 2.0)) * t + ((-2.0 * (1.0 - 2.0 * G2) * (1.0 - 2.0 * G2)) + a);
-        if c <= 0.0 {
-            n2 = 0.0;
-        } else {
-            let x2: f32 = x0 + (2.0 * G2 - 1.0);
-            let y2: f32 = y0 + (2.0 * G2 - 1.0);
-            n2 = (c * c) * (c * c) * grad2(seed, i.wrapping_add(PRIME_X), j.wrapping_add(PRIME_Y), x2, y2);
-        }
-
-        if y0 > x0 {
-            let x1: f32 = x0 + G2;
-            let y1: f32 = y0 + (G2 - 1.0);
-            let b: f32 = 0.5 - x1 * x1 - y1 * y1;
-            if b <= 0.0 {
-                n1 = 0.0;
-            } else {
-                n1 = (b * b) * (b * b) * grad2(seed, i, j.wrapping_add(PRIME_Y), x1, y1);
-            }
-        } else {
-            let x1: f32 = x0 + (G2 - 1.0);
-            let y1: f32 = y0 + G2;
-            let b: f32 = 0.5 - x1 * x1 - y1 * y1;
-            if b <= 0.0 {
-                n1 = 0.0;
-            } else {
-                n1 = (b * b) * (b * b) * grad2(seed, i.wrapping_add(PRIME_X), j, x1, y1);
-            }
-        }
-
-        (n0 + n1 + n2) * 99.83685446303647
+    fn raw_sample2(&self, point: [f32; 2], seed: i32) -> f32 {
+        crate::from_open_simplex_2::fast::noise2_UnskewedBase(point, seed)
     }
 
     #[inline]
     #[cfg(feature = "nightly-simd")]
     fn raw_sample2a(&self, point: f32x2, seed: i32) -> f32 {
-        // based on the implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{floor_to_int, grad2, grad2_simd, splat, PRIME_X, PRIME_XY, PRIME_Y};
-
-        use core::simd::num::SimdInt;
-
-        const SQRT3: f32 = 1.7320508075688772935274463415059;
-        const G2: f32 = (3.0 - SQRT3) / 6.0;
-
-        let i = floor_to_int(point);
-        let vi = point - i.cast();
-
-        let t = (vi[0] + vi[1]) * G2;
-        let v0 = vi - splat(t);
-
-        let i = i * PRIME_XY;
-
-        let n0: f32;
-        let n1: f32;
-        let n2: f32;
-
-        let a: f32 = 0.5 - v0[0] * v0[0] - v0[1] * v0[1];
-        if a <= 0.0 {
-            n0 = 0.0;
-        } else {
-            n0 = (a * a) * (a * a) * grad2_simd(seed, i, v0);
-        }
-
-        let c: f32 = (2.0 * (1.0 - 2.0 * G2) * (1.0 / G2 - 2.0)) * t + ((-2.0 * (1.0 - 2.0 * G2) * (1.0 - 2.0 * G2)) + a);
-
-        if c <= 0.0 {
-            n2 = 0.0;
-        } else {
-            let v2 = v0 + splat(2.0 * G2 - 1.0);
-            n2 = (c * c) * (c * c) * grad2_simd(seed, i + PRIME_XY, v2);
-        }
-
-        if v0[1] > v0[0] {
-            let x1 = v0[0] + G2;
-            let y1 = v0[1] + (G2 - 1.0);
-            let b = 0.5 - x1 * x1 - y1 * y1;
-            if b <= 0.0 {
-                n1 = 0.0;
-            } else {
-                n1 = (b * b) * (b * b) * grad2(seed, i[0], i[1].wrapping_add(PRIME_Y), x1, y1);
-            }
-        } else {
-            let x1 = v0[0] + (G2 - 1.0);
-            let y1 = v0[1] + G2;
-            let b = 0.5 - x1 * x1 - y1 * y1;
-            if b <= 0.0 {
-                n1 = 0.0;
-            } else {
-                n1 = (b * b) * (b * b) * grad2(seed, i[0].wrapping_add(PRIME_X), i[1], x1, y1);
-            }
-        }
-
-        (n0 + n1 + n2) * 99.83685446303647
+        self.raw_sample2(point.into(), seed)
     }
 
     #[inline]
-    fn raw_sample3(&self, [x, y, z]: [f32; 3], mut seed: i32) -> f32 {
-        // implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{grad3, round_to_int, PRIME_X, PRIME_Y, PRIME_Z};
-
-        let mut i: i32 = round_to_int(x);
-        let mut j: i32 = round_to_int(y);
-        let mut k: i32 = round_to_int(z);
-        let mut x0: f32 = x - i as f32;
-        let mut y0: f32 = y - j as f32;
-        let mut z0: f32 = z - k as f32;
-
-        let mut x_nsign: i32 = (-1.0 - x0) as i32 | 1;
-        let mut y_nsign: i32 = (-1.0 - y0) as i32 | 1;
-        let mut z_nsign: i32 = (-1.0 - z0) as i32 | 1;
-
-        let mut ax0: f32 = x_nsign as f32 * -x0;
-        let mut ay0: f32 = y_nsign as f32 * -y0;
-        let mut az0: f32 = z_nsign as f32 * -z0;
-
-        i = i.wrapping_mul(PRIME_X);
-        j = j.wrapping_mul(PRIME_Y);
-        k = k.wrapping_mul(PRIME_Z);
-
-        let mut value: f32 = 0.0;
-        let mut a: f32 = (0.6 - x0 * x0) - (y0 * y0 + z0 * z0);
-
-        for l in 0..2 {
-            if a > 0.0 {
-                value += (a * a) * (a * a) * grad3(seed, i, j, k, x0, y0, z0);
-            }
-
-            let mut b: f32 = a + 1.0;
-            let mut i1 = i;
-            let mut j1 = j;
-            let mut k1 = k;
-            let mut x1: f32 = x0;
-            let mut y1: f32 = y0;
-            let mut z1: f32 = z0;
-
-            if ax0 >= ay0 && ax0 >= az0 {
-                x1 += x_nsign as f32;
-                b -= x_nsign as f32 * 2.0 * x1;
-                i1 = i1.wrapping_sub(x_nsign.wrapping_mul(PRIME_X));
-            } else if ay0 > ax0 && ay0 >= az0 {
-                y1 += y_nsign as f32;
-                b -= y_nsign as f32 * 2.0 * y1;
-                j1 = j1.wrapping_sub(y_nsign.wrapping_mul(PRIME_Y));
-            } else {
-                z1 += z_nsign as f32;
-                b -= z_nsign as f32 * 2.0 * z1;
-                k1 = k1.wrapping_sub(z_nsign.wrapping_mul(PRIME_Z));
-            }
-
-            if b > 0.0 {
-                value += (b * b) * (b * b) * grad3(seed, i1, j1, k1, x1, y1, z1);
-            }
-
-            if l == 1 {
-                break;
-            }
-
-            ax0 = 0.5 - ax0;
-            ay0 = 0.5 - ay0;
-            az0 = 0.5 - az0;
-
-            x0 = x_nsign as f32 * ax0;
-            y0 = y_nsign as f32 * ay0;
-            z0 = z_nsign as f32 * az0;
-
-            a += (0.75 - ax0) - (ay0 + az0);
-
-            i = i.wrapping_add(x_nsign.wrapping_shr(1) & PRIME_X);
-            j = j.wrapping_add(y_nsign.wrapping_shr(1) & PRIME_Y);
-            k = k.wrapping_add(z_nsign.wrapping_shr(1) & PRIME_Z);
-
-            x_nsign = x_nsign.wrapping_neg();
-            y_nsign = y_nsign.wrapping_neg();
-            z_nsign = z_nsign.wrapping_neg();
-
-            seed = !seed;
-        }
-
-        value * 32.69428253173828125
+    fn raw_sample3(&self, point: [f32; 3], seed: i32) -> f32 {
+        crate::from_open_simplex_2::fast::noise3_UnrotatedBase(point, seed)
     }
 
     #[inline]
     #[cfg(feature = "nightly-simd")]
-    fn raw_sample3a(&self, point: f32x4, mut seed: i32) -> f32 {
-        // based on the implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{grad3_simd, round_to_int, splat, PRIME_X, PRIME_XYZ, PRIME_Y, PRIME_Z};
-
-        use core::simd::num::{SimdFloat, SimdInt};
-
-        let i = round_to_int(point);
-        let mut v0 = point - i.cast();
-        let mut nsign = (splat(-1.0) - v0).cast::<i32>() | splat(1);
-        let mut a0 = nsign.cast() * -v0;
-        let mut i = i * PRIME_XYZ;
-
-        let mut value: f32 = 0.0;
-        let mut a: f32 = (0.6 - v0[0] * v0[0]) - (v0[1] * v0[1] + v0[2] * v0[2]);
-
-        for l in 0..2 {
-            if a > 0.0 {
-                value += (a * a) * (a * a) * grad3_simd(seed, i, v0);
-            }
-
-            let mut b: f32 = a + 1.0;
-            let mut i1 = i;
-            let mut v1 = v0;
-
-            if a0[0] >= a0[1] && a0[0] >= a0[2] {
-                v1[0] += nsign[0] as f32;
-                b -= nsign[0] as f32 * 2.0 * v1[0];
-                i1[0] = i1[0].wrapping_sub(nsign[0].wrapping_mul(PRIME_X));
-            } else if a0[1] > a0[0] && a0[1] >= a0[2] {
-                v1[1] += nsign[1] as f32;
-                b -= nsign[1] as f32 * 2.0 * v1[1];
-                i1[1] = i1[1].wrapping_sub(nsign[1].wrapping_mul(PRIME_Y));
-            } else {
-                v1[2] += nsign[2] as f32;
-                b -= nsign[2] as f32 * 2.0 * v1[2];
-                i1[2] = i1[2].wrapping_sub(nsign[2].wrapping_mul(PRIME_Z));
-            }
-
-            if b > 0.0 {
-                value += (b * b) * (b * b) * grad3_simd(seed, i1, v1);
-            }
-
-            if l == 1 {
-                break;
-            }
-
-            a0 = splat(0.5) - a0;
-            v0 = nsign.cast() * a0;
-            a += (0.75 - a0[0]) - (a0[1] + a0[2]);
-            i += (nsign >> splat(1)) & PRIME_XYZ;
-            nsign = -nsign;
-            seed = !seed;
-        }
-
-        value * 32.69428253173828125
+    fn raw_sample3a(&self, point: f32x4, seed: i32) -> f32 {
+        self.raw_sample3(*crate::array_4_take_3(point.as_array()), seed)
     }
 
     #[inline]
@@ -299,14 +50,19 @@ impl OpenSimplexNoise for OpenSimplex2 {
     }
 
     #[doc(hidden)]
-    fn raw_improve3_xy(&self, [mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
-        let xy: f32 = x + y;
-        let s2: f32 = xy * -0.211324865405187;
-        z *= 0.577350269189626;
-        x += s2 - z;
-        y = y + s2 - z;
-        z += xy * 0.577350269189626;
-        [x, y, z]
+    fn raw_improve3_xy(&self, [x, y, z]: [f32; 3]) -> [f32; 3] {
+        // Re-orient the cubic lattices without skewing, so Z points up the main lattice diagonal,
+        // and the planes formed by XY are moved far out of alignment with the cube faces.
+        // Orthonormal rotation. Not a skew transform.
+        let xy = x + y;
+        let s2 = xy * ROTATE_3D_ORTHOGONALIZER;
+        let zz = z * ROOT3OVER3;
+        let xr = x + s2 + zz;
+        let yr = y + s2 + zz;
+        let zr = xy * -ROOT3OVER3 + zz;
+
+        // Evaluate both lattices to form a BCC lattice.
+        [xr, yr, zr]
     }
 
     #[doc(hidden)]
@@ -318,14 +74,19 @@ impl OpenSimplexNoise for OpenSimplex2 {
     }
 
     #[doc(hidden)]
-    fn raw_improve3_xz(&self, [mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
-        let xz: f32 = x + z;
-        let s2: f32 = xz * -0.211324865405187;
-        y *= 0.577350269189626;
-        x += s2 - y;
-        z += s2 - y;
-        y += xz * 0.577350269189626;
-        [x, y, z]
+    fn raw_improve3_xz(&self, [x, y, z]: [f32; 3]) -> [f32; 3] {
+        // Re-orient the cubic lattices without skewing, so Y points up the main lattice diagonal,
+        // and the planes formed by XZ are moved far out of alignment with the cube faces.
+        // Orthonormal rotation. Not a skew transform.
+        let xz = x + z;
+        let s2 = xz * ROTATE_3D_ORTHOGONALIZER;
+        let yy = y * ROOT3OVER3;
+        let xr = x + s2 + yy;
+        let zr = z + s2 + yy;
+        let yr = xz * -ROOT3OVER3 + yy;
+
+        // Evaluate both lattices to form a BCC lattice.
+        [xr, yr, zr]
     }
 
     #[doc(hidden)]
@@ -411,32 +172,31 @@ impl OpenSimplexNoise for OpenSimplex2 {
 }
 
 #[inline]
-pub(crate) fn improve2([mut x, mut y]: [f32; 2]) -> [f32; 2] {
-    const SQRT3: f32 = 1.7320508075688772935274463415059;
-    const F2: f32 = 0.5 * (SQRT3 - 1.0);
-    let t: f32 = (x + y) * F2;
-    x += t;
-    y += t;
-    [x, y]
+pub(crate) fn improve2([x, y]: [f32; 2]) -> [f32; 2] {
+    // Get points for A2* lattice
+    let s = SKEW_2D * (x + y);
+    let xs = x + s;
+    let ys = y + s;
+    [xs, ys]
 }
 
 #[inline]
 #[cfg(feature = "nightly-simd")]
 pub(crate) fn improve2a(point: f32x2) -> f32x2 {
-    const SQRT3: f32 = 1.7320508075688772935274463415059;
-    const F2: f32 = 0.5 * (SQRT3 - 1.0);
-    let t: f32 = (point[0] + point[1]) * F2;
-    point + splat(t)
+    improve2(point.into()).into()
 }
 
 #[inline]
-pub(crate) fn improve3([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
-    const R3: f32 = 2.0 / 3.0;
-    let r: f32 = (x + y + z) * R3; // Rotation, not skew
-    x = r - x;
-    y = r - y;
-    z = r - z;
-    [x, y, z]
+pub(crate) fn improve3([x, y, z]: [f32; 3]) -> [f32; 3] {
+    // Re-orient the cubic lattices via rotation, to produce a familiar look.
+    // Orthonormal rotation. Not a skew transform.
+    let r = FALLBACK_ROTATE_3D * (x + y + z);
+    let xr = r - x;
+    let yr = r - y;
+    let zr = r - z;
+
+    // Evaluate both lattices to form a BCC lattice.
+    [xr, yr, zr]
 }
 
 #[inline]
@@ -465,3 +225,10 @@ pub(crate) fn improve4a(point: f32x4) -> f32x4 {
     let s = SKEW_4D * point.reduce_sum();
     point + splat(s)
 }
+
+const SKEW_2D: f32 = 0.366025403784439;
+const UNSKEW_2D: f32 = -0.21132486540518713;
+
+const ROOT3OVER3: f32 = 0.577350269189626;
+const FALLBACK_ROTATE_3D: f32 = 2.0 / 3.0;
+const ROTATE_3D_ORTHOGONALIZER: f32 = UNSKEW_2D;

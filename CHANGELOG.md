@@ -2,6 +2,7 @@
 
 ## Unreleased
 - **breaking:** sealed the `OpenSimplexNoise` trait
+- **breaking:** changed `OpenSimplex2` 2D and 3D noise output
 - **added:** implemented `Default` for `OpenSimplex2(s)`, `Perlin`, `Simplex`, `ValueCubic` and `Value`
 - **added:** 4D OpenSimplex2 `improve_*` methods
 

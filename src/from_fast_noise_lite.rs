@@ -151,7 +151,7 @@ pub fn cell_neighbours(cell: i32) -> RangeInclusive<i32> {
 mod simd {
     use core::simd::{f32x2, f32x4, i32x2, i32x4, simd_swizzle};
 
-    use super::{dot, Dot, Index4, GRADIENTS_2D, GRADIENTS_3D, PRIME_X, PRIME_Y, PRIME_Z};
+    use super::{Dot, Index4, GRADIENTS_3D, PRIME_X, PRIME_Y, PRIME_Z};
 
     pub(crate) const PRIME_XY: i32x2 = i32x2::from_array([PRIME_X, PRIME_Y]);
     pub(crate) const PRIME_XYZ: i32x4 = i32x4::from_array([PRIME_X, PRIME_Y, PRIME_Z, 0]);
@@ -178,34 +178,6 @@ mod simd {
             let dot3 = x2y2_0_0_0 + z2_0_0_0;
             dot3[0]
         }
-    }
-
-    #[inline(always)]
-    pub(crate) fn hash2_simd(seed: i32, primed: i32x2) -> i32 {
-        (seed ^ (primed[0] ^ primed[1])).wrapping_mul(0x27d4eb2d)
-    }
-
-    #[inline(always)]
-    pub(crate) fn hash3_simd(seed: i32, primed: i32x4) -> i32 {
-        (seed ^ primed[0] ^ primed[1] ^ primed[2]).wrapping_mul(0x27d4eb2d)
-    }
-
-    #[inline(always)]
-    pub(crate) fn grad2_simd(seed: i32, primed: i32x2, delta: f32x2) -> f32 {
-        let mut hash = hash2_simd(seed, primed);
-        hash ^= hash.wrapping_shr(15);
-
-        let gradient = GRADIENTS_2D[hash].0;
-        dot(delta, gradient)
-    }
-
-    #[inline(always)]
-    pub(crate) fn grad3_simd(seed: i32, primed: i32x4, delta: f32x4) -> f32 {
-        let mut hash = hash3_simd(seed, primed);
-        hash ^= hash.wrapping_shr(15);
-
-        let gradient = GRADIENTS_3D[hash].0;
-        dot(delta, gradient)
     }
 
     #[inline(always)]

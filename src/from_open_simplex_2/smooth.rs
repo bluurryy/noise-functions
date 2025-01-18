@@ -57,7 +57,7 @@ pub fn noise2_ImproveX([x, y]: [f32; 2], seed: i32) -> f32 {
 }
 
 /// 2D OpenSimplex2S/SuperSimplex noise base.
-fn noise2_UnskewedBase([xs, ys]: [f32; 2], seed: i32) -> f32 {
+pub fn noise2_UnskewedBase([xs, ys]: [f32; 2], seed: i32) -> f32 {
     let seed = Wrapping(seed as i64);
 
     // Get base points and offsets.

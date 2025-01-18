@@ -126,15 +126,7 @@
 //!     this CC0 or use of the Work.
 //! ```
 
-#![expect(
-    dead_code,
-    non_snake_case,
-    clippy::excessive_precision,
-    clippy::identity_op,
-    clippy::needless_range_loop,
-    clippy::approx_constant,
-    clippy::too_many_arguments
-)]
+#![expect(dead_code, non_snake_case, clippy::excessive_precision, clippy::identity_op, clippy::approx_constant, clippy::too_many_arguments)]
 
 pub(crate) mod fast;
 pub(crate) mod smooth;
