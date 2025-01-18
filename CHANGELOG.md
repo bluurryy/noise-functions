@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-- **breaking:** fixed open simplex `Improve*` wrappers to apply the improvements on the base unrotated noise instead of the noise with the already improved rotation; this introduces new `#[doc(hidden)]` members on the `OpenSimplexNoise` trait and changes the bounds required for `Improve*` to implement `Sample`
+- **breaking:** fixed open simplex `Improve*` wrappers to apply the improvements on the base unrotated noise instead of the noise with the already improved rotation; this introduces new `#[doc(hidden)]` members on the `OpenSimplexNoise` trait and changes to the bounds required for `Improve*` to implement `Sample`
 - **added:** 4D OpenSimplex2s and OpenSimplex2s noise
 
 ## 0.5.0 (2025-01-16)
