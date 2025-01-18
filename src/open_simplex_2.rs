@@ -73,6 +73,28 @@ macro_rules! impl_improves {
                 fn raw_sample4a(&self, point: f32x4, seed: i32) -> f32 {
                     self.0.raw_sample4a(point, seed)
                 }
+
+                #[inline(always)]
+                fn raw_improve3_xy(&self, point: [f32; 3]) -> [f32; 3] {
+                    self.0.raw_improve3_xy(point)
+                }
+
+                #[inline(always)]
+                #[cfg(feature = "nightly-simd")]
+                fn raw_improve3a_xy(&self, point: f32x4) -> f32x4 {
+                    self.0.raw_improve3a_xy(point)
+                }
+
+                #[inline(always)]
+                fn raw_improve3_xz(&self, point: [f32; 3]) -> [f32; 3] {
+                    self.0.raw_improve3_xz(point)
+                }
+
+                #[inline(always)]
+                #[cfg(feature = "nightly-simd")]
+                fn raw_improve3a_xz(&self, point: f32x4) -> f32x4 {
+                    self.0.raw_improve3a_xz(point)
+                }
             }
 
             impl<N: Sample<2>> Sample<2> for $improve_struct<N> {
@@ -108,14 +130,14 @@ macro_rules! impl_improves {
             impl<N: OpenSimplexNoise> Sample<3> for $improve_struct<N> {
                 #[inline(always)]
                 fn sample(&self, point: [f32; 3]) -> f32 {
-                    self.0.raw_sample3($improve(point), 0)
+                    self.0.raw_sample3(self.0.$improve(point), 0)
                 }
             }
 
             impl<N: OpenSimplexNoise> SampleWithSeed<3> for $improve_struct<N> {
                 #[inline(always)]
                 fn sample_with_seed(&self, point: [f32; 3], seed: i32) -> f32 {
-                    self.0.raw_sample3($improve(point), seed)
+                    self.0.raw_sample3(self.0.$improve(point), seed)
                 }
             }
 
@@ -123,7 +145,7 @@ macro_rules! impl_improves {
             impl<N: OpenSimplexNoise> Sample<3, f32x4> for $improve_struct<N> {
                 #[inline(always)]
                 fn sample(&self, point: f32x4) -> f32 {
-                    self.0.raw_sample3a($improve_a(point), 0)
+                    self.0.raw_sample3a(self.0.$improve_a(point), 0)
                 }
             }
 
@@ -131,7 +153,7 @@ macro_rules! impl_improves {
             impl<N: OpenSimplexNoise> SampleWithSeed<3, f32x4> for $improve_struct<N> {
                 #[inline(always)]
                 fn sample_with_seed(&self, point: f32x4, seed: i32) -> f32 {
-                    self.0.raw_sample3a($improve_a(point), seed)
+                    self.0.raw_sample3a(self.0.$improve_a(point), seed)
                 }
             }
 
@@ -197,13 +219,27 @@ impl_improves! {
         #[doc(hidden)]
         #[cfg(feature = "nightly-simd")]
         fn raw_sample4a(&self, point: f32x4, seed: i32) -> f32;
+
+        #[doc(hidden)]
+        fn raw_improve3_xy(&self, point: [f32; 3]) -> [f32; 3];
+
+        #[doc(hidden)]
+        #[cfg(feature = "nightly-simd")]
+        fn raw_improve3a_xy(&self, point: f32x4) -> f32x4;
+
+        #[doc(hidden)]
+        fn raw_improve3_xz(&self, point: [f32; 3]) -> [f32; 3];
+
+        #[doc(hidden)]
+        #[cfg(feature = "nightly-simd")]
+        fn raw_improve3a_xz(&self, point: f32x4) -> f32x4;
     }
 
     /// Improves 3D orientation for the `XY` plane.
-    ImproveXy improve_xy use improve3_xy improve3a_xy;
+    ImproveXy improve_xy use raw_improve3_xy raw_improve3a_xy;
 
     /// Improves 3D orientation for the `XZ` plane.
-    ImproveXz improve_xz use improve3_xz improve3a_xz;
+    ImproveXz improve_xz use raw_improve3_xz raw_improve3a_xz;
 }
 
 #[inline]
@@ -241,44 +277,6 @@ pub(crate) fn improve3a(point: f32x4) -> f32x4 {
     const R3: f32 = 2.0 / 3.0;
     let r: f32 = (point[0] + point[1] + point[2]) * R3; // Rotation, not skew
     f32x4::splat(r) - point
-}
-
-#[inline]
-pub(crate) fn improve3_xy([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
-    let xy: f32 = x + y;
-    let s2: f32 = xy * -0.211324865405187;
-    z *= 0.577350269189626;
-    x += s2 - z;
-    y = y + s2 - z;
-    z += xy * 0.577350269189626;
-    [x, y, z]
-}
-
-#[inline]
-#[cfg(feature = "nightly-simd")]
-pub(crate) fn improve3a_xy(point: f32x4) -> f32x4 {
-    let &[x, y, z, _] = point.as_array();
-    let [x, y, z] = improve3_xy([x, y, z]);
-    f32x4::from_array([x, y, z, z])
-}
-
-#[inline]
-#[cfg(feature = "nightly-simd")]
-pub(crate) fn improve3a_xz(point: f32x4) -> f32x4 {
-    let &[x, y, z, _] = point.as_array();
-    let [x, y, z] = improve3_xz([x, y, z]);
-    f32x4::from_array([x, y, z, z])
-}
-
-#[inline]
-pub(crate) fn improve3_xz([mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
-    let xz: f32 = x + z;
-    let s2: f32 = xz * -0.211324865405187;
-    y *= 0.577350269189626;
-    x += s2 - y;
-    z += s2 - y;
-    y += xz * 0.577350269189626;
-    [x, y, z]
 }
 
 #[inline]

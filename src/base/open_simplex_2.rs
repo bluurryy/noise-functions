@@ -392,4 +392,42 @@ impl OpenSimplexNoise for OpenSimplex2 {
     fn raw_sample4a(&self, point: f32x4, seed: i32) -> f32 {
         self.raw_sample4(point.into(), seed)
     }
+
+    #[doc(hidden)]
+    fn raw_improve3_xy(&self, [mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
+        let xy: f32 = x + y;
+        let s2: f32 = xy * -0.211324865405187;
+        z *= 0.577350269189626;
+        x += s2 - z;
+        y = y + s2 - z;
+        z += xy * 0.577350269189626;
+        [x, y, z]
+    }
+
+    #[doc(hidden)]
+    #[cfg(feature = "nightly-simd")]
+    fn raw_improve3a_xy(&self, point: f32x4) -> f32x4 {
+        let &[x, y, z, _] = point.as_array();
+        let [x, y, z] = self.raw_improve3_xy([x, y, z]);
+        f32x4::from_array([x, y, z, z])
+    }
+
+    #[doc(hidden)]
+    fn raw_improve3_xz(&self, [mut x, mut y, mut z]: [f32; 3]) -> [f32; 3] {
+        let xz: f32 = x + z;
+        let s2: f32 = xz * -0.211324865405187;
+        y *= 0.577350269189626;
+        x += s2 - y;
+        z += s2 - y;
+        y += xz * 0.577350269189626;
+        [x, y, z]
+    }
+
+    #[doc(hidden)]
+    #[cfg(feature = "nightly-simd")]
+    fn raw_improve3a_xz(&self, point: f32x4) -> f32x4 {
+        let &[x, y, z, _] = point.as_array();
+        let [x, y, z] = self.raw_improve3_xz([x, y, z]);
+        f32x4::from_array([x, y, z, z])
+    }
 }
