@@ -22,12 +22,17 @@ use core::simd::*;
 
 pub use noise_functions;
 
+macro_rules! or_else {
+    ({ } else { $($else:tt)* }) => { $($else)* };
+    ({ $($tokens:tt)+ } else { $($else:tt)* }) => { $($tokens)* };
+}
+
 macro_rules! simple_enum {
 	(
 		enum $name:ident {
 			$(
                 $(#[$variant_attr:meta])*
-                $variant:ident $(= $variant_expr:expr)?
+                $variant:ident $(= $variant_name:literal)?
             ),* $(,)?
 		}
 	) => {
@@ -35,7 +40,7 @@ macro_rules! simple_enum {
 		pub enum $name {
 			$(
                 $(#[$variant_attr])*
-                $variant $(= $variant_expr)?,
+                $variant,
             )*
 		}
 
@@ -44,7 +49,7 @@ macro_rules! simple_enum {
 
 			fn from_str(s: &str) -> Result<Self, Self::Err> {
 				Ok(match s {
-					$(stringify!($variant) => Self::$variant,)*
+					$(or_else!({$($variant_name)?} else { stringify!($variant) }) => Self::$variant,)*
 					_ => return Err(noise_functions::errors::EnumFromStrError),
 				})
 			}
@@ -56,7 +61,7 @@ macro_rules! simple_enum {
 			];
 
 			pub fn to_str(self) -> &'static str {
-				[$(stringify!($variant)),*][self as usize]
+				[$(or_else!({$($variant_name)?} else { stringify!($variant) })),*][self as usize]
 			}
 		}
 
@@ -100,10 +105,15 @@ simple_enum! {
 
 simple_enum! {
     enum Improve {
-        None,
         #[default]
-        Xy,
-        Xz,
+        None,
+        X = "2D X",
+        Xy = "3D Xy",
+        Xz = "3D Xz",
+        Xyz = "4D Xyz",
+        XyzXy = "4D XyzXy",
+        XyzXz = "4D XyzXz",
+        XyZw = "4D XyZw",
     }
 }
 
@@ -255,13 +265,23 @@ macro_rules! base {
             Noise::Simplex => tileable!($dim, $self, Simplex),
             Noise::OpenSimplex2 => match $self.improve {
                 Improve::None => tileable!($dim, $self, OpenSimplex2),
-                Improve::Xy => tileable!($dim, $self, OpenSimplex2.improve_xy()),
-                Improve::Xz => tileable!($dim, $self, OpenSimplex2.improve_xz()),
+                Improve::X => tileable!($dim, $self, OpenSimplex2.improve2_x()),
+                Improve::Xy => tileable!($dim, $self, OpenSimplex2.improve3_xy()),
+                Improve::Xz => tileable!($dim, $self, OpenSimplex2.improve3_xz()),
+                Improve::Xyz => tileable!($dim, $self, OpenSimplex2.improve4_xyz()),
+                Improve::XyzXy => tileable!($dim, $self, OpenSimplex2.improve4_xyz_xy()),
+                Improve::XyzXz => tileable!($dim, $self, OpenSimplex2.improve4_xyz_xz()),
+                Improve::XyZw => tileable!($dim, $self, OpenSimplex2.improve4_xy_zw()),
             },
             Noise::OpenSimplex2s => match $self.improve {
                 Improve::None => tileable!($dim, $self, OpenSimplex2s),
-                Improve::Xy => tileable!($dim, $self, OpenSimplex2s.improve_xy()),
-                Improve::Xz => tileable!($dim, $self, OpenSimplex2s.improve_xz()),
+                Improve::X => tileable!($dim, $self, OpenSimplex2s.improve2_x()),
+                Improve::Xy => tileable!($dim, $self, OpenSimplex2s.improve3_xy()),
+                Improve::Xz => tileable!($dim, $self, OpenSimplex2s.improve3_xz()),
+                Improve::Xyz => tileable!($dim, $self, OpenSimplex2s.improve4_xyz()),
+                Improve::XyzXy => tileable!($dim, $self, OpenSimplex2s.improve4_xyz_xy()),
+                Improve::XyzXz => tileable!($dim, $self, OpenSimplex2s.improve4_xyz_xz()),
+                Improve::XyZw => tileable!($dim, $self, OpenSimplex2s.improve4_xy_zw()),
             },
             Noise::CellValue => tileable!($dim, $self, CellValue::default().jitter($self.jitter)),
             Noise::CellDistance => tileable!($dim, $self, CellDistance::default().jitter($self.jitter)),
