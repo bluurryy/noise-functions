@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-- **breaking:** added more `#[doc(hidden)]` members to the `OpenSimplexNoise` trait
+- **breaking:** sealed the `OpenSimplexNoise` trait
 - **added:** implemented `Default` for `OpenSimplex2(s)`, `Perlin`, `Simplex`, `ValueCubic` and `Value`
 - **added:** 4D OpenSimplex2 `improve_*` methods
 

@@ -3,6 +3,8 @@ use core::simd::{f32x2, f32x4};
 
 use crate::{Noise, Sample, SampleWithSeed};
 
+pub(crate) trait Sealed {}
+
 macro_rules! r#if {
     (if 3 == 3 { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (if 3 == 4 { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
@@ -25,7 +27,8 @@ macro_rules! impl_improves {
         )*
     ) => {
         $(#[$trait_attrs])*
-        pub trait $trait: Noise {
+        #[expect(private_bounds)]
+        pub trait $trait: Sealed + Noise {
             $(
                 $(#[$improve_attrs])*
                 fn $improve_fn(self) -> $improve_struct<Self>
@@ -45,6 +48,8 @@ macro_rules! impl_improves {
             pub struct $improve_struct<OpenSimplexNoise>(pub OpenSimplexNoise);
 
             impl<N> Noise for $improve_struct<N> {}
+
+            impl<N: OpenSimplexNoise> Sealed for $improve_struct<N> {}
 
             impl<N: OpenSimplexNoise> $trait for $improve_struct<N> {
                 #[inline(always)]

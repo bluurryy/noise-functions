@@ -107,6 +107,8 @@ impl SampleWithSeed<4, f32x4> for OpenSimplex2s {
     }
 }
 
+impl crate::open_simplex_2::Sealed for OpenSimplex2s {}
+
 impl OpenSimplexNoise for OpenSimplex2s {
     #[inline(always)]
     fn raw_sample2(&self, [x, y]: [f32; 2], seed: i32) -> f32 {
