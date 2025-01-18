@@ -449,49 +449,49 @@ impl_improves! {
     /// Probably slightly less optimal for heightmaps or continent maps,
     /// unless your map is centered around an equator. It's a subtle
     /// difference, but the option is here to make it an easy choice.
-    ImproveX 2 improve_x use raw_improve2_x raw_improve2a_x;
+    Improve2X 2 improve2_x use raw_improve2_x raw_improve2a_x;
 
     /// Improves 3D orientation for better visual isotropy in (X, Y).
     ///
     /// Recommended for 3D terrain and time-varied animations.
     /// The Z coordinate should always be the "different" coordinate in
     /// whatever your use case is.
-    ImproveXy 3 improve_xy use raw_improve3_xy raw_improve3a_xy;
+    Improve3Xy 3 improve3_xy use raw_improve3_xy raw_improve3a_xy;
 
     /// Improves 3D orientation for better visual isotropy in (X, Z).
     ///
     /// Recommended for 3D terrain and time-varied animations.
     /// The Y coordinate should always be the "different" coordinate in
     /// whatever your use case is.
-    ImproveXz 3 improve_xz use raw_improve3_xz raw_improve3a_xz;
+    Improve3Xz 3 improve3_xz use raw_improve3_xz raw_improve3a_xz;
 
     /// Improves 4D orientation so XYZ is oriented like the default 3D noise
     /// and W for an extra degree of freedom. W repeats eventually.
     ///
     /// Recommended for time-varied animations which texture a 3D object with W as time
     /// where there isn't a clear distinction between horizontal and vertical.
-    ImproveXyz 4 improve_xyz use raw_improve4_xyz raw_improve4a_xyz;
+    Improve4Xyz 4 improve4_xyz use raw_improve4_xyz raw_improve4a_xyz;
 
     /// Improves 4D orientation so XYZ is oriented like the 3D `improve_xy` noise
     /// and W for an extra degree of freedom. W repeats eventually.
     ///
     /// Recommended for time-varied animations which texture a 3D object with W as time
     /// in a space where Z is vertical.
-    ImproveXyzXy 4 improve_xyz_xy use raw_improve4_xyz_xy raw_improve4a_xyz_xy;
+    Improve4XyzXy 4 improve4_xyz_xy use raw_improve4_xyz_xy raw_improve4a_xyz_xy;
 
     /// Improves 4D orientation so XYZ is oriented like the 3D `improve_xz` noise
     /// and W for an extra degree of freedom. W repeats eventually.
     ///
     /// Recommended for time-varied animations which texture a 3D object with W as time
     /// in a space where Y is vertical.
-    ImproveXyzXz 4 improve_xyz_xz use raw_improve4_xyz_xz raw_improve4a_xyz_xz;
+    Improve4XyzXz 4 improve4_xyz_xz use raw_improve4_xyz_xz raw_improve4a_xyz_xz;
 
     /// Improves 4D orientation so XY and ZW form orthogonal triangular-based planes.
     ///
     /// Recommended for 3D terrain, where X and Y or (Z and W) are horizontal.
     ///
     /// Recommended for the noise(x, y, sin(time), cos(time)) trick.
-    ImproveXyZw 4 improve_xy_zw use raw_improve4_xy_zw raw_improve4a_xy_zw;
+    Improve4XyZw 4 improve4_xy_zw use raw_improve4_xy_zw raw_improve4a_xy_zw;
 }
 
 macro_rules! impl_open_simplex_noise {

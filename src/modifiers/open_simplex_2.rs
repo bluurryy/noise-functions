@@ -1,3 +1,3 @@
 //! OpenSimplex2 noise functions and combinators.
 
-pub use crate::open_simplex_2::{ImproveXy, ImproveXyZw, ImproveXyz, ImproveXyzXy, ImproveXyzXz, ImproveXz};
+pub use crate::open_simplex_2::{Improve3Xy, Improve3Xz, Improve4XyZw, Improve4Xyz, Improve4XyzXy, Improve4XyzXz};
