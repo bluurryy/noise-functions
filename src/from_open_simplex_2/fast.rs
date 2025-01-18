@@ -37,7 +37,7 @@ const RSQUARED_3D: f32 = 0.6;
 const RSQUARED_4D: f32 = 0.6;
 
 /// 2D Simplex noise, standard lattice orientation.
-pub fn noise2([x, y]: [f32; 2], seed: i64) -> f32 {
+pub fn noise2([x, y]: [f32; 2], seed: i32) -> f32 {
     // Get points for A2* lattice
     let s = SKEW_2D * (x + y);
     let xs = x + s;
@@ -51,7 +51,7 @@ pub fn noise2([x, y]: [f32; 2], seed: i64) -> f32 {
 /// Probably slightly less optimal for heightmaps or continent maps,
 /// unless your map is centered around an equator. It's a subtle
 /// difference, but the option is here to make it an easy choice.
-pub fn noise2_ImproveX([x, y]: [f32; 2], seed: i64) -> f32 {
+pub fn noise2_ImproveX([x, y]: [f32; 2], seed: i32) -> f32 {
     // Skew transform and rotation baked into one.
     let xx = x * ROOT2OVER2;
     let yy = y * (ROOT2OVER2 * (1.0 + 2.0 * SKEW_2D));
@@ -60,8 +60,8 @@ pub fn noise2_ImproveX([x, y]: [f32; 2], seed: i64) -> f32 {
 }
 
 /// 2D Simplex noise base.
-fn noise2_UnskewedBase([xs, ys]: [f32; 2], seed: i64) -> f32 {
-    let seed = Wrapping(seed);
+fn noise2_UnskewedBase([xs, ys]: [f32; 2], seed: i32) -> f32 {
+    let seed = Wrapping(seed as i64);
 
     // Get base points and offsets.
     let xsb = fastFloor(xs);
@@ -119,7 +119,7 @@ fn noise2_UnskewedBase([xs, ys]: [f32; 2], seed: i64) -> f32 {
 /// If Y is vertical in world coordinates, call noise3_ImproveXZ(x, z, Y) or use noise3_XZBeforeY.
 /// If Z is vertical in world coordinates, call noise3_ImproveXZ(x, y, Z).
 /// For a time varied animation, call noise3_ImproveXY(x, y, T).
-pub fn noise3_ImproveXY([x, y, z]: [f32; 3], seed: i64) -> f32 {
+pub fn noise3_ImproveXY([x, y, z]: [f32; 3], seed: i32) -> f32 {
     // Re-orient the cubic lattices without skewing, so Z points up the main lattice diagonal,
     // and the planes formed by XY are moved far out of alignment with the cube faces.
     // Orthonormal rotation. Not a skew transform.
@@ -140,7 +140,7 @@ pub fn noise3_ImproveXY([x, y, z]: [f32; 3], seed: i64) -> f32 {
 /// If Y is vertical in world coordinates, call noise3_ImproveXZ(x, Y, z).
 /// If Z is vertical in world coordinates, call noise3_ImproveXZ(x, Z, y) or use noise3_ImproveXY.
 /// For a time varied animation, call noise3_ImproveXZ(x, T, y) or use noise3_ImproveXY.
-pub fn noise3_ImproveXZ([x, y, z]: [f32; 3], seed: i64) -> f32 {
+pub fn noise3_ImproveXZ([x, y, z]: [f32; 3], seed: i32) -> f32 {
     // Re-orient the cubic lattices without skewing, so Y points up the main lattice diagonal,
     // and the planes formed by XZ are moved far out of alignment with the cube faces.
     // Orthonormal rotation. Not a skew transform.
@@ -158,7 +158,7 @@ pub fn noise3_ImproveXZ([x, y, z]: [f32; 3], seed: i64) -> f32 {
 /// 3D OpenSimplex2 noise, fallback rotation option
 /// Use noise3_ImproveXY or noise3_ImproveXZ instead, wherever appropriate.
 /// They have less diagonal bias. This function's best use is as a fallback.
-pub fn noise3_Fallback([x, y, z]: [f32; 3], seed: i64) -> f32 {
+pub fn noise3_Fallback([x, y, z]: [f32; 3], seed: i32) -> f32 {
     // Re-orient the cubic lattices via rotation, to produce a familiar look.
     // Orthonormal rotation. Not a skew transform.
     let r = FALLBACK_ROTATE_3D * (x + y + z);
@@ -171,8 +171,8 @@ pub fn noise3_Fallback([x, y, z]: [f32; 3], seed: i64) -> f32 {
 }
 
 /// Generate overlapping cubic lattices for 3D OpenSimplex2 noise.
-pub fn noise3_UnrotatedBase([xr, yr, zr]: [f32; 3], seed: i64) -> f32 {
-    let mut seed = Wrapping(seed);
+pub fn noise3_UnrotatedBase([xr, yr, zr]: [f32; 3], seed: i32) -> f32 {
+    let mut seed = Wrapping(seed as i64);
 
     // Get base points and offsets.
     let xrb = fastRound(xr);
@@ -266,7 +266,7 @@ pub fn noise3_UnrotatedBase([xr, yr, zr]: [f32; 3], seed: i64) -> f32 {
 /// and W for an extra degree of freedom. W repeats eventually.
 /// Recommended for time-varied animations which texture a 3D object (W=time)
 /// in a space where Z is vertical
-pub fn noise4_ImproveXYZ_ImproveXY([x, y, z, w]: [f32; 4], seed: i64) -> f32 {
+pub fn noise4_ImproveXYZ_ImproveXY([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
     let xy = x + y;
     let s2 = xy * -0.21132486540518699998;
     let zz = z * 0.28867513459481294226;
@@ -283,7 +283,7 @@ pub fn noise4_ImproveXYZ_ImproveXY([x, y, z, w]: [f32; 4], seed: i64) -> f32 {
 /// and W for an extra degree of freedom. W repeats eventually.
 /// Recommended for time-varied animations which texture a 3D object (W=time)
 /// in a space where Y is vertical
-pub fn noise4_ImproveXYZ_ImproveXZ([x, y, z, w]: [f32; 4], seed: i64) -> f32 {
+pub fn noise4_ImproveXYZ_ImproveXZ([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
     let xz = x + z;
     let s2 = xz * -0.21132486540518699998;
     let yy = y * 0.28867513459481294226;
@@ -300,7 +300,7 @@ pub fn noise4_ImproveXYZ_ImproveXZ([x, y, z, w]: [f32; 4], seed: i64) -> f32 {
 /// and W for an extra degree of freedom. W repeats eventually.
 /// Recommended for time-varied animations which texture a 3D object (W=time)
 /// where there isn't a clear distinction between horizontal and vertical
-pub fn noise4_ImproveXYZ([x, y, z, w]: [f32; 4], seed: i64) -> f32 {
+pub fn noise4_ImproveXYZ([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
     let xyz = x + y + z;
     let ww = w * 0.2236067977499788;
     let s2 = xyz * -0.16666666666666666 + ww;
@@ -315,7 +315,7 @@ pub fn noise4_ImproveXYZ([x, y, z, w]: [f32; 4], seed: i64) -> f32 {
 /// 4D OpenSimplex2 noise, with XY and ZW forming orthogonal triangular-based planes.
 /// Recommended for 3D terrain, where X and Y (or Z and W) are horizontal.
 /// Recommended for noise(x, y, sin(time), cos(time)) trick.
-pub fn noise4_ImproveXY_ImproveZW([x, y, z, w]: [f32; 4], seed: i64) -> f32 {
+pub fn noise4_ImproveXY_ImproveZW([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
     let s2 = (x + y) * -0.178275657951399372 + (z + w) * 0.215623393288842828;
     let t2 = (z + w) * -0.403949762580207112 + (x + y) * -0.375199083010075342;
     let xs = x + s2;
@@ -327,7 +327,7 @@ pub fn noise4_ImproveXY_ImproveZW([x, y, z, w]: [f32; 4], seed: i64) -> f32 {
 }
 
 /// 4D OpenSimplex2 noise, fallback lattice orientation.
-pub fn noise4_Fallback([x, y, z, w]: [f32; 4], seed: i64) -> f32 {
+pub fn noise4_Fallback([x, y, z, w]: [f32; 4], seed: i32) -> f32 {
     // Get points for A4 lattice
     let s = SKEW_4D * (x + y + z + w);
     let xs = x + s;
@@ -339,8 +339,8 @@ pub fn noise4_Fallback([x, y, z, w]: [f32; 4], seed: i64) -> f32 {
 }
 
 /// 4D OpenSimplex2 noise base.
-pub fn noise4_UnskewedBase([xs, ys, zs, ws]: [f32; 4], seed: i64) -> f32 {
-    let mut seed = Wrapping(seed);
+pub fn noise4_UnskewedBase([xs, ys, zs, ws]: [f32; 4], seed: i32) -> f32 {
+    let mut seed = Wrapping(seed as i64);
 
     // Get base points and offsets
     let xsb = fastFloor(xs);

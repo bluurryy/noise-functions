@@ -381,7 +381,7 @@ impl OpenSimplexNoise for OpenSimplex2 {
 
     #[inline]
     fn raw_sample4(&self, point: [f32; 4], seed: i32) -> f32 {
-        crate::from_open_simplex_2::fast::noise4_UnskewedBase(point, seed as i64)
+        crate::from_open_simplex_2::fast::noise4_UnskewedBase(point, seed)
     }
 
     #[inline]
