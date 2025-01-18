@@ -148,33 +148,6 @@ pub fn cell_neighbours(cell: i32) -> RangeInclusive<i32> {
     cell.wrapping_sub(1)..=cell.wrapping_add(1)
 }
 
-pub(crate) mod open_simplex_2 {
-    #[cfg(feature = "nightly-simd")]
-    use core::simd::f32x2;
-
-    #[cfg(feature = "nightly-simd")]
-    use super::splat;
-
-    #[inline]
-    pub(crate) fn improve2([mut x, mut y]: [f32; 2]) -> [f32; 2] {
-        const SQRT3: f32 = 1.7320508075688772935274463415059;
-        const F2: f32 = 0.5 * (SQRT3 - 1.0);
-        let t: f32 = (x + y) * F2;
-        x += t;
-        y += t;
-        [x, y]
-    }
-
-    #[inline]
-    #[cfg(feature = "nightly-simd")]
-    pub(crate) fn improve2a(point: f32x2) -> f32x2 {
-        const SQRT3: f32 = 1.7320508075688772935274463415059;
-        const F2: f32 = 0.5 * (SQRT3 - 1.0);
-        let t: f32 = (point[0] + point[1]) * F2;
-        point + splat(t)
-    }
-}
-
 #[cfg(feature = "nightly-simd")]
 mod simd {
     use core::simd::{f32x2, f32x4, i32x2, i32x4, simd_swizzle};

@@ -219,8 +219,8 @@ macro_rules! if_supports_4d {
     (ValueCubic { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
     (Perlin { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (Simplex { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
-    (OpenSimplex2 { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
-    (OpenSimplex2s { $($then:tt)* } else { $($else:tt)* }) => { $($else)* };
+    (OpenSimplex2 { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
+    (OpenSimplex2s { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (CellValue { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (CellDistance { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };
     (CellDistanceSq { $($then:tt)* } else { $($else:tt)* }) => { $($then)* };

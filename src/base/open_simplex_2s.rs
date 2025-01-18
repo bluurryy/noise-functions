@@ -1,12 +1,15 @@
-use crate::{base::impl_noise, open_simplex_2::improve3, OpenSimplexNoise, Sample, SampleWithSeed};
+use crate::{
+    open_simplex_2::{improve2, improve3, improve4_smooth},
+    Noise, OpenSimplexNoise, Sample, SampleWithSeed,
+};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
 
 #[cfg(feature = "nightly-simd")]
-use crate::open_simplex_2::improve3a;
+use crate::open_simplex_2::{improve2a, improve3a, improve4a_smooth};
 
-/// 2/3 dimensional OpenSimplex2s noise. Smooth variant.
+/// 2/3/4 dimensional OpenSimplex2 noise. Smooth variant.
 ///
 /// When sampling in 3 Dimensions you can improve the visual isotropy in a the respective planes via [`improve_xy`] or [`improve_xz`].
 ///
@@ -15,19 +18,49 @@ use crate::open_simplex_2::improve3a;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OpenSimplex2s;
 
-impl_noise!(2 OpenSimplex2s);
+impl Noise for OpenSimplex2s {}
+
+impl Sample<2> for OpenSimplex2s {
+    #[inline(always)]
+    fn sample(&self, point: [f32; 2]) -> f32 {
+        self.raw_sample2(improve2(point), 0)
+    }
+}
+
+impl SampleWithSeed<2> for OpenSimplex2s {
+    #[inline(always)]
+    fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
+        self.raw_sample2(improve2(point), seed)
+    }
+}
+
+#[cfg(feature = "nightly-simd")]
+impl Sample<2, f32x2> for OpenSimplex2s {
+    #[inline(always)]
+    fn sample(&self, point: f32x2) -> f32 {
+        self.raw_sample2a(improve2a(point), 0)
+    }
+}
+
+#[cfg(feature = "nightly-simd")]
+impl SampleWithSeed<2, f32x2> for OpenSimplex2s {
+    #[inline(always)]
+    fn sample_with_seed(&self, point: f32x2, seed: i32) -> f32 {
+        self.raw_sample2a(improve2a(point), seed)
+    }
+}
 
 impl Sample<3> for OpenSimplex2s {
     #[inline(always)]
     fn sample(&self, point: [f32; 3]) -> f32 {
-        self.gen3(improve3(point), 0)
+        self.raw_sample3(improve3(point), 0)
     }
 }
 
 impl SampleWithSeed<3> for OpenSimplex2s {
     #[inline(always)]
     fn sample_with_seed(&self, point: [f32; 3], seed: i32) -> f32 {
-        self.gen3(improve3(point), seed)
+        self.raw_sample3(improve3(point), seed)
     }
 }
 
@@ -35,7 +68,7 @@ impl SampleWithSeed<3> for OpenSimplex2s {
 impl Sample<3, core::simd::f32x4> for OpenSimplex2s {
     #[inline(always)]
     fn sample(&self, point: core::simd::f32x4) -> f32 {
-        self.gen3a(improve3a(point), 0)
+        self.raw_sample3a(improve3a(point), 0)
     }
 }
 
@@ -43,41 +76,45 @@ impl Sample<3, core::simd::f32x4> for OpenSimplex2s {
 impl SampleWithSeed<3, core::simd::f32x4> for OpenSimplex2s {
     #[inline(always)]
     fn sample_with_seed(&self, point: core::simd::f32x4, seed: i32) -> f32 {
-        self.gen3a(improve3a(point), seed)
+        self.raw_sample3a(improve3a(point), seed)
+    }
+}
+
+impl Sample<4> for OpenSimplex2s {
+    #[inline(always)]
+    fn sample(&self, point: [f32; 4]) -> f32 {
+        self.raw_sample4(improve4_smooth(point), 0)
+    }
+}
+
+impl SampleWithSeed<4> for OpenSimplex2s {
+    #[inline(always)]
+    fn sample_with_seed(&self, point: [f32; 4], seed: i32) -> f32 {
+        self.raw_sample4(improve4_smooth(point), seed)
+    }
+}
+
+#[cfg(feature = "nightly-simd")]
+impl Sample<4, f32x4> for OpenSimplex2s {
+    #[inline(always)]
+    fn sample(&self, point: f32x4) -> f32 {
+        self.raw_sample4a(improve4a_smooth(point), 0)
+    }
+}
+
+#[cfg(feature = "nightly-simd")]
+impl SampleWithSeed<4, f32x4> for OpenSimplex2s {
+    #[inline(always)]
+    fn sample_with_seed(&self, point: f32x4, seed: i32) -> f32 {
+        self.raw_sample4a(improve4a_smooth(point), seed)
     }
 }
 
 impl OpenSimplexNoise for OpenSimplex2s {
     #[inline(always)]
-    fn raw_sample2(&self, point: [f32; 2], seed: i32) -> f32 {
-        self.gen2(point, seed)
-    }
-
-    #[inline(always)]
-    #[cfg(feature = "nightly-simd")]
-    fn raw_sample2a(&self, point: f32x2, seed: i32) -> f32 {
-        self.gen2a(point, seed)
-    }
-
-    #[inline(always)]
-    fn raw_sample3(&self, point: [f32; 3], seed: i32) -> f32 {
-        self.gen3(point, seed)
-    }
-
-    #[inline(always)]
-    #[cfg(feature = "nightly-simd")]
-    fn raw_sample3a(&self, point: f32x4, seed: i32) -> f32 {
-        self.gen3a(point, seed)
-    }
-}
-
-impl OpenSimplex2s {
-    #[inline]
-    fn gen2(self, [x, y]: [f32; 2], seed: i32) -> f32 {
+    fn raw_sample2(&self, [x, y]: [f32; 2], seed: i32) -> f32 {
         // implementation from FastNoiseLite
-        use crate::from_fast_noise_lite::{floor_to_int, grad2, open_simplex_2::improve2, PRIME_X, PRIME_Y};
-
-        let [x, y] = improve2([x, y]);
+        use crate::from_fast_noise_lite::{floor_to_int, grad2, PRIME_X, PRIME_Y};
 
         const SQRT3: f32 = 1.7320508075688772935274463415059;
         const G2: f32 = (3.0 - SQRT3) / 6.0;
@@ -178,7 +215,13 @@ impl OpenSimplex2s {
     }
 
     #[inline]
-    fn gen3(self, [x, y, z]: [f32; 3], seed: i32) -> f32 {
+    #[cfg(feature = "nightly-simd")]
+    fn raw_sample2a(&self, point: f32x2, seed: i32) -> f32 {
+        self.raw_sample2(point.into(), seed)
+    }
+
+    #[inline]
+    fn raw_sample3(&self, [x, y, z]: [f32; 3], seed: i32) -> f32 {
         // implementation from FastNoiseLite
         use crate::from_fast_noise_lite::{floor_to_int, grad3, PRIME_X, PRIME_Y, PRIME_Z};
 
@@ -451,13 +494,18 @@ impl OpenSimplex2s {
 
     #[inline]
     #[cfg(feature = "nightly-simd")]
-    fn gen2a(self, point: f32x2, seed: i32) -> f32 {
-        self.gen2(point.into(), seed)
+    fn raw_sample3a(&self, point: f32x4, seed: i32) -> f32 {
+        self.raw_sample3(*crate::array_4_take_3(point.as_array()), seed)
+    }
+
+    #[inline]
+    fn raw_sample4(&self, [x, y, z, w]: [f32; 4], seed: i32) -> f32 {
+        crate::from_open_simplex_2::smooth::noise4_UnskewedBase(seed as i64, x, y, z, w)
     }
 
     #[inline]
     #[cfg(feature = "nightly-simd")]
-    fn gen3a(self, point: f32x4, seed: i32) -> f32 {
-        self.gen3(*crate::array_4_take_3(point.as_array()), seed)
+    fn raw_sample4a(&self, point: f32x4, seed: i32) -> f32 {
+        self.raw_sample4(point.into(), seed)
     }
 }
