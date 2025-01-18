@@ -93,3 +93,11 @@ pub(crate) use std_math::*;
 mod traits;
 
 pub(crate) use traits::*;
+
+pub(crate) const fn const_abs(f: f32) -> f32 {
+    if f < 0.0 {
+        -f
+    } else {
+        f
+    }
+}

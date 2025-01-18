@@ -9,7 +9,10 @@ pub use frequency::Frequency;
 pub use seeded::Seeded;
 pub use tileable::Tileable;
 
-use crate::Noise;
+use crate::{
+    math::{abs, const_abs},
+    Noise,
+};
 
 /// Modifies a fractal noise to make successive octaves have less impact the lower the output value of the previous one was.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -129,7 +132,7 @@ modifier_map! {
     self, seed, point, value;
 
     map_value: {
-        fast_abs(value) * -2.0 + 1.0
+        abs(value) * -2.0 + 1.0
     }
 }
 
@@ -176,7 +179,7 @@ modifier_map! {
 ///
 #[inline(always)]
 pub const fn fractal_bounding(octaves: u32, gain: f32) -> f32 {
-    let gain = fast_abs(gain);
+    let gain = const_abs(gain);
     let mut amp = gain;
     let mut amp_fractal = 1.0;
     let mut i = 0;
@@ -188,13 +191,4 @@ pub const fn fractal_bounding(octaves: u32, gain: f32) -> f32 {
     }
 
     1.0 / amp_fractal
-}
-
-#[inline(always)]
-const fn fast_abs(f: f32) -> f32 {
-    if f < 0.0 {
-        -f
-    } else {
-        f
-    }
 }
