@@ -41,10 +41,16 @@ pub(crate) struct Index4<const TABLE_SIZE: usize>(i32);
 
 impl<const TABLE_SIZE: usize> Index4<TABLE_SIZE> {
     pub const MASK: i32 = ((TABLE_SIZE * 4) as i32 - 1) & !3;
+    pub const MASK_64: i64 = ((TABLE_SIZE * 4) as i64 - 1) & !3;
 
     #[inline(always)]
     pub fn new(hash: i32) -> Self {
         Self(hash & Self::MASK)
+    }
+
+    #[inline(always)]
+    pub fn new_64(hash: i64) -> Self {
+        Self((hash & Self::MASK_64) as i32)
     }
 
     #[inline(always)]
@@ -53,7 +59,7 @@ impl<const TABLE_SIZE: usize> Index4<TABLE_SIZE> {
     }
 }
 
-pub(crate) struct Table4<const TABLE_SIZE: usize>([Entry<4>; TABLE_SIZE]);
+pub(crate) struct Table4<const TABLE_SIZE: usize>(pub [Entry<4>; TABLE_SIZE]);
 
 impl<const TABLE_SIZE: usize> Table4<TABLE_SIZE> {
     pub const fn new(values: [Entry<4>; TABLE_SIZE]) -> Self {
@@ -79,6 +85,15 @@ impl<const TABLE_SIZE: usize> Index<i32> for Table4<TABLE_SIZE> {
     #[inline(always)]
     fn index(&self, index: i32) -> &Self::Output {
         &self[Index4::new(index)]
+    }
+}
+
+impl<const TABLE_SIZE: usize> Index<i64> for Table4<TABLE_SIZE> {
+    type Output = Entry<4>;
+
+    #[inline(always)]
+    fn index(&self, index: i64) -> &Self::Output {
+        &self[Index4::new_64(index)]
     }
 }
 

@@ -1,7 +1,7 @@
 mod table2;
 mod table4;
 
-pub(crate) use entry::{entry2, entry3, Entry};
+pub(crate) use entry::{entry2, entry3, entry4, Entry};
 pub(crate) use table2::Table2;
 pub(crate) use table4::Table4;
 
@@ -51,6 +51,10 @@ mod entry {
     pub(crate) const fn entry3(x: f32, y: f32, z: f32) -> Entry<4> {
         Entry(f32x4::from_array([x, y, z, 0.0]))
     }
+
+    pub(crate) const fn entry4(x: f32, y: f32, z: f32, w: f32) -> Entry<4> {
+        Entry(f32x4::from_array([x, y, z, w]))
+    }
 }
 
 #[cfg(not(feature = "nightly-simd"))]
@@ -70,5 +74,9 @@ mod entry {
 
     pub(crate) const fn entry3(x: f32, y: f32, z: f32) -> Entry<4> {
         Entry([x, y, z, 0.0])
+    }
+
+    pub(crate) const fn entry4(x: f32, y: f32, z: f32, w: f32) -> Entry<4> {
+        Entry([x, y, z, w])
     }
 }

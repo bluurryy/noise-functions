@@ -365,24 +365,24 @@ fn grad2(seed: Wrapping<i64>, xsvp: Wrapping<i64>, ysvp: Wrapping<i64>, dx: f32,
     let mut hash = seed ^ xsvp ^ ysvp;
     hash *= HASH_MULTIPLIER;
     hash ^= hash.0 >> (64 - N_GRADS_2D_EXPONENT + 1);
-    let gi = (hash.0 as i32 & ((N_GRADS_2D - 1) << 1)) as usize;
-    GRADIENTS_2D[gi | 0] * dx + GRADIENTS_2D[gi | 1] * dy
+    let [grad_x, grad_y] = *GRADIENTS_2D[hash.0].as_array();
+    grad_x * dx + grad_y * dy
 }
 
 fn grad3(seed: Wrapping<i64>, xrvp: Wrapping<i64>, yrvp: Wrapping<i64>, zrvp: Wrapping<i64>, dx: f32, dy: f32, dz: f32) -> f32 {
     let mut hash = (seed ^ xrvp) ^ (yrvp ^ zrvp);
     hash *= HASH_MULTIPLIER;
     hash ^= hash.0 >> (64 - N_GRADS_3D_EXPONENT + 2);
-    let gi = (hash.0 as i32 & ((N_GRADS_3D - 1) << 2)) as usize;
-    GRADIENTS_3D[gi | 0] * dx + GRADIENTS_3D[gi | 1] * dy + GRADIENTS_3D[gi | 2] * dz
+    let [grad_x, grad_y, grad_z, ..] = *GRADIENTS_3D[hash.0].as_array();
+    grad_x * dx + grad_y * dy + grad_z * dz
 }
 
 fn grad4(seed: Wrapping<i64>, xsvp: Wrapping<i64>, ysvp: Wrapping<i64>, zsvp: Wrapping<i64>, wsvp: Wrapping<i64>, dx: f32, dy: f32, dz: f32, dw: f32) -> f32 {
     let mut hash = seed ^ (xsvp ^ ysvp) ^ (zsvp ^ wsvp);
     hash *= HASH_MULTIPLIER;
     hash ^= hash.0 >> (64 - N_GRADS_4D_EXPONENT + 2);
-    let gi = (hash.0 as i32 & ((N_GRADS_4D - 1) << 2)) as usize;
-    (GRADIENTS_4D[gi | 0] * dx + GRADIENTS_4D[gi | 1] * dy) + (GRADIENTS_4D[gi | 2] * dz + GRADIENTS_4D[gi | 3] * dw)
+    let [grad_x, grad_y, grad_z, grad_w] = *GRADIENTS_4D[hash.0].as_array();
+    grad_x * dx + grad_y * dy + grad_z * dz + grad_w * dw
 }
 
 fn fastFloor(x: f32) -> i32 {
