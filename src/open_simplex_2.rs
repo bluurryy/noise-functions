@@ -451,10 +451,18 @@ impl_improves! {
     /// difference, but the option is here to make it an easy choice.
     ImproveX 2 improve_x use raw_improve2_x raw_improve2a_x;
 
-    /// Improves 3D orientation for the `XY` plane.
+    /// Improves 3D orientation for better visual isotropy in (X, Y).
+    ///
+    /// Recommended for 3D terrain and time-varied animations.
+    /// The Z coordinate should always be the "different" coordinate in
+    /// whatever your use case is.
     ImproveXy 3 improve_xy use raw_improve3_xy raw_improve3a_xy;
 
-    /// Improves 3D orientation for the `XZ` plane.
+    /// Improves 3D orientation for better visual isotropy in (X, Z).
+    ///
+    /// Recommended for 3D terrain and time-varied animations.
+    /// The Y coordinate should always be the "different" coordinate in
+    /// whatever your use case is.
     ImproveXz 3 improve_xz use raw_improve3_xz raw_improve3a_xz;
 
     /// Improves 4D orientation so XYZ is oriented like the default 3D noise
