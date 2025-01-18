@@ -1,4 +1,4 @@
-use super::{cell_neighbours, fast_min, hash2, hash3, round_to_int, Index2, Index3, JITTER_2D, JITTER_3D, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_2D, RAND_VECS_3D};
+use super::{cell_neighbours, fast_min, hash2, hash3, round_to_int, Index2, Index4, JITTER_2D, JITTER_3D, PRIME_X, PRIME_Y, PRIME_Z, RAND_VECS_2D, RAND_VECS_3D};
 
 #[cfg(feature = "nightly-simd")]
 use super::{length_squared, splat};
@@ -59,7 +59,7 @@ pub(crate) fn gen3(jitter: f32, [x, y, z]: [f32; 3], seed: i32) -> f32 {
 
             for zi in cell_neighbours(zr) {
                 let hash: i32 = hash3(seed, x_primed, y_primed, z_primed);
-                let [rand_x, rand_y, rand_z, _] = *RAND_VECS_3D[Index3::new(hash)].as_array();
+                let [rand_x, rand_y, rand_z, _] = *RAND_VECS_3D[Index4::new(hash)].as_array();
 
                 let vec_x: f32 = (xi as f32 - x) + rand_x * jitter;
                 let vec_y: f32 = (yi as f32 - y) + rand_y * jitter;
@@ -127,7 +127,7 @@ pub(crate) fn gen3a(jitter: f32, point: f32x4, seed: i32) -> f32 {
 
             for zi in cell_neighbours(rounded[2]) {
                 let hash = hash3(seed, x_primed, y_primed, z_primed);
-                let rand = RAND_VECS_3D[Index3::new(hash)].0;
+                let rand = RAND_VECS_3D[Index4::new(hash)].0;
                 let coor = f32x4::from_array([xi as f32, yi as f32, zi as f32, zi as f32]);
                 let vec = (coor - point) + rand * splat(jitter);
                 let new_distance = length_squared(vec);

@@ -206,13 +206,13 @@ impl Perlin {
         // based on the implementation from FastNoiseLite
         use core::simd::{i32x4, num::SimdInt};
 
-        use crate::from_fast_noise_lite::{floor_to_int, grad3_with_hash, interp_quintic, Index3x4, PRIME_XYZ};
+        use crate::from_fast_noise_lite::{floor_to_int, grad3_with_hash, interp_quintic, Index4x4, PRIME_XYZ};
 
         #[inline(always)]
-        fn create_hash(mut hash: i32x4) -> Index3x4<64> {
+        fn create_hash(mut hash: i32x4) -> Index4x4<64> {
             hash *= i32x4::splat(0x27d4eb2d);
             hash ^= hash >> i32x4::splat(15);
-            Index3x4::new(hash)
+            Index4x4::new(hash)
         }
 
         let mut v0 = floor_to_int(point);

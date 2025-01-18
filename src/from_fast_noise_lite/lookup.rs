@@ -1,4 +1,4 @@
-use crate::lookup_table::{entry2, entry3, Table2, Table3};
+use crate::lookup_table::{entry2, entry3, Table2, Table4};
 
 pub(crate) const RAND_VECS_2D: Table2<256> = Table2::new([
     entry2(-0.2700222198, -0.9628540911),
@@ -259,7 +259,7 @@ pub(crate) const RAND_VECS_2D: Table2<256> = Table2::new([
     entry2(-0.7743120191, -0.6328039957),
 ]);
 
-pub(crate) const RAND_VECS_3D: Table3<256> = Table3::new([
+pub(crate) const RAND_VECS_3D: Table4<256> = Table4::new([
     entry3(-0.7292736885, -0.6618439697, 0.1735581948),
     entry3(0.790292081, -0.5480887466, -0.2739291014),
     entry3(0.7217578935, 0.6226212466, -0.3023380997),
@@ -649,7 +649,7 @@ pub(crate) const GRADIENTS_2D: Table2<128> = Table2::new([
     entry2(-0.38268343236509, 0.923879532511287),
 ]);
 
-pub(crate) const GRADIENTS_3D: Table3<64> = Table3::new([
+pub(crate) const GRADIENTS_3D: Table4<64> = Table4::new([
     entry3(0.0, 1.0, 1.0),
     entry3(0.0, -1.0, 1.0),
     entry3(0.0, 1.0, -1.0),

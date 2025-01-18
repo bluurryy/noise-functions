@@ -3,10 +3,10 @@ mod table4;
 
 pub(crate) use entry::{entry2, entry3, Entry};
 pub(crate) use table2::{Index2, Table2};
-pub(crate) use table4::{Index3, Table3};
+pub(crate) use table4::{Index4, Table4};
 
 #[cfg(feature = "nightly-simd")]
-pub(crate) use table4::Index3x4;
+pub(crate) use table4::Index4x4;
 
 macro_rules! const_assert {
     ($($tt:tt)*) => {
