@@ -118,11 +118,11 @@ pub(crate) use modifier_map;
 use crate::math::floor;
 
 modifier_map! {
-    /// Modifies a noise to create a peak at value 0.
+    /// Modifies a noise to create a peak at 0.
     ///
     /// Equal to `abs(x) * 2 - 1`.
     ///
-    /// **Note:** This modifier assumes the base noise to return values in the [-1, 1] range.
+    /// **Note:** This modifier assumes the base noise returns values in the [-1, 1] range.
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     pub struct Ridged {}
 
@@ -138,7 +138,7 @@ modifier_map! {
     ///
     /// The output value is in the [-1, 1] range.
     ///
-    /// **Note:** This modifier assumes the base noise to return values in the [-1, 1] range.
+    /// **Note:** This modifier assumes the base noise returns values in the [-1, 1] range.
     #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct TriangleWave {
         pub frequency: f32,

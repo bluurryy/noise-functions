@@ -15,7 +15,7 @@ use super::{fractal_bounding, Weighted};
 ///
 /// `fBm` noise is created by calling the base noise `octaves` amount of times with increasing frequency and decreasing amplitude.
 ///
-/// **Note:** This modifier assumes the base noise to return values in the [-1, 1] range.
+/// **Note:** This modifier assumes the base noise returns values in the [-1, 1] range.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Fbm<Noise> {
     pub noise: Noise,
