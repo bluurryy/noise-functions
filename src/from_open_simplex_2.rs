@@ -126,10 +126,16 @@
 //!     this CC0 or use of the Work.
 //! ```
 
-#![expect(dead_code, non_snake_case, clippy::excessive_precision, clippy::identity_op, clippy::approx_constant, clippy::too_many_arguments)]
+pub(crate) mod fast_luts;
+pub(crate) mod smooth_luts;
 
-pub(crate) mod fast;
-pub(crate) mod smooth;
-
-mod fast_luts;
-mod smooth_luts;
+pub(super) struct LatticeVertex4D {
+    pub(super) dx: f32,
+    pub(super) dy: f32,
+    pub(super) dz: f32,
+    pub(super) dw: f32,
+    pub(super) xsvp: i64,
+    pub(super) ysvp: i64,
+    pub(super) zsvp: i64,
+    pub(super) wsvp: i64,
+}

@@ -1,6 +1,6 @@
 use crate::lookup_table::{entry2, entry4, Table2, Table4};
 
-pub(super) const GRADIENTS_2D: Table2<128> = Table2::new([
+pub(crate) const GRADIENTS_2D: Table2<128> = Table2::new([
     entry2(38.20591, 92.23723),
     entry2(92.23723, 38.20591),
     entry2(92.23723, -38.20591),
@@ -131,7 +131,7 @@ pub(super) const GRADIENTS_2D: Table2<128> = Table2::new([
     entry2(-38.20591, 92.23723),
 ]);
 
-pub(super) const GRADIENTS_3D: Table4<256> = Table4::new([
+pub(crate) const GRADIENTS_3D: Table4<256> = Table4::new([
     entry4(27.914557, 27.914557, -12.547307, 0.0),
     entry4(27.914557, 27.914557, 12.547307, 0.0),
     entry4(38.724335, 14.707343, 0.0, 0.0),
@@ -390,7 +390,7 @@ pub(super) const GRADIENTS_3D: Table4<256> = Table4::new([
     entry4(0.0, -38.724335, 14.707343, 0.0),
 ]);
 
-pub(super) const GRADIENTS_4D: Table4<512> = Table4::new([
+pub(crate) const GRADIENTS_4D: Table4<512> = Table4::new([
     entry4(-30.627455, -14.722169, -14.722169, 26.331585),
     entry4(-34.102886, -18.197601, 6.9508653, 22.856152),
     entry4(-34.102886, 6.9508653, -18.197601, 22.856152),

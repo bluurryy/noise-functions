@@ -1,8 +1,8 @@
 use crate::lookup_table::{entry2, entry4, Table2, Table4};
 
-use super::smooth::LatticeVertex4D;
+use super::LatticeVertex4D;
 
-pub(super) const GRADIENTS_2D: Table2<128> = Table2::new([
+pub(crate) const GRADIENTS_2D: Table2<128> = Table2::new([
     entry2(6.9808965, 16.853374),
     entry2(16.853374, 6.9808965),
     entry2(16.853374, -6.9808965),
@@ -133,7 +133,7 @@ pub(super) const GRADIENTS_2D: Table2<128> = Table2::new([
     entry2(-6.9808965, 16.853374),
 ]);
 
-pub(super) const GRADIENTS_3D: Table4<256> = Table4::new([
+pub(crate) const GRADIENTS_3D: Table4<256> = Table4::new([
     entry4(7.9971385, 7.9971385, -3.5946317, 0.0),
     entry4(7.9971385, 7.9971385, 3.5946317, 0.0),
     entry4(11.093991, 4.2134523, 0.0, 0.0),
@@ -392,7 +392,7 @@ pub(super) const GRADIENTS_3D: Table4<256> = Table4::new([
     entry4(0.0, -11.093991, 4.2134523, 0.0),
 ]);
 
-pub(super) const GRADIENTS_4D: Table4<512> = Table4::new([
+pub(crate) const GRADIENTS_4D: Table4<512> = Table4::new([
     entry4(-6.057173, -2.9115942, -2.9115942, 5.207581),
     entry4(-6.744507, -3.5989282, 1.3746682, 4.520247),
     entry4(-6.744507, 1.3746682, -3.5989282, 4.520247),
@@ -907,7 +907,7 @@ pub(super) const GRADIENTS_4D: Table4<512> = Table4::new([
     entry4(6.057173, -5.207581, 2.9115942, 2.9115942),
 ]);
 
-pub(super) const LOOKUP_4D_A: &[[u16; 2]; 256] = &[
+pub(crate) const LOOKUP_4D_A: &[[u16; 2]; 256] = &[
     [0, 20],
     [20, 35],
     [35, 51],
@@ -1166,7 +1166,7 @@ pub(super) const LOOKUP_4D_A: &[[u16; 2]; 256] = &[
     [3456, 3476],
 ];
 
-pub(super) const LOOKUP_4D_B: &[LatticeVertex4D] = &[
+pub(crate) const LOOKUP_4D_B: &[LatticeVertex4D] = &[
     LatticeVertex4D {
         dx: -0.1381966,
         dy: -0.1381966,
