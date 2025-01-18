@@ -70,6 +70,7 @@ mod cellular;
 mod from_fast_noise_2;
 mod from_fast_noise_lite;
 mod from_open_simplex_2;
+mod lookup_table;
 mod math;
 /// Noise modifiers.
 pub mod modifiers;

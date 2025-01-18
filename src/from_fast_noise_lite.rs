@@ -29,19 +29,19 @@
 
 pub(crate) mod cell_distance_euclidean_squared;
 mod lookup;
-mod table2;
-mod table4;
 
 use core::ops::RangeInclusive;
 
+pub(crate) use crate::lookup_table::{Index2, Index3};
 pub(crate) use lookup::*;
-pub(crate) use table2::*;
-pub(crate) use table4::*;
 
 pub(crate) use crate::math::{floor_to_int, interp_hermite, interp_quintic, round_to_int};
 
 #[cfg(feature = "nightly-simd")]
 pub(crate) use crate::math::splat;
+
+#[cfg(feature = "nightly-simd")]
+pub(crate) use crate::lookup_table::Index3x4;
 
 pub trait Dot {
     type Output;
