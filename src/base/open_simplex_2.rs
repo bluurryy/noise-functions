@@ -1,7 +1,7 @@
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4, num::SimdFloat};
 
-use crate::{Noise, OpenSimplexNoise, Sample, SampleWithSeed};
+use crate::{open_simplex_2::impl_open_simplex_noise, OpenSimplexNoise};
 
 #[cfg(feature = "nightly-simd")]
 use crate::math::splat;
@@ -15,99 +15,7 @@ use crate::math::splat;
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OpenSimplex2;
 
-impl Noise for OpenSimplex2 {}
-
-impl Sample<2> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample(&self, point: [f32; 2]) -> f32 {
-        self.raw_sample2(improve2(point), 0)
-    }
-}
-
-impl SampleWithSeed<2> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
-        self.raw_sample2(improve2(point), seed)
-    }
-}
-
-#[cfg(feature = "nightly-simd")]
-impl Sample<2, f32x2> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample(&self, point: f32x2) -> f32 {
-        self.raw_sample2a(improve2a(point), 0)
-    }
-}
-
-#[cfg(feature = "nightly-simd")]
-impl SampleWithSeed<2, f32x2> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample_with_seed(&self, point: f32x2, seed: i32) -> f32 {
-        self.raw_sample2a(improve2a(point), seed)
-    }
-}
-
-impl Sample<3> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample(&self, point: [f32; 3]) -> f32 {
-        self.raw_sample3(improve3(point), 0)
-    }
-}
-
-impl SampleWithSeed<3> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample_with_seed(&self, point: [f32; 3], seed: i32) -> f32 {
-        self.raw_sample3(improve3(point), seed)
-    }
-}
-
-#[cfg(feature = "nightly-simd")]
-impl Sample<3, f32x4> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample(&self, point: f32x4) -> f32 {
-        self.raw_sample3a(improve3a(point), 0)
-    }
-}
-
-#[cfg(feature = "nightly-simd")]
-impl SampleWithSeed<3, f32x4> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample_with_seed(&self, point: f32x4, seed: i32) -> f32 {
-        self.raw_sample3a(improve3a(point), seed)
-    }
-}
-
-impl Sample<4> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample(&self, point: [f32; 4]) -> f32 {
-        self.raw_sample4(improve4(point), 0)
-    }
-}
-
-impl SampleWithSeed<4> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample_with_seed(&self, point: [f32; 4], seed: i32) -> f32 {
-        self.raw_sample4(improve4(point), seed)
-    }
-}
-
-#[cfg(feature = "nightly-simd")]
-impl Sample<4, f32x4> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample(&self, point: f32x4) -> f32 {
-        self.raw_sample4a(improve4a(point), 0)
-    }
-}
-
-#[cfg(feature = "nightly-simd")]
-impl SampleWithSeed<4, f32x4> for OpenSimplex2 {
-    #[inline(always)]
-    fn sample_with_seed(&self, point: f32x4, seed: i32) -> f32 {
-        self.raw_sample4a(improve4a(point), seed)
-    }
-}
-
-impl crate::open_simplex_2::Sealed for OpenSimplex2 {}
+impl_open_simplex_noise!(234 OpenSimplex2);
 
 impl OpenSimplexNoise for OpenSimplex2 {
     #[inline]

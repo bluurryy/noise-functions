@@ -420,3 +420,103 @@ impl_improves! {
     /// Recommended for the noise(x, y, sin(time), cos(time)) trick.
     ImproveXyZw 4 improve_xy_zw use raw_improve4_xy_zw raw_improve4a_xy_zw;
 }
+
+macro_rules! impl_open_simplex_noise {
+    (234 $struct:ident) => {
+        impl $crate::Noise for $struct {}
+
+        impl $crate::Sample<2> for $struct {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 2]) -> f32 {
+                self.raw_sample2(improve2(point), 0)
+            }
+        }
+
+        impl $crate::SampleWithSeed<2> for $struct {
+            #[inline(always)]
+            fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
+                self.raw_sample2(improve2(point), seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl $crate::Sample<2, core::simd::f32x2> for $struct {
+            #[inline(always)]
+            fn sample(&self, point: core::simd::f32x2) -> f32 {
+                self.raw_sample2a(improve2a(point), 0)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl $crate::SampleWithSeed<2, core::simd::f32x2> for $struct {
+            #[inline(always)]
+            fn sample_with_seed(&self, point: core::simd::f32x2, seed: i32) -> f32 {
+                self.raw_sample2a(improve2a(point), seed)
+            }
+        }
+
+        impl $crate::Sample<3> for $struct {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 3]) -> f32 {
+                self.raw_sample3(improve3(point), 0)
+            }
+        }
+
+        impl $crate::SampleWithSeed<3> for $struct {
+            #[inline(always)]
+            fn sample_with_seed(&self, point: [f32; 3], seed: i32) -> f32 {
+                self.raw_sample3(improve3(point), seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl $crate::Sample<3, core::simd::f32x4> for $struct {
+            #[inline(always)]
+            fn sample(&self, point: core::simd::f32x4) -> f32 {
+                self.raw_sample3a(improve3a(point), 0)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl $crate::SampleWithSeed<3, core::simd::f32x4> for $struct {
+            #[inline(always)]
+            fn sample_with_seed(&self, point: core::simd::f32x4, seed: i32) -> f32 {
+                self.raw_sample3a(improve3a(point), seed)
+            }
+        }
+
+        impl $crate::Sample<4> for $struct {
+            #[inline(always)]
+            fn sample(&self, point: [f32; 4]) -> f32 {
+                self.raw_sample4(improve4(point), 0)
+            }
+        }
+
+        impl $crate::SampleWithSeed<4> for $struct {
+            #[inline(always)]
+            fn sample_with_seed(&self, point: [f32; 4], seed: i32) -> f32 {
+                self.raw_sample4(improve4(point), seed)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl $crate::Sample<4, f32x4> for $struct {
+            #[inline(always)]
+            fn sample(&self, point: f32x4) -> f32 {
+                self.raw_sample4a(improve4a(point), 0)
+            }
+        }
+
+        #[cfg(feature = "nightly-simd")]
+        impl $crate::SampleWithSeed<4, core::simd::f32x4> for $struct {
+            #[inline(always)]
+            fn sample_with_seed(&self, point: core::simd::f32x4, seed: i32) -> f32 {
+                self.raw_sample4a(improve4a(point), seed)
+            }
+        }
+
+        impl $crate::open_simplex_2::Sealed for $struct {}
+    };
+}
+
+pub(crate) use impl_open_simplex_noise;
