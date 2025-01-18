@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- **breaking:** fixed open simplex `Improve*` wrappers to apply the improvements on the base unrotated noise instead of the noise with the already improved rotation; this introduces new `#[doc(hidden)]` members on the `OpenSimplexNoise` trait and changes the bounds required for `Improve*` to implement `Sample`
+
 ## 0.5.0 (2025-01-16)
 - **breaking:** `Sample*` helper traits now require `Sample` which in turn now requires `Noise`; this is useful for generic code so you don't need to specify those additional bounds if you need them; every type that implements `Sample*` should implement `Sample` and `Noise` anyway
 - **added:** missing `Noise` implementations for `Weighted` and `Frequency` modifiers

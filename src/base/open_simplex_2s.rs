@@ -1,4 +1,4 @@
-use crate::{base::impl_noise, open_simplex_2::improve3, Sample, SampleWithSeed};
+use crate::{base::impl_noise, open_simplex_2::improve3, OpenSimplexNoise, Sample, SampleWithSeed};
 
 #[cfg(feature = "nightly-simd")]
 use core::simd::{f32x2, f32x4};
@@ -44,6 +44,30 @@ impl SampleWithSeed<3, core::simd::f32x4> for OpenSimplex2s {
     #[inline(always)]
     fn sample_with_seed(&self, point: core::simd::f32x4, seed: i32) -> f32 {
         self.gen3a(improve3a(point), seed)
+    }
+}
+
+impl OpenSimplexNoise for OpenSimplex2s {
+    #[inline(always)]
+    fn raw_sample2(&self, point: [f32; 2], seed: i32) -> f32 {
+        self.gen2(point, seed)
+    }
+
+    #[inline(always)]
+    #[cfg(feature = "nightly-simd")]
+    fn raw_sample2a(&self, point: f32x2, seed: i32) -> f32 {
+        self.gen2a(point, seed)
+    }
+
+    #[inline(always)]
+    fn raw_sample3(&self, point: [f32; 3], seed: i32) -> f32 {
+        self.gen3(point, seed)
+    }
+
+    #[inline(always)]
+    #[cfg(feature = "nightly-simd")]
+    fn raw_sample3a(&self, point: f32x4, seed: i32) -> f32 {
+        self.gen3a(point, seed)
     }
 }
 
