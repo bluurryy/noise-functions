@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.0 (2025-01-19)
 - **breaking:** sealed the `OpenSimplexNoise` trait
 - **breaking:** changed `OpenSimplex2` 2D and 3D implementation and output
 - **breaking:** renamed `improve_xy` and `improve_xz` to `improve3_xy` and `improve3_xz`
