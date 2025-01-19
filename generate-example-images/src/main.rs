@@ -38,6 +38,7 @@ fn main() {
 
     save_jpg("cell_value", CellValue::default());
     save_jpg("perlin", Perlin);
+    save_jpg("simplex", Simplex);
     save_jpg("open_simplex_2", OpenSimplex2);
     save_jpg("open_simplex_2s", OpenSimplex2s);
     save_jpg("value", Value);
