@@ -17,7 +17,6 @@ Click on the images to view the code that created them.
 [![](/example-images/cell_distance.jpg "Cell Distance")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L37)
 [![](/example-images/cell_value.jpg "Cell Value")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L39)
 [![](/example-images/perlin.jpg "Perlin")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L40)
-[![](/example-images/simplex.jpg "Simplex")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L41)
 [![](/example-images/open_simplex_2.jpg "OpenSimplex2")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L42)
 [![](/example-images/open_simplex_2s.jpg "OpenSimplex2s")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L43)
 [![](/example-images/value.jpg "Value")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L44)
