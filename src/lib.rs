@@ -46,7 +46,7 @@
 //! let value = OpenSimplex2s.sample3(point);
 //!
 //! // 3d OpenSimplex2s noise with improved isotropy in the xy plane
-//! let value = OpenSimplex2s.improve_xy().sample3(point);
+//! let value = OpenSimplex2s.improve3_xy().sample3(point);
 //! ```
 //!
 //! ## Feature flags
