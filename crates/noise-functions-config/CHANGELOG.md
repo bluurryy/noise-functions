@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- **breaking:** upgraded `noise-functions` dependency to `0.7.0`
 - **added:** new `Improve` variants
 
 ## 0.8.0 (2025-01-18)
