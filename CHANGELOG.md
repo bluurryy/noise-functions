@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+- **breaking:** moved `sample_with_seed` to `Sample` trait
+- **breaking:** moved `sample` to `Noise` trait
+- **breaking:** removed `SampleWithSeed` trait
+
 ## 0.7.0 (2025-01-19)
 - **breaking:** sealed the `OpenSimplexNoise` trait
 - **breaking:** changed `OpenSimplex2` 2D and 3D implementation and output
