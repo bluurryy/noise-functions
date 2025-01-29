@@ -1,5 +1,7 @@
 use crate::{
-    modifiers::{Abs, Add, AddSeed, Ceil, Div, Fbm, Floor, Frequency, Mul, MulSeed, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw, TriangleWave},
+    modifiers::{
+        Abs, Add, AddSeed, Ceil, Div, Fbm, Floor, Frequency, Max, Min, Mul, MulSeed, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw, TriangleWave,
+    },
     Sample, ValueOrNoise,
 };
 
@@ -204,6 +206,24 @@ pub trait Noise {
         Rhs: ValueOrNoise,
     {
         Rem { lhs: self, rhs: rhs.into_noise() }
+    }
+
+    /// Computes the minimum of the two output values, ignoring NaN.
+    fn min<Rhs>(self, rhs: Rhs) -> Min<Self, Rhs::Noise>
+    where
+        Self: Sized,
+        Rhs: ValueOrNoise,
+    {
+        Min { lhs: self, rhs: rhs.into_noise() }
+    }
+
+    /// Computes the maximum of the two output values, ignoring NaN.
+    fn max<Rhs>(self, rhs: Rhs) -> Max<Self, Rhs::Noise>
+    where
+        Self: Sized,
+        Rhs: ValueOrNoise,
+    {
+        Max { lhs: self, rhs: rhs.into_noise() }
     }
 
     /// Computes the absolute value of the output value.
