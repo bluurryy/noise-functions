@@ -1,6 +1,6 @@
 use crate::{
-    modifiers::{Fbm, Frequency, MulSeed, Ridged, Seeded, Tileable, TriangleWave},
-    Sample,
+    modifiers::{AddSeed, Fbm, Frequency, MulSeed, Ridged, Seeded, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw, TriangleWave},
+    Sample, ValueOrNoise,
 };
 
 /// Provides modifier methods for noise types.
@@ -62,7 +62,7 @@ pub trait Noise {
         Ridged { noise: self }
     }
 
-    /// Applies a triangle wave to the output of a base noise function.
+    /// Applies a triangle wave to the output of a noise function.
     ///
     /// This outputs values is in the [-1, 1] range.
     ///
@@ -86,6 +86,15 @@ pub trait Noise {
         Tileable::new(self, width, height)
     }
 
+    /// Adds `value` to the seed.
+    #[inline(always)]
+    fn add_seed(self, value: i32) -> AddSeed<Self>
+    where
+        Self: Sized,
+    {
+        AddSeed { noise: self, value }
+    }
+
     /// Multiplies the seed by `value`.
     #[inline(always)]
     fn mul_seed(self, value: i32) -> MulSeed<Self>
@@ -93,6 +102,63 @@ pub trait Noise {
         Self: Sized,
     {
         MulSeed { noise: self, value }
+    }
+
+    /// Translates the point before it is being sampled by the base noise.
+    fn translate_x<X>(self, x: X) -> TranslateX<Self, X::Noise>
+    where
+        Self: Sized,
+        X: ValueOrNoise,
+    {
+        TranslateX { noise: self, x: x.into_noise() }
+    }
+
+    /// Translates the point before it is being sampled by the base noise.
+    fn translate_xy<X, Y>(self, x: X, y: Y) -> TranslateXy<Self, X::Noise, Y::Noise>
+    where
+        Self: Sized,
+        X: ValueOrNoise,
+        Y: ValueOrNoise,
+    {
+        TranslateXy {
+            noise: self,
+            x: x.into_noise(),
+            y: y.into_noise(),
+        }
+    }
+
+    /// Translates the point before it is being sampled by the base noise.
+    fn translate_xyz<X, Y, Z>(self, x: X, y: Y, z: Z) -> TranslateXyz<Self, X::Noise, Y::Noise, Z::Noise>
+    where
+        Self: Sized,
+        X: ValueOrNoise,
+        Y: ValueOrNoise,
+        Z: ValueOrNoise,
+    {
+        TranslateXyz {
+            noise: self,
+            x: x.into_noise(),
+            y: y.into_noise(),
+            z: z.into_noise(),
+        }
+    }
+
+    /// Translates the point before it is being sampled by the base noise.
+    fn translate_xyzw<X, Y, Z, W>(self, x: X, y: Y, z: Z, w: W) -> TranslateXyzw<Self, X::Noise, Y::Noise, Z::Noise, W::Noise>
+    where
+        Self: Sized,
+        X: ValueOrNoise,
+        Y: ValueOrNoise,
+        Z: ValueOrNoise,
+        W: ValueOrNoise,
+    {
+        TranslateXyzw {
+            noise: self,
+            x: x.into_noise(),
+            y: y.into_noise(),
+            z: z.into_noise(),
+            w: w.into_noise(),
+        }
     }
 }
 

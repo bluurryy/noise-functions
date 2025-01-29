@@ -4,6 +4,9 @@
 - **breaking:** moved `sample_with_seed` to `Sample` trait
 - **breaking:** moved `sample` to `Noise` trait
 - **breaking:** removed `SampleWithSeed` trait
+- **added:** `add_seed` modifier
+- **added:** `translate_*` modifiers
+- **added:** `Constant` noise
 
 ## 0.7.0 (2025-01-19)
 - **breaking:** sealed the `OpenSimplexNoise` trait

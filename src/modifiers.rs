@@ -3,11 +3,19 @@ mod frequency;
 pub mod open_simplex_2;
 mod seeded;
 mod tileable;
+mod translate_x;
+mod translate_xy;
+mod translate_xyz;
+mod translate_xyzw;
 
 pub use fbm::Fbm;
 pub use frequency::Frequency;
 pub use seeded::Seeded;
 pub use tileable::Tileable;
+pub use translate_x::TranslateX;
+pub use translate_xy::TranslateXy;
+pub use translate_xyz::TranslateXyz;
+pub use translate_xyzw::TranslateXyzw;
 
 use crate::{
     math::{abs, const_abs},
@@ -113,7 +121,7 @@ modifier_map! {
 }
 
 modifier_map! {
-    /// Applies a triangle wave to the output of a base noise function.
+    /// Applies a triangle wave to the output of a noise function.
     ///
     /// This outputs values is in the [-1, 1] range.
     ///
@@ -134,6 +142,20 @@ modifier_map! {
             2.0 - v
         };
         (v - 0.5) * 2.0
+    }
+}
+
+modifier_map! {
+    /// Adds `value` to the seed.
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    pub struct AddSeed {
+        pub value: i32,
+    }
+
+    self, seed, point, value;
+
+    map_seed: {
+        seed + self.value
     }
 }
 

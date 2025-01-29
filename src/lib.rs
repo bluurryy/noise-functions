@@ -67,6 +67,7 @@ compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature mu
 
 mod base;
 mod cellular;
+mod constant;
 mod from_fast_noise_2;
 mod from_fast_noise_lite;
 mod from_open_simplex_2;
@@ -78,14 +79,17 @@ mod noise;
 mod noise_fn;
 mod open_simplex_2;
 mod sample;
+mod value_or_noise;
 
 pub use base::{CellDistance, CellDistanceSq, CellValue, OpenSimplex2, OpenSimplex2s, Perlin, Simplex, Value, ValueCubic};
+pub use constant::Constant;
 pub use noise::Noise;
 pub use noise_fn::NoiseFn;
 pub use open_simplex_2::OpenSimplexNoise;
 pub use sample::{Sample, Sample2, Sample3, Sample4};
 #[cfg(feature = "nightly-simd")]
 pub use sample::{Sample2a, Sample3a, Sample4a};
+pub use value_or_noise::ValueOrNoise;
 
 #[inline(always)]
 #[cfg(feature = "nightly-simd")]
