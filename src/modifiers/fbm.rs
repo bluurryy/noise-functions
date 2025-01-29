@@ -3,7 +3,7 @@ use core::simd::{LaneCount, Simd, SupportedLaneCount};
 
 use crate::{
     math::{fast_min, lerp},
-    Noise, Sample, SampleWithSeed,
+    Noise, Sample,
 };
 
 #[cfg(feature = "nightly-simd")]
@@ -47,24 +47,7 @@ impl<Noise> Fbm<Noise> {
 
 impl<Noise, const DIM: usize> Sample<DIM> for Fbm<Noise>
 where
-    Noise: SampleWithSeed<DIM>,
-{
-    #[inline]
-    fn sample(&self, point: [f32; DIM]) -> f32 {
-        let &Fbm {
-            ref noise,
-            octaves,
-            gain,
-            lacunarity,
-            fractal_bounding,
-        } = self;
-        fbm(noise, octaves, gain, lacunarity, fractal_bounding, 0, point)
-    }
-}
-
-impl<Noise, const DIM: usize> SampleWithSeed<DIM> for Fbm<Noise>
-where
-    Noise: SampleWithSeed<DIM>,
+    Noise: Sample<DIM>,
 {
     #[inline]
     fn sample_with_seed(&self, point: [f32; DIM], seed: i32) -> f32 {
@@ -81,28 +64,7 @@ where
 
 impl<Noise, const DIM: usize> Sample<DIM> for Weighted<Fbm<Noise>>
 where
-    Noise: SampleWithSeed<DIM>,
-{
-    #[inline]
-    fn sample(&self, point: [f32; DIM]) -> f32 {
-        let &Weighted {
-            fractal: Fbm {
-                ref noise,
-                octaves,
-                gain,
-                lacunarity,
-                fractal_bounding,
-            },
-            strength: weighted_strength,
-        } = self;
-
-        weighted_fbm(noise, octaves, gain, lacunarity, fractal_bounding, weighted_strength, 0, point)
-    }
-}
-
-impl<Noise, const DIM: usize> SampleWithSeed<DIM> for Weighted<Fbm<Noise>>
-where
-    Noise: SampleWithSeed<DIM>,
+    Noise: Sample<DIM>,
 {
     #[inline]
     fn sample_with_seed(&self, point: [f32; DIM], seed: i32) -> f32 {
@@ -123,26 +85,7 @@ where
 #[cfg(feature = "nightly-simd")]
 impl<Noise, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for Fbm<Noise>
 where
-    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
-    LaneCount<LANES>: SupportedLaneCount,
-{
-    #[inline]
-    fn sample(&self, point: Simd<f32, LANES>) -> f32 {
-        let &Fbm {
-            ref noise,
-            octaves,
-            gain,
-            lacunarity,
-            fractal_bounding,
-        } = self;
-        fbm_a(noise, octaves, gain, lacunarity, fractal_bounding, 0, point)
-    }
-}
-
-#[cfg(feature = "nightly-simd")]
-impl<Noise, const DIM: usize, const LANES: usize> SampleWithSeed<DIM, Simd<f32, LANES>> for Fbm<Noise>
-where
-    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
+    Noise: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
@@ -161,30 +104,7 @@ where
 #[cfg(feature = "nightly-simd")]
 impl<Noise, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for Weighted<Fbm<Noise>>
 where
-    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
-    LaneCount<LANES>: SupportedLaneCount,
-{
-    #[inline]
-    fn sample(&self, point: Simd<f32, LANES>) -> f32 {
-        let &Weighted {
-            fractal: Fbm {
-                ref noise,
-                octaves,
-                gain,
-                lacunarity,
-                fractal_bounding,
-            },
-            strength: weighted_strength,
-        } = self;
-
-        weighted_fbm_a(noise, octaves, gain, lacunarity, fractal_bounding, weighted_strength, 0, point)
-    }
-}
-
-#[cfg(feature = "nightly-simd")]
-impl<Noise, const DIM: usize, const LANES: usize> SampleWithSeed<DIM, Simd<f32, LANES>> for Weighted<Fbm<Noise>>
-where
-    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
+    Noise: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
@@ -207,7 +127,7 @@ where
 #[inline(always)]
 fn fbm<Noise, const DIM: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, mut seed: i32, mut point: [f32; DIM]) -> f32
 where
-    Noise: SampleWithSeed<DIM>,
+    Noise: Sample<DIM>,
 {
     let mut sum = 0.0;
     let mut amp = fractal_bounding;
@@ -231,7 +151,7 @@ where
 #[inline(always)]
 fn fbm_a<Noise, const DIM: usize, const LANES: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, mut seed: i32, mut point: Simd<f32, LANES>) -> f32
 where
-    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
+    Noise: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     let mut sum = 0.0;
@@ -252,7 +172,7 @@ where
 #[inline(always)]
 fn weighted_fbm<Noise, const DIM: usize>(noise: &Noise, octaves: u32, gain: f32, lacunarity: f32, fractal_bounding: f32, weighted_strength: f32, mut seed: i32, mut point: [f32; DIM]) -> f32
 where
-    Noise: SampleWithSeed<DIM>,
+    Noise: Sample<DIM>,
 {
     let mut sum = 0.0;
     let mut amp = fractal_bounding;
@@ -286,7 +206,7 @@ fn weighted_fbm_a<Noise, const DIM: usize, const LANES: usize>(
     mut point: Simd<f32, LANES>,
 ) -> f32
 where
-    Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
+    Noise: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     let mut sum = 0.0;

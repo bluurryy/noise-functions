@@ -5,7 +5,7 @@ use crate::Noise;
 
 /// Trait for sampling noises.
 pub trait Sample<const DIM: usize, Point = [f32; DIM]>: Noise {
-    fn sample(&self, point: Point) -> f32;
+    fn sample_with_seed(&self, point: Point, seed: i32) -> f32;
 }
 
 impl<const DIM: usize, Point, N> Sample<DIM, Point> for &N
@@ -13,8 +13,8 @@ where
     N: Sample<DIM, Point>,
 {
     #[inline(always)]
-    fn sample(&self, point: Point) -> f32 {
-        N::sample(self, point)
+    fn sample_with_seed(&self, point: Point, seed: i32) -> f32 {
+        N::sample_with_seed(self, point, seed)
     }
 }
 
@@ -46,7 +46,7 @@ macro_rules! helper_trait {
 		{
 			#[inline(always)]
 			fn $fn(&self, point: impl Into<$ty>) -> f32 {
-				N::sample(self, point.into())
+				N::sample_with_seed(self, point.into(), 0)
 			}
 		}
 	};
@@ -76,8 +76,3 @@ helper_trait!(
     sample4a,
     4 as f32x4 as f32x4
 );
-
-/// Trait for sampling noises with a seed.
-pub trait SampleWithSeed<const DIM: usize, Point = [f32; DIM]>: Sample<DIM, Point> {
-    fn sample_with_seed(&self, point: Point, seed: i32) -> f32;
-}

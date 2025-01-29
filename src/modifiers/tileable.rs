@@ -1,6 +1,6 @@
 use crate::{
     math::{cos, sin},
-    Noise, Sample, SampleWithSeed,
+    Noise, Sample,
 };
 
 use core::f32::consts::{PI, TAU};
@@ -46,15 +46,6 @@ impl<Noise> Sample<2> for Tileable<Noise>
 where
     Noise: Sample<4>,
 {
-    fn sample(&self, point: [f32; 2]) -> f32 {
-        self.noise.sample(self.map_point(point))
-    }
-}
-
-impl<Noise> SampleWithSeed<2> for Tileable<Noise>
-where
-    Noise: SampleWithSeed<4>,
-{
     fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
         self.noise.sample_with_seed(self.map_point(point), seed)
     }
@@ -64,16 +55,6 @@ where
 impl<Noise> Sample<2, f32x2> for Tileable<Noise>
 where
     Noise: Sample<4, f32x4>,
-{
-    fn sample(&self, point: f32x2) -> f32 {
-        self.noise.sample(self.map_point(point.into()).into())
-    }
-}
-
-#[cfg(feature = "nightly-simd")]
-impl<Noise> SampleWithSeed<2, f32x2> for Tileable<Noise>
-where
-    Noise: SampleWithSeed<4, f32x4>,
 {
     fn sample_with_seed(&self, point: f32x2, seed: i32) -> f32 {
         self.noise.sample_with_seed(self.map_point(point.into()).into(), seed)

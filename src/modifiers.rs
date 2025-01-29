@@ -58,7 +58,7 @@ macro_rules! modifier_map {
         }
 
         const _: () = {
-            use crate::{ Noise, Sample, SampleWithSeed };
+            use crate::{ Noise, Sample };
 
             #[cfg(feature = "nightly-simd")]
             use core::simd::{ Simd, LaneCount, SupportedLaneCount };
@@ -67,18 +67,7 @@ macro_rules! modifier_map {
 
             impl<Noise, const DIM: usize> Sample<DIM> for $struct<Noise>
             where
-                Noise: SampleWithSeed<DIM>,
-            {
-                #[inline]
-                fn sample(&$self, $point: [f32; DIM]) -> f32 {
-                    let $value = $self.noise.sample($point);
-                    or_else!({$({$($map_value)*})?} else { $value })
-                }
-            }
-
-            impl<Noise, const DIM: usize> SampleWithSeed<DIM> for $struct<Noise>
-            where
-                Noise: SampleWithSeed<DIM>,
+                Noise: Sample<DIM>,
             {
                 #[inline]
                 fn sample_with_seed(&$self, $point: [f32; DIM], $seed: i32) -> f32 {
@@ -90,20 +79,7 @@ macro_rules! modifier_map {
             #[cfg(feature = "nightly-simd")]
             impl<Noise, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for $struct<Noise>
             where
-                Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
-                LaneCount<LANES>: SupportedLaneCount,
-            {
-                #[inline]
-                fn sample(&$self, $point: Simd<f32, LANES>) -> f32 {
-                    let $value = $self.noise.sample($point);
-                    or_else!({$({$($map_value)*})?} else { $value })
-                }
-            }
-
-            #[cfg(feature = "nightly-simd")]
-            impl<Noise, const DIM: usize, const LANES: usize> SampleWithSeed<DIM, Simd<f32, LANES>> for $struct<Noise>
-            where
-                Noise: SampleWithSeed<DIM, Simd<f32, LANES>>,
+                Noise: Sample<DIM, Simd<f32, LANES>>,
                 LaneCount<LANES>: SupportedLaneCount,
             {
                 #[inline]

@@ -83,7 +83,7 @@ pub use base::{CellDistance, CellDistanceSq, CellValue, OpenSimplex2, OpenSimple
 pub use noise::Noise;
 pub use noise_fn::NoiseFn;
 pub use open_simplex_2::OpenSimplexNoise;
-pub use sample::{Sample, Sample2, Sample3, Sample4, SampleWithSeed};
+pub use sample::{Sample, Sample2, Sample3, Sample4};
 #[cfg(feature = "nightly-simd")]
 pub use sample::{Sample2a, Sample3a, Sample4a};
 

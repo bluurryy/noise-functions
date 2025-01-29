@@ -1,7 +1,18 @@
-use crate::modifiers::{Fbm, Frequency, MulSeed, Ridged, Seeded, Tileable, TriangleWave};
+use crate::{
+    modifiers::{Fbm, Frequency, MulSeed, Ridged, Seeded, Tileable, TriangleWave},
+    Sample,
+};
 
 /// Provides modifier methods for noise types.
 pub trait Noise {
+    // Samples the noise with seed 0.
+    fn sample<const DIM: usize, Point>(&self, point: Point) -> f32
+    where
+        Self: Sample<DIM, Point> + Sized,
+    {
+        self.sample_with_seed(point, 0)
+    }
+
     /// Sets a seed to be sampled with.
     ///
     /// This requires a noise that implements `SampleWithSeed`.

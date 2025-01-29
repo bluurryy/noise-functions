@@ -44,13 +44,6 @@ macro_rules! impl_noise {
         $crate::base::if_has_dim! { 2 in $dims;
             impl $crate::Sample<2> for $struct {
                 #[inline(always)]
-                fn sample(&self, point: [f32; 2]) -> f32 {
-                    self.gen2(point, 0)
-                }
-            }
-
-            impl $crate::SampleWithSeed<2> for $struct {
-                #[inline(always)]
                 fn sample_with_seed(&self, point: [f32; 2], seed: i32) -> f32 {
                     self.gen2(point, seed)
                 }
@@ -58,14 +51,6 @@ macro_rules! impl_noise {
 
             #[cfg(feature = "nightly-simd")]
             impl $crate::Sample<2, core::simd::f32x2> for $struct {
-                #[inline(always)]
-                fn sample(&self, point: core::simd::f32x2) -> f32 {
-                    self.gen2a(point, 0)
-                }
-            }
-
-            #[cfg(feature = "nightly-simd")]
-            impl $crate::SampleWithSeed<2, core::simd::f32x2> for $struct {
                 #[inline(always)]
                 fn sample_with_seed(&self, point: core::simd::f32x2, seed: i32) -> f32 {
                     self.gen2a(point, seed)
@@ -76,13 +61,6 @@ macro_rules! impl_noise {
         $crate::base::if_has_dim! { 3 in $dims;
             impl $crate::Sample<3> for $struct {
                 #[inline(always)]
-                fn sample(&self, point: [f32; 3]) -> f32 {
-                    self.gen3(point, 0)
-                }
-            }
-
-            impl $crate::SampleWithSeed<3> for $struct {
-                #[inline(always)]
                 fn sample_with_seed(&self, point: [f32; 3], seed: i32) -> f32 {
                     self.gen3(point, seed)
                 }
@@ -90,14 +68,6 @@ macro_rules! impl_noise {
 
             #[cfg(feature = "nightly-simd")]
             impl $crate::Sample<3, core::simd::f32x4> for $struct {
-                #[inline(always)]
-                fn sample(&self, point: core::simd::f32x4) -> f32 {
-                    self.gen3a(point, 0)
-                }
-            }
-
-            #[cfg(feature = "nightly-simd")]
-            impl $crate::SampleWithSeed<3, core::simd::f32x4> for $struct {
                 #[inline(always)]
                 fn sample_with_seed(&self, point: core::simd::f32x4, seed: i32) -> f32 {
                     self.gen3a(point, seed)
@@ -108,13 +78,6 @@ macro_rules! impl_noise {
         $crate::base::if_has_dim! { 4 in $dims;
             impl $crate::Sample<4> for $struct {
                 #[inline(always)]
-                fn sample(&self, point: [f32; 4]) -> f32 {
-                    self.gen4(point, 0)
-                }
-            }
-
-            impl $crate::SampleWithSeed<4> for $struct {
-                #[inline(always)]
                 fn sample_with_seed(&self, point: [f32; 4], seed: i32) -> f32 {
                     self.gen4(point, seed)
                 }
@@ -122,14 +85,6 @@ macro_rules! impl_noise {
 
             #[cfg(feature = "nightly-simd")]
             impl $crate::Sample<4, core::simd::f32x4> for $struct {
-                #[inline(always)]
-                fn sample(&self, point: core::simd::f32x4) -> f32 {
-                    self.gen4a(point, 0)
-                }
-            }
-
-            #[cfg(feature = "nightly-simd")]
-            impl $crate::SampleWithSeed<4, core::simd::f32x4> for $struct {
                 #[inline(always)]
                 fn sample_with_seed(&self, point: core::simd::f32x4, seed: i32) -> f32 {
                     self.gen4a(point, seed)

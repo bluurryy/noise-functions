@@ -1,4 +1,4 @@
-use crate::{Noise, Sample, SampleWithSeed};
+use crate::{Noise, Sample};
 
 /// Wraps a function to make it implement [`Sample`].
 ///
@@ -28,21 +28,12 @@ impl<const DIM: usize, Point, F> Sample<DIM, Point> for NoiseFn<F, false>
 where
     F: Fn(Point) -> f32,
 {
-    fn sample(&self, point: Point) -> f32 {
+    fn sample_with_seed(&self, point: Point, _seed: i32) -> f32 {
         self.0(point)
     }
 }
 
 impl<const DIM: usize, Point, F> Sample<DIM, Point> for NoiseFn<F, true>
-where
-    F: Fn(Point, i32) -> f32,
-{
-    fn sample(&self, point: Point) -> f32 {
-        self.0(point, 0)
-    }
-}
-
-impl<const DIM: usize, Point, F> SampleWithSeed<DIM, Point> for NoiseFn<F, true>
 where
     F: Fn(Point, i32) -> f32,
 {
