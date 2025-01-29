@@ -8,7 +8,7 @@ use crate::{
 
 /// Provides modifier methods for noise types.
 pub trait Noise {
-    // Samples the noise with seed 0.
+    /// Samples the noise with seed 0.
     fn sample<const DIM: usize, Point>(&self, point: Point) -> f32
     where
         Self: Sample<DIM, Point> + Sized,
