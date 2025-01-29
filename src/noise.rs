@@ -228,15 +228,17 @@ pub trait Noise {
     }
 
     /// Linearly interpolates between `a` and `b`.
-    fn lerp<Rhs, T>(self, rhs: Rhs, t: T) -> Lerp<Self, Rhs::Noise, T::Noise>
+    #[doc(alias = "mix")]
+    #[doc(alias = "blend")]
+    fn lerp<B, T>(self, b: B, t: T) -> Lerp<Self, B::Noise, T::Noise>
     where
         Self: Sized,
-        Rhs: ValueOrNoise,
+        B: ValueOrNoise,
         T: ValueOrNoise,
     {
         Lerp {
             a: self,
-            b: rhs.into_noise(),
+            b: b.into_noise(),
             t: t.into_noise(),
         }
     }
