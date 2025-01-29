@@ -1,6 +1,7 @@
 use crate::{
     modifiers::{
-        Abs, Add, AddSeed, Ceil, Div, Fbm, Floor, Frequency, Max, Min, Mul, MulSeed, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw, TriangleWave,
+        Abs, Add, AddSeed, Ceil, Div, Fbm, Floor, Frequency, Lerp, Max, Min, Mul, MulSeed, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw,
+        TriangleWave,
     },
     Sample, ValueOrNoise,
 };
@@ -224,6 +225,20 @@ pub trait Noise {
         Rhs: ValueOrNoise,
     {
         Max { lhs: self, rhs: rhs.into_noise() }
+    }
+
+    /// Linearly interpolates between `a` and `b`.
+    fn lerp<Rhs, T>(self, rhs: Rhs, t: T) -> Lerp<Self, Rhs::Noise, T::Noise>
+    where
+        Self: Sized,
+        Rhs: ValueOrNoise,
+        T: ValueOrNoise,
+    {
+        Lerp {
+            a: self,
+            b: rhs.into_noise(),
+            t: t.into_noise(),
+        }
     }
 
     /// Computes the absolute value of the output value.
