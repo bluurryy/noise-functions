@@ -53,10 +53,7 @@ pub use translate_xyz::TranslateXyz;
 pub use translate_xyzw::TranslateXyzw;
 pub use triangle_wave::TriangleWave;
 
-use crate::{
-    math::{abs, const_abs},
-    Noise,
-};
+use crate::Noise;
 
 /// Modifies a fractal noise to make successive octaves have less impact the lower the output value of the previous one was.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -68,24 +65,24 @@ pub struct Weighted<Fractal> {
 impl<Fractal> Noise for Weighted<Fractal> {}
 
 impl<Fractal> Weighted<Fractal> {
+    // TODO: remove this
     #[inline(always)]
     pub const fn seed(self, seed: i32) -> Seeded<Self> {
         Seeded { noise: self, seed }
     }
 
+    // TODO: remove this
     #[inline(always)]
     pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
         Frequency { noise: self, frequency }
     }
 }
 
-use crate::math::floor;
-
 /// Calculates the `fractal_bounding` property for [`Fbm`].
 ///
 #[inline(always)]
 pub const fn fractal_bounding(octaves: u32, gain: f32) -> f32 {
-    let gain = const_abs(gain);
+    let gain = crate::math::const_abs(gain);
     let mut amp = gain;
     let mut amp_fractal = 1.0;
     let mut i = 0;

@@ -1,9 +1,7 @@
 #[cfg(feature = "nightly-simd")]
 use core::simd::{LaneCount, Simd, SupportedLaneCount};
 
-use crate::{Noise, Sample};
-
-use super::abs;
+use crate::{math::abs, Noise, Sample};
 
 /// Applies a triangle wave to the output of a noise function.
 ///
