@@ -56,6 +56,9 @@
 #[cfg(any(feature = "std", test))]
 extern crate std;
 
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
 #[cfg(all(not(feature = "std"), not(feature = "libm")))]
 compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature must be enabled"#);
 

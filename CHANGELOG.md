@@ -7,6 +7,7 @@
 - **added:** `add_seed` modifier
 - **added:** `translate_*` modifiers
 - **added:** `add`, `sub`, `mul`, `div`, `rem`, `min`, `max`, `clamp`, `pow`, `neg`, `abs`, `floor`, `ceil`, `round`, `lerp` modifiers
+- **added:** `Noise` and `Sample` implementations for boxed trait objects (requires `"alloc"` feature)
 
 ## 0.7.0 (2025-01-19)
 - **breaking:** sealed the `OpenSimplexNoise` trait
