@@ -10,7 +10,7 @@ pub struct Add<A, B> {
     pub rhs: B,
 }
 
-impl<N, V> Noise for Add<N, V> {}
+impl<A, B> Noise for Add<A, B> {}
 
 impl<const DIM: usize, A, B> Sample<DIM> for Add<A, B>
 where

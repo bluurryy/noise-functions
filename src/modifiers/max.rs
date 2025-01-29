@@ -10,7 +10,7 @@ pub struct Max<A, B> {
     pub rhs: B,
 }
 
-impl<N, V> Noise for Max<N, V> {}
+impl<A, B> Noise for Max<A, B> {}
 
 impl<const DIM: usize, A, B> Sample<DIM> for Max<A, B>
 where

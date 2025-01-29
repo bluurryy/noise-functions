@@ -10,7 +10,7 @@ pub struct Mul<A, B> {
     pub rhs: B,
 }
 
-impl<N, V> Noise for Mul<N, V> {}
+impl<A, B> Noise for Mul<A, B> {}
 
 impl<const DIM: usize, A, B> Sample<DIM> for Mul<A, B>
 where

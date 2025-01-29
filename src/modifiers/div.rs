@@ -10,7 +10,7 @@ pub struct Div<A, B> {
     pub rhs: B,
 }
 
-impl<N, V> Noise for Div<N, V> {}
+impl<A, B> Noise for Div<A, B> {}
 
 impl<const DIM: usize, A, B> Sample<DIM> for Div<A, B>
 where

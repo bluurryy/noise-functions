@@ -10,7 +10,7 @@ pub struct Min<A, B> {
     pub rhs: B,
 }
 
-impl<N, V> Noise for Min<N, V> {}
+impl<A, B> Noise for Min<A, B> {}
 
 impl<const DIM: usize, A, B> Sample<DIM> for Min<A, B>
 where
