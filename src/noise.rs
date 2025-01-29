@@ -31,11 +31,15 @@ pub trait Noise {
     ///
     /// This multiplies the point by the provided `frequency` before sampling.
     #[inline(always)]
-    fn frequency(self, frequency: f32) -> Frequency<Self>
+    fn frequency<F>(self, frequency: F) -> Frequency<Self, F::Noise>
     where
         Self: Sized,
+        F: ValueOrNoise,
     {
-        Frequency { noise: self, frequency }
+        Frequency {
+            noise: self,
+            frequency: frequency.into_noise(),
+        }
     }
 
     /// Creates a fractal from this noise with the provided `octaves`, `gain`
