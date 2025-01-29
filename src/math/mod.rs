@@ -46,6 +46,11 @@ mod libm_math {
     }
 
     #[inline(always)]
+    pub(crate) fn pow(a: f32, b: f32) -> f32 {
+        libm::powf(a, b)
+    }
+
+    #[inline(always)]
     pub(crate) fn mul_add(a: f32, b: f32, c: f32) -> f32 {
         a * b + c
     }
@@ -96,6 +101,11 @@ mod std_math {
     #[inline(always)]
     pub(crate) fn max(a: f32, b: f32) -> f32 {
         f32::max(a, b)
+    }
+
+    #[inline(always)]
+    pub(crate) fn pow(a: f32, b: f32) -> f32 {
+        f32::powf(a, b)
     }
 
     #[inline(always)]

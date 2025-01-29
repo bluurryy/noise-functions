@@ -6,7 +6,7 @@
 - **breaking:** removed `SampleWithSeed` trait
 - **added:** `add_seed` modifier
 - **added:** `translate_*` modifiers
-- **added:** `add`, `sub`, `mul`, `div`, `rem`, `min`, `max`, `abs`, `floor`, `ceil`, `round`, `lerp` modifiers
+- **added:** `add`, `sub`, `mul`, `div`, `rem`, `min`, `max`, `pow`, `abs`, `floor`, `ceil`, `round`, `lerp` modifiers
 
 ## 0.7.0 (2025-01-19)
 - **breaking:** sealed the `OpenSimplexNoise` trait

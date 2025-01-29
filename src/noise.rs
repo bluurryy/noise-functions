@@ -1,6 +1,6 @@
 use crate::{
     modifiers::{
-        Abs, Add, AddSeed, Ceil, Div, Fbm, Floor, Frequency, Lerp, Max, Min, Mul, MulSeed, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw,
+        Abs, Add, AddSeed, Ceil, Div, Fbm, Floor, Frequency, Lerp, Max, Min, Mul, MulSeed, Pow, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw,
         TriangleWave,
     },
     Sample, ValueOrNoise,
@@ -225,6 +225,15 @@ pub trait Noise {
         Rhs: ValueOrNoise,
     {
         Max { lhs: self, rhs: rhs.into_noise() }
+    }
+
+    /// Raises the output value to a power.
+    fn pow<Rhs>(self, rhs: Rhs) -> Pow<Self, Rhs::Noise>
+    where
+        Self: Sized,
+        Rhs: ValueOrNoise,
+    {
+        Pow { lhs: self, rhs: rhs.into_noise() }
     }
 
     /// Linearly interpolates between `a` and `b`.
