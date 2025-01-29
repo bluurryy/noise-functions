@@ -1,4 +1,4 @@
-use crate::{Constant, Noise, OpenSimplex2, Sample};
+use crate::{Constant, Noise, OpenSimplex2, Sample, Sample2};
 
 #[test]
 fn translate() {
@@ -26,6 +26,18 @@ fn translate() {
     Sample::<4>::sample_with_seed(&Constant(0.0).translate_xy(0.0, 0.0), [0.0; 4], 0);
     Sample::<4>::sample_with_seed(&Constant(0.0).translate_xyz(0.0, 0.0, 0.0), [0.0; 4], 0);
     Sample::<4>::sample_with_seed(&Constant(0.0).translate_xyzw(0.0, 0.0, 0.0, 0.0), [0.0; 4], 0);
+}
+
+#[test]
+fn clamp() {
+    assert_eq!(Constant(0.0).clamp(1.0, 2.0).sample2([0.0; 2]), 1.0);
+    assert_eq!(Constant(1.5).clamp(1.0, 2.0).sample2([0.0; 2]), 1.5);
+    assert_eq!(Constant(3.0).clamp(1.0, 2.0).sample2([0.0; 2]), 2.0);
+    assert!(Constant(f32::NAN).clamp(1.0, 2.0).sample2([0.0; 2]).is_nan());
+
+    // these would panic if we used `f32::clamp`, but our clamp must not panic
+    Constant(0.0).clamp(2.0, 1.0).sample2([0.0; 2]);
+    assert_eq!(Constant(0.0).clamp(f32::NAN, f32::NAN).sample2([0.0; 2]), 0.0);
 }
 
 #[test]

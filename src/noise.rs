@@ -1,7 +1,7 @@
 use crate::{
     modifiers::{
-        Abs, Add, AddSeed, Ceil, Div, Fbm, Floor, Frequency, Lerp, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw,
-        TriangleWave,
+        Abs, Add, AddSeed, Ceil, Clamp, Div, Fbm, Floor, Frequency, Lerp, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz,
+        TranslateXyzw, TriangleWave,
     },
     Sample, ValueOrNoise,
 };
@@ -225,6 +225,23 @@ pub trait Noise {
         Rhs: ValueOrNoise,
     {
         Max { lhs: self, rhs: rhs.into_noise() }
+    }
+
+    /// Returns `max` if `value` is greater than `max` and `min` if `value` is less than `min`.
+    /// Otherwise this will return `value`.
+    ///
+    /// Unlike [`f32::clamp`], this modifier won't panic if `!(min <= max)`.
+    fn clamp<Min, Max>(self, min: Min, max: Max) -> Clamp<Self, Min::Noise, Max::Noise>
+    where
+        Self: Sized,
+        Min: ValueOrNoise,
+        Max: ValueOrNoise,
+    {
+        Clamp {
+            value: self,
+            min: min.into_noise(),
+            max: max.into_noise(),
+        }
     }
 
     /// Raises the output value to a power.
