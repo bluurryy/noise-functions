@@ -79,6 +79,8 @@ mod noise;
 mod noise_fn;
 mod open_simplex_2;
 mod sample;
+#[cfg(test)]
+mod tests;
 mod value_or_noise;
 
 pub use base::{CellDistance, CellDistanceSq, CellValue, OpenSimplex2, OpenSimplex2s, Perlin, Simplex, Value, ValueCubic};

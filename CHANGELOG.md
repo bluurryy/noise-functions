@@ -7,6 +7,7 @@
 - **added:** `add_seed` modifier
 - **added:** `translate_*` modifiers
 - **added:** `add`, `sub`, `mul`, `div`, `rem` modifiers
+- **added:** `abs`, `floor`, `ceil`, `round` modifiers
 
 ## 0.7.0 (2025-01-19)
 - **breaking:** sealed the `OpenSimplexNoise` trait

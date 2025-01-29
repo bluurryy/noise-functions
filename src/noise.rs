@@ -1,5 +1,5 @@
 use crate::{
-    modifiers::{Add, AddSeed, Div, Fbm, Frequency, Mul, MulSeed, Rem, Ridged, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw, TriangleWave},
+    modifiers::{Abs, Add, AddSeed, Ceil, Div, Fbm, Floor, Frequency, Mul, MulSeed, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw, TriangleWave},
     Sample, ValueOrNoise,
 };
 
@@ -204,6 +204,39 @@ pub trait Noise {
         Rhs: ValueOrNoise,
     {
         Rem { lhs: self, rhs: rhs.into_noise() }
+    }
+
+    /// Computes the absolute value of the output value.
+    fn abs(self) -> Abs<Self>
+    where
+        Self: Sized,
+    {
+        Abs { noise: self }
+    }
+
+    /// Computes the largest integer less than or equal to the output value.
+    fn floor(self) -> Floor<Self>
+    where
+        Self: Sized,
+    {
+        Floor { noise: self }
+    }
+
+    /// Computes the smallest integer greater than or equal to self.
+    fn ceil(self) -> Ceil<Self>
+    where
+        Self: Sized,
+    {
+        Ceil { noise: self }
+    }
+
+    /// Computes the nearest integer to the output value.
+    /// If a value is half-way between two integers, round away from 0.0.
+    fn round(self) -> Round<Self>
+    where
+        Self: Sized,
+    {
+        Round { noise: self }
     }
 }
 
