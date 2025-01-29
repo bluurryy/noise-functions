@@ -31,14 +31,8 @@
 //! let value = CellDistance::default().jitter(0.5).sample2(point);
 //!
 //! // domain warped OpenSimplex2s noise
-//! let warped_noise = |point: [f32; 2]| {
-//!     let warp_x = OpenSimplex2s.seed(1).sample2(point);
-//!     let warp_y = OpenSimplex2s.seed(2).sample2(point);
-//!     let warped = [point[0] + warp_x, point[1] + warp_y];
-//!     OpenSimplex2s.sample2(warped)
-//! };
-//!
-//! let value = warped_noise(point);
+//! let noise = OpenSimplex2s.translate_xy(OpenSimplex2s.seed(1), OpenSimplex2s.seed(2));
+//! let value = noise.sample2(point);
 //!
 //! let point = [1.0, 2.0, 3.0];
 //!
