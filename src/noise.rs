@@ -1,6 +1,6 @@
 use crate::{
     modifiers::{
-        Abs, Add, AddSeed, Ceil, Div, Fbm, Floor, Frequency, Lerp, Max, Min, Mul, MulSeed, Pow, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw,
+        Abs, Add, AddSeed, Ceil, Div, Fbm, Floor, Frequency, Lerp, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw,
         TriangleWave,
     },
     Sample, ValueOrNoise,
@@ -250,6 +250,14 @@ pub trait Noise {
             b: b.into_noise(),
             t: t.into_noise(),
         }
+    }
+
+    /// Performs negation on the output value.
+    fn neg(self) -> Neg<Self>
+    where
+        Self: Sized,
+    {
+        Neg { noise: self }
     }
 
     /// Computes the absolute value of the output value.
