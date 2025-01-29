@@ -66,20 +66,6 @@ pub struct Weighted<Fractal> {
 
 impl<Fractal> Noise for Weighted<Fractal> {}
 
-impl<Fractal> Weighted<Fractal> {
-    // TODO: remove this
-    #[inline(always)]
-    pub const fn seed(self, seed: i32) -> Seeded<Self> {
-        Seeded { noise: self, seed }
-    }
-
-    // TODO: remove this
-    #[inline(always)]
-    pub const fn frequency(self, frequency: f32) -> Frequency<Self> {
-        Frequency { noise: self, frequency }
-    }
-}
-
 /// Calculates the `fractal_bounding` property for [`Fbm`].
 ///
 #[inline(always)]

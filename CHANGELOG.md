@@ -4,6 +4,7 @@
 - **breaking:** moved `sample_with_seed` to `Sample` trait
 - **breaking:** moved `sample` to `Noise` trait
 - **breaking:** removed `SampleWithSeed` trait
+- **breaking:** removed `Weighted`'s `seed` and `frequency` methods in favor of  the ones provided by `Noise`
 - **added:** `add_seed` modifier
 - **added:** `translate_*` modifiers
 - **added:** `add`, `sub`, `mul`, `div`, `rem`, `min`, `max`, `clamp`, `pow`, `neg`, `abs`, `floor`, `ceil`, `round`, `lerp` modifiers
