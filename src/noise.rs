@@ -1,5 +1,5 @@
 use crate::{
-    modifiers::{AddSeed, Fbm, Frequency, MulSeed, Ridged, Seeded, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw, TriangleWave},
+    modifiers::{Add, AddSeed, Div, Fbm, Frequency, Mul, MulSeed, Rem, Ridged, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz, TranslateXyzw, TriangleWave},
     Sample, ValueOrNoise,
 };
 
@@ -159,6 +159,51 @@ pub trait Noise {
             z: z.into_noise(),
             w: w.into_noise(),
         }
+    }
+
+    /// Adds the output values.
+    fn add<Rhs>(self, rhs: Rhs) -> Add<Self, Rhs::Noise>
+    where
+        Self: Sized,
+        Rhs: ValueOrNoise,
+    {
+        Add { lhs: self, rhs: rhs.into_noise() }
+    }
+
+    /// Subtracts one output value from the other.
+    fn sub<Rhs>(self, rhs: Rhs) -> Sub<Self, Rhs::Noise>
+    where
+        Self: Sized,
+        Rhs: ValueOrNoise,
+    {
+        Sub { lhs: self, rhs: rhs.into_noise() }
+    }
+
+    /// Multiplies the output values.
+    fn mul<Rhs>(self, rhs: Rhs) -> Mul<Self, Rhs::Noise>
+    where
+        Self: Sized,
+        Rhs: ValueOrNoise,
+    {
+        Mul { lhs: self, rhs: rhs.into_noise() }
+    }
+
+    /// Divides one output value by the other.
+    fn div<Rhs>(self, rhs: Rhs) -> Div<Self, Rhs::Noise>
+    where
+        Self: Sized,
+        Rhs: ValueOrNoise,
+    {
+        Div { lhs: self, rhs: rhs.into_noise() }
+    }
+
+    /// Calculates the remainder from dividing one output value by the other.
+    fn rem<Rhs>(self, rhs: Rhs) -> Rem<Self, Rhs::Noise>
+    where
+        Self: Sized,
+        Rhs: ValueOrNoise,
+    {
+        Rem { lhs: self, rhs: rhs.into_noise() }
     }
 }
 

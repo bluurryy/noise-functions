@@ -6,7 +6,7 @@
 - **breaking:** removed `SampleWithSeed` trait
 - **added:** `add_seed` modifier
 - **added:** `translate_*` modifiers
-- **added:** `Constant` noise
+- **added:** `add`, `sub`, `mul`, `div`, `rem` modifiers
 
 ## 0.7.0 (2025-01-19)
 - **breaking:** sealed the `OpenSimplexNoise` trait
