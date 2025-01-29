@@ -18,7 +18,11 @@ where
 {
     fn sample_with_seed(&self, point: Point, seed: i32) -> f32 {
         let mut translated = point;
-        translated[0] += self.x.sample_with_seed(point, seed);
+
+        if DIM > 0 {
+            translated[0] += self.x.sample_with_seed(point, seed);
+        }
+
         self.noise.sample_with_seed(translated, seed)
     }
 }

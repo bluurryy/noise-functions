@@ -1,4 +1,32 @@
-use crate::{Noise, OpenSimplex2, Sample};
+use crate::{Constant, Noise, OpenSimplex2, Sample};
+
+#[test]
+fn translate() {
+    Sample::<0>::sample_with_seed(&Constant(0.0).translate_x(0.0), [0.0; 0], 0);
+    Sample::<0>::sample_with_seed(&Constant(0.0).translate_xy(0.0, 0.0), [0.0; 0], 0);
+    Sample::<0>::sample_with_seed(&Constant(0.0).translate_xyz(0.0, 0.0, 0.0), [0.0; 0], 0);
+    Sample::<0>::sample_with_seed(&Constant(0.0).translate_xyzw(0.0, 0.0, 0.0, 0.0), [0.0; 0], 0);
+
+    Sample::<1>::sample_with_seed(&Constant(0.0).translate_x(0.0), [0.0; 1], 0);
+    Sample::<1>::sample_with_seed(&Constant(0.0).translate_xy(0.0, 0.0), [0.0; 1], 0);
+    Sample::<1>::sample_with_seed(&Constant(0.0).translate_xyz(0.0, 0.0, 0.0), [0.0; 1], 0);
+    Sample::<1>::sample_with_seed(&Constant(0.0).translate_xyzw(0.0, 0.0, 0.0, 0.0), [0.0; 1], 0);
+
+    Sample::<2>::sample_with_seed(&Constant(0.0).translate_x(0.0), [0.0; 2], 0);
+    Sample::<2>::sample_with_seed(&Constant(0.0).translate_xy(0.0, 0.0), [0.0; 2], 0);
+    Sample::<2>::sample_with_seed(&Constant(0.0).translate_xyz(0.0, 0.0, 0.0), [0.0; 2], 0);
+    Sample::<2>::sample_with_seed(&Constant(0.0).translate_xyzw(0.0, 0.0, 0.0, 0.0), [0.0; 2], 0);
+
+    Sample::<3>::sample_with_seed(&Constant(0.0).translate_x(0.0), [0.0; 3], 0);
+    Sample::<3>::sample_with_seed(&Constant(0.0).translate_xy(0.0, 0.0), [0.0; 3], 0);
+    Sample::<3>::sample_with_seed(&Constant(0.0).translate_xyz(0.0, 0.0, 0.0), [0.0; 3], 0);
+    Sample::<3>::sample_with_seed(&Constant(0.0).translate_xyzw(0.0, 0.0, 0.0, 0.0), [0.0; 3], 0);
+
+    Sample::<4>::sample_with_seed(&Constant(0.0).translate_x(0.0), [0.0; 4], 0);
+    Sample::<4>::sample_with_seed(&Constant(0.0).translate_xy(0.0, 0.0), [0.0; 4], 0);
+    Sample::<4>::sample_with_seed(&Constant(0.0).translate_xyz(0.0, 0.0, 0.0), [0.0; 4], 0);
+    Sample::<4>::sample_with_seed(&Constant(0.0).translate_xyzw(0.0, 0.0, 0.0, 0.0), [0.0; 4], 0);
+}
 
 #[test]
 fn modifiers_manual_ridged() {
