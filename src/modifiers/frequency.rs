@@ -18,14 +18,14 @@ impl<const DIM: usize, Noise> Sample<DIM> for Frequency<Noise>
 where
     Noise: Sample<DIM>,
 {
-    fn sample(&self, mut point: [f32; DIM]) -> f32 {
+    fn sample_with_seed(&self, mut point: [f32; DIM], seed: i32) -> f32 {
         let frequency = self.frequency;
 
         for x in &mut point {
             *x *= frequency;
         }
 
-        self.noise.sample(point)
+        self.noise.sample_with_seed(point, seed)
     }
 }
 
@@ -35,8 +35,8 @@ where
     Noise: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
-    fn sample(&self, mut point: Simd<f32, LANES>) -> f32 {
+    fn sample_with_seed(&self, mut point: Simd<f32, LANES>, seed: i32) -> f32 {
         point *= Simd::splat(self.frequency);
-        self.noise.sample(point)
+        self.noise.sample_with_seed(point, seed)
     }
 }
