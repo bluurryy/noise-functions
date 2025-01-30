@@ -19,10 +19,13 @@ exclude = [
 ]
 
 [features]
-default = ["std"]
+default = ["std", "alloc"]
 
 ## Uses floating point functions from the standard library.
 std = []
+
+## Adds trait implementations for boxed trait objects.
+alloc = []
 
 ## Uses `libm` for floating point functions. Required for `no_std`.
 libm = ["dep:libm"]

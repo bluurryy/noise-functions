@@ -16,6 +16,16 @@ mod libm_math {
     }
 
     #[inline(always)]
+    pub(crate) fn ceil(f: f32) -> f32 {
+        libm::ceilf(f)
+    }
+
+    #[inline(always)]
+    pub(crate) fn round(f: f32) -> f32 {
+        libm::roundf(f)
+    }
+
+    #[inline(always)]
     pub(crate) fn sin(f: f32) -> f32 {
         libm::sinf(f)
     }
@@ -33,6 +43,11 @@ mod libm_math {
     #[inline(always)]
     pub(crate) fn max(a: f32, b: f32) -> f32 {
         libm::fmaxf(a, b)
+    }
+
+    #[inline(always)]
+    pub(crate) fn pow(a: f32, b: f32) -> f32 {
+        libm::powf(a, b)
     }
 
     #[inline(always)]
@@ -59,6 +74,16 @@ mod std_math {
     }
 
     #[inline(always)]
+    pub(crate) fn ceil(f: f32) -> f32 {
+        f32::ceil(f)
+    }
+
+    #[inline(always)]
+    pub(crate) fn round(f: f32) -> f32 {
+        f32::round(f)
+    }
+
+    #[inline(always)]
     pub(crate) fn sin(f: f32) -> f32 {
         f32::sin(f)
     }
@@ -76,6 +101,11 @@ mod std_math {
     #[inline(always)]
     pub(crate) fn max(a: f32, b: f32) -> f32 {
         f32::max(a, b)
+    }
+
+    #[inline(always)]
+    pub(crate) fn pow(a: f32, b: f32) -> f32 {
+        f32::powf(a, b)
     }
 
     #[inline(always)]

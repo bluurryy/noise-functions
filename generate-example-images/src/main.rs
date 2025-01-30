@@ -48,33 +48,14 @@ fn main() {
     save_jpg("ridged", OpenSimplex2.ridged().fbm(3, 0.5, 2.0));
     save_jpg("ping_pong", OpenSimplex2.triangle_wave(2.0).fbm(3, 0.5, 2.0).weighted(1.0));
 
-    save_jpg(
-        "warped",
-        NoiseFn(|point: [f32; 2]| {
-            let warp_x = OpenSimplex2s.seed(1).sample(point);
-            let warp_y = OpenSimplex2s.seed(2).sample(point);
-            let warped = [point[0] + warp_x, point[1] + warp_y];
-            OpenSimplex2s.sample(warped)
-        }),
-    );
-
+    save_jpg("warped", OpenSimplex2s.translate_xy(OpenSimplex2s.seed(1), OpenSimplex2s.seed(2)));
     save_jpg(
         "warped_fbm",
-        NoiseFn(|point: [f32; 2], seed: i32| {
-            let warp_x = OpenSimplex2s.seed(seed + 1).sample(point);
-            let warp_y = OpenSimplex2s.seed(seed + 2).sample(point);
-            let warped = [point[0] + warp_x, point[1] + warp_y];
-            OpenSimplex2s.sample(warped)
-        })
-        .mul_seed(100)
-        .fbm(3, 0.5, 1.5),
+        OpenSimplex2s.translate_xy(OpenSimplex2s.add_seed(1), OpenSimplex2s.add_seed(2)).mul_seed(100).fbm(3, 0.5, 1.5),
     );
 
     save_jpg("tileable_perlin", Perlin.tileable(FREQUENCY, FREQUENCY));
-
     save_jpg("tileable_value", Value.seed(12).tileable(FREQUENCY, FREQUENCY));
-
     save_jpg("tileable_cell_value", CellValue::default().seed(12).tileable(2.15, 2.15).frequency(2.15 / FREQUENCY));
-
     save_jpg("tileable_cell_distance_sq", CellDistanceSq::default().seed(12).tileable(2.0, 2.0).frequency(2.0 / FREQUENCY));
 }
