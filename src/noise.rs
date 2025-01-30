@@ -1,6 +1,6 @@
 use crate::{
     modifiers::{
-        Abs, Add, AddSeed, Ceil, Clamp, Div, Fbm, Floor, Frequency, Lerp, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz,
+        Abs, Add, AddSeed, Ceil, Clamp, Div, Fbm, Floor, Frequency, Lerp, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sqrt, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz,
         TranslateXyzw, TriangleWave,
     },
     Sample, ValueOrNoise,
@@ -287,6 +287,16 @@ pub trait Noise {
         Self: Sized,
     {
         Abs { noise: self }
+    }
+
+    /// Returns the square root of a number.
+    ///
+    /// Returns NaN if `self` is a negative number other than `-0.0`.
+    fn sqrt(self) -> Sqrt<Self>
+    where
+        Self: Sized,
+    {
+        Sqrt { noise: self }
     }
 
     /// Computes the largest integer less than or equal to the output value.
