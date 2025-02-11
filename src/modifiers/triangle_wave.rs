@@ -8,32 +8,34 @@ use crate::{math::floor, Noise, Sample};
 /// This outputs values is in the [-1, 1] range.
 ///
 /// **Note:** This modifier assumes the base noise returns values in the [-1, 1] range.
-pub struct TriangleWave<Noise> {
-    pub noise: Noise,
-    pub frequency: f32,
+pub struct TriangleWave<N, F> {
+    pub noise: N,
+    pub frequency: F,
 }
 
-impl<N> Noise for TriangleWave<N> {}
+impl<N, F> Noise for TriangleWave<N, F> {}
 
-impl<Noise, const DIM: usize> Sample<DIM> for TriangleWave<Noise>
+impl<N, F, const DIM: usize> Sample<DIM> for TriangleWave<N, F>
 where
-    Noise: Sample<DIM>,
+    N: Sample<DIM>,
+    F: Sample<DIM>,
 {
     #[inline]
     fn sample_with_seed(&self, point: [f32; DIM], seed: i32) -> f32 {
-        apply(self.noise.sample_with_seed(point, seed), self.frequency)
+        apply(self.noise.sample_with_seed(point, seed), self.frequency.sample_with_seed(point, seed))
     }
 }
 
 #[cfg(feature = "nightly-simd")]
-impl<Noise, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for TriangleWave<Noise>
+impl<N, F, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> for TriangleWave<N, F>
 where
-    Noise: Sample<DIM, Simd<f32, LANES>>,
+    N: Sample<DIM, Simd<f32, LANES>>,
+    F: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
     fn sample_with_seed(&self, point: Simd<f32, LANES>, seed: i32) -> f32 {
-        apply(self.noise.sample_with_seed(point, seed), self.frequency)
+        apply(self.noise.sample_with_seed(point, seed), self.frequency.sample_with_seed(point, seed))
     }
 }
 

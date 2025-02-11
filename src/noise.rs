@@ -75,11 +75,15 @@ pub trait Noise {
     ///
     /// **Note:** This modifier assumes the base noise returns values in the [-1, 1] range.
     #[inline(always)]
-    fn triangle_wave(self, frequency: f32) -> TriangleWave<Self>
+    fn triangle_wave<F>(self, frequency: F) -> TriangleWave<Self, F::Noise>
     where
         Self: Sized,
+        F: ValueOrNoise,
     {
-        TriangleWave { noise: self, frequency }
+        TriangleWave {
+            noise: self,
+            frequency: frequency.into_noise(),
+        }
     }
 
     /// Creates a tileable 2D noise from a 4D noise.
