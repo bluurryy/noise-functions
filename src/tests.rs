@@ -22,10 +22,8 @@ fn translate() {
     }
 
     fn assert(dim: usize) {
-        let xyzw = [&X, &Y, &Z, &W];
-
-        for i in 0..dim {
-            assert_eq!(xyzw[i].get(), OFFSET + (i + 1) as f32);
+        for (i, value) in [&X, &Y, &Z, &W].into_iter().enumerate().take(dim) {
+            assert_eq!(value.get(), OFFSET + (i + 1) as f32);
         }
     }
 
