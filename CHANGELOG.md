@@ -4,6 +4,10 @@
 - **breaking:** moved `sample_with_seed` to `Sample` trait
 - **breaking:** moved `sample` to `Noise` trait
 - **breaking:** removed `SampleWithSeed` trait
+- **breaking:** removed `Weighted`'s `seed` and `frequency` methods in favor of  the ones provided by `Noise`
+- **breaking:** `frequency` can now be called with a noise argument
+- **added:** `sample`, `add_seed`, `translate_xy`, `translate_xyz`, `translate_xyzw`, `add`, `sub`, `mul`, `div`, `rem`, `min`, `max`, `clamp`, `lerp`, `pow`, `neg`, `abs`, `sqrt`, `floor`, `ceil`, `round`, `map` and `by_ref` modifiers
+- **added:** `Noise` and `Sample` implementations for boxed trait objects (requires `"alloc"` feature)
 
 ## 0.7.0 (2025-01-19)
 - **breaking:** sealed the `OpenSimplexNoise` trait

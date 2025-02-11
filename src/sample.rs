@@ -18,6 +18,16 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
+impl<const DIM: usize, Point> Sample<DIM, Point> for alloc::boxed::Box<dyn Sample<DIM, Point>>
+where
+    Self: Noise,
+{
+    fn sample_with_seed(&self, point: Point, seed: i32) -> f32 {
+        (**self).sample_with_seed(point, seed)
+    }
+}
+
 macro_rules! helper_trait {
 	($(#[$attr:meta])* $trait:ident, $fn:ident, $dim:literal as $ty:ty $(as $ty_param:ty)?) => {
 		#[doc = concat!(

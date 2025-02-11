@@ -31,14 +31,8 @@
 //! let value = CellDistance::default().jitter(0.5).sample2(point);
 //!
 //! // domain warped OpenSimplex2s noise
-//! let warped_noise = |point: [f32; 2]| {
-//!     let warp_x = OpenSimplex2s.seed(1).sample2(point);
-//!     let warp_y = OpenSimplex2s.seed(2).sample2(point);
-//!     let warped = [point[0] + warp_x, point[1] + warp_y];
-//!     OpenSimplex2s.sample2(warped)
-//! };
-//!
-//! let value = warped_noise(point);
+//! let noise = OpenSimplex2s.translate_xy(OpenSimplex2s.seed(1), OpenSimplex2s.seed(2));
+//! let value = noise.sample2(point);
 //!
 //! let point = [1.0, 2.0, 3.0];
 //!
@@ -62,11 +56,15 @@
 #[cfg(any(feature = "std", test))]
 extern crate std;
 
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
 #[cfg(all(not(feature = "std"), not(feature = "libm")))]
 compile_error!(r#"`noise-functions` crate: either the "std" or "libm" feature must be enabled"#);
 
 mod base;
 mod cellular;
+mod constant;
 mod from_fast_noise_2;
 mod from_fast_noise_lite;
 mod from_open_simplex_2;
@@ -78,14 +76,19 @@ mod noise;
 mod noise_fn;
 mod open_simplex_2;
 mod sample;
+#[cfg(test)]
+mod tests;
+mod value_or_noise;
 
 pub use base::{CellDistance, CellDistanceSq, CellValue, OpenSimplex2, OpenSimplex2s, Perlin, Simplex, Value, ValueCubic};
+pub use constant::Constant;
 pub use noise::Noise;
 pub use noise_fn::NoiseFn;
 pub use open_simplex_2::OpenSimplexNoise;
 pub use sample::{Sample, Sample2, Sample3, Sample4};
 #[cfg(feature = "nightly-simd")]
 pub use sample::{Sample2a, Sample3a, Sample4a};
+pub use value_or_noise::ValueOrNoise;
 
 #[inline(always)]
 #[cfg(feature = "nightly-simd")]

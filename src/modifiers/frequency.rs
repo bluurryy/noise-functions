@@ -7,19 +7,20 @@ use crate::{Noise, Sample};
 ///
 /// This multiplies the point by the provided `frequency` before sampling.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Frequency<Noise> {
-    pub noise: Noise,
-    pub frequency: f32,
+pub struct Frequency<N, F> {
+    pub noise: N,
+    pub frequency: F,
 }
 
-impl<N> Noise for Frequency<N> {}
+impl<N, F> Noise for Frequency<N, F> {}
 
-impl<const DIM: usize, Noise> Sample<DIM> for Frequency<Noise>
+impl<const DIM: usize, N, F> Sample<DIM> for Frequency<N, F>
 where
-    Noise: Sample<DIM>,
+    N: Sample<DIM>,
+    F: Sample<DIM>,
 {
     fn sample_with_seed(&self, mut point: [f32; DIM], seed: i32) -> f32 {
-        let frequency = self.frequency;
+        let frequency = self.frequency.sample_with_seed(point, seed);
 
         for x in &mut point {
             *x *= frequency;
@@ -30,13 +31,14 @@ where
 }
 
 #[cfg(feature = "nightly-simd")]
-impl<const DIM: usize, const LANES: usize, Noise> Sample<DIM, Simd<f32, LANES>> for Frequency<Noise>
+impl<const DIM: usize, const LANES: usize, N, F> Sample<DIM, Simd<f32, LANES>> for Frequency<N, F>
 where
-    Noise: Sample<DIM, Simd<f32, LANES>>,
+    N: Sample<DIM, Simd<f32, LANES>>,
+    F: Sample<DIM, Simd<f32, LANES>>,
     LaneCount<LANES>: SupportedLaneCount,
 {
     fn sample_with_seed(&self, mut point: Simd<f32, LANES>, seed: i32) -> f32 {
-        point *= Simd::splat(self.frequency);
+        point *= Simd::splat(self.frequency.sample_with_seed(point, seed));
         self.noise.sample_with_seed(point, seed)
     }
 }
