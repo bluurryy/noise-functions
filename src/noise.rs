@@ -1,3 +1,6 @@
+#[cfg(feature = "nightly-simd")]
+use core::simd::{f32x2, f32x4};
+
 use crate::{
     modifiers::{
         Abs, Add, AddSeed, Ceil, Clamp, Div, Fbm, Floor, Frequency, Lerp, Map, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sqrt, Sub, Tileable, TranslateX, TranslateXy,
@@ -14,6 +17,63 @@ pub trait Noise {
         Self: Sized + Sample<DIM, Point>,
     {
         self.sample_with_seed(point, 0)
+    }
+
+    /// Samples the noise in 2D.
+    fn sample2<Point>(&self, point: Point) -> f32
+    where
+        Self: Sized + Sample<2>,
+        Point: Into<[f32; 2]>,
+    {
+        self.sample_with_seed(point.into(), 0)
+    }
+
+    /// Samples the noise in 3D.
+    fn sample3<Point>(&self, point: Point) -> f32
+    where
+        Self: Sized + Sample<3>,
+        Point: Into<[f32; 3]>,
+    {
+        self.sample_with_seed(point.into(), 0)
+    }
+
+    /// Samples the noise in 3D.
+    fn sample4<Point>(&self, point: Point) -> f32
+    where
+        Self: Sized + Sample<4>,
+        Point: Into<[f32; 4]>,
+    {
+        self.sample_with_seed(point.into(), 0)
+    }
+
+    /// Samples the noise in 2D.
+    #[cfg(feature = "nightly-simd")]
+    fn sample2a<Point>(&self, point: Point) -> f32
+    where
+        Self: Sized + Sample<2, f32x2>,
+        Point: Into<f32x2>,
+    {
+        self.sample_with_seed(point.into(), 0)
+    }
+
+    /// Samples the noise in 3D.
+    #[cfg(feature = "nightly-simd")]
+    fn sample3a<Point>(&self, point: Point) -> f32
+    where
+        Self: Sized + Sample<3, f32x4>,
+        Point: Into<f32x4>,
+    {
+        self.sample_with_seed(point.into(), 0)
+    }
+
+    /// Samples the noise in 4D.
+    #[cfg(feature = "nightly-simd")]
+    fn sample4a<Point>(&self, point: Point) -> f32
+    where
+        Self: Sized + Sample<4, f32x4>,
+        Point: Into<f32x4>,
+    {
+        self.sample_with_seed(point.into(), 0)
     }
 
     /// Overwrites the seed to be sampled with.

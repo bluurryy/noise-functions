@@ -1,7 +1,7 @@
 use core::{cell::Cell, f32};
 use std::thread_local;
 
-use crate::{Constant, Noise, NoiseFn, OpenSimplex2, Sample, Sample2, Sample3, Sample4};
+use crate::{Constant, Noise, NoiseFn, OpenSimplex2, Sample};
 
 #[test]
 fn translate() {
