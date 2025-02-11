@@ -1,7 +1,70 @@
-use crate::{Constant, Noise, OpenSimplex2, Sample, Sample2};
+use core::{cell::Cell, f32};
+use std::thread_local;
+
+use crate::{Constant, Noise, NoiseFn, OpenSimplex2, Sample, Sample2, Sample3, Sample4};
 
 #[test]
 fn translate() {
+    const OFFSET: f32 = 10.0;
+
+    thread_local! {
+        static X: Cell<f32> = const { Cell::new(f32::NAN) };
+        static Y: Cell<f32> = const { Cell::new(f32::NAN) };
+        static Z: Cell<f32> = const { Cell::new(f32::NAN) };
+        static W: Cell<f32> = const { Cell::new(f32::NAN) };
+    }
+
+    fn reset() {
+        X.set(f32::NAN);
+        Y.set(f32::NAN);
+        Z.set(f32::NAN);
+        W.set(f32::NAN);
+    }
+
+    fn assert(dim: usize) {
+        let xyzw = [&X, &Y, &Z, &W];
+
+        for i in 0..dim {
+            assert_eq!(xyzw[i].get(), OFFSET + (i + 1) as f32);
+        }
+    }
+
+    fn noise2([x, y]: [f32; 2]) -> f32 {
+        X.set(x);
+        Y.set(y);
+        x + y
+    }
+
+    fn noise3([x, y, z]: [f32; 3]) -> f32 {
+        X.set(x);
+        Y.set(y);
+        Z.set(z);
+        x + y + z
+    }
+
+    fn noise4([x, y, z, w]: [f32; 4]) -> f32 {
+        X.set(x);
+        Y.set(y);
+        Z.set(z);
+        W.set(w);
+        x + y + z + w
+    }
+
+    reset();
+    NoiseFn(noise2).translate_xy(1.0, 2.0).sample2([OFFSET; 2]);
+    assert(2);
+
+    reset();
+    NoiseFn(noise3).translate_xyz(1.0, 2.0, 3.0).sample3([OFFSET; 3]);
+    assert(3);
+
+    reset();
+    NoiseFn(noise4).translate_xyzw(1.0, 2.0, 3.0, 4.0).sample4([OFFSET; 4]);
+    assert(4);
+}
+
+#[test]
+fn translate_doesnt_crash() {
     Sample::<0>::sample_with_seed(&Constant(0.0).translate_x(0.0), [0.0; 0], 0);
     Sample::<0>::sample_with_seed(&Constant(0.0).translate_xy(0.0, 0.0), [0.0; 0], 0);
     Sample::<0>::sample_with_seed(&Constant(0.0).translate_xyz(0.0, 0.0, 0.0), [0.0; 0], 0);
