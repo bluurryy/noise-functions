@@ -16,9 +16,9 @@ pub trait Noise {
         self.sample_with_seed(point, 0)
     }
 
-    /// Sets a seed to be sampled with.
+    /// Overwrites the seed to be sampled with.
     ///
-    /// This requires a noise that implements `SampleWithSeed`.
+    /// For the sake of composition it is often better to use [`add_seed`](Self::add_seed) instead.
     #[inline(always)]
     fn seed(self, seed: i32) -> Seeded<Self>
     where
@@ -341,7 +341,10 @@ pub trait Noise {
     /// Returns the `Noise` by reference.
     ///
     /// This reference also implements `Noise`.
-    fn by_ref(&self) -> &Self {
+    fn by_ref(&self) -> &Self
+    where
+        Self: Sized,
+    {
         self
     }
 }
