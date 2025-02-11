@@ -1,7 +1,7 @@
 use crate::{
     modifiers::{
-        Abs, Add, AddSeed, Ceil, Clamp, Div, Fbm, Floor, Frequency, Lerp, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sqrt, Sub, Tileable, TranslateX, TranslateXy, TranslateXyz,
-        TranslateXyzw, TriangleWave,
+        Abs, Add, AddSeed, Ceil, Clamp, Div, Fbm, Floor, Frequency, Lerp, Map, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sqrt, Sub, Tileable, TranslateX, TranslateXy,
+        TranslateXyz, TranslateXyzw, TriangleWave,
     },
     Sample, ValueOrNoise,
 };
@@ -326,6 +326,16 @@ pub trait Noise {
         Self: Sized,
     {
         Round { noise: self }
+    }
+
+    /// Maps the output value.
+    #[inline(always)]
+    fn map<F>(self, f: F) -> Map<Self, F>
+    where
+        Self: Sized,
+        F: Fn(f32) -> f32,
+    {
+        Map { noise: self, f }
     }
 }
 
