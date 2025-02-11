@@ -18,7 +18,7 @@ pub trait Noise {
 
     /// Overwrites the seed to be sampled with.
     ///
-    /// For the sake of composition it is often better to use [`add_seed`](Self::add_seed) instead.
+    /// For the sake of composition it can be better to use [`add_seed`](Self::add_seed) instead.
     #[inline(always)]
     fn seed(self, seed: i32) -> Seeded<Self>
     where
