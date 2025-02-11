@@ -27,6 +27,24 @@ pub trait Noise {
         Seeded { noise: self, seed }
     }
 
+    /// Adds `value` to the seed.
+    #[inline(always)]
+    fn add_seed(self, value: i32) -> AddSeed<Self>
+    where
+        Self: Sized,
+    {
+        AddSeed { noise: self, value }
+    }
+
+    /// Multiplies the seed by `value`.
+    #[inline(always)]
+    fn mul_seed(self, value: i32) -> MulSeed<Self>
+    where
+        Self: Sized,
+    {
+        MulSeed { noise: self, value }
+    }
+
     /// Modifies a noise with a frequency multiplier.
     ///
     /// This multiplies the point by the provided `frequency` before sampling.
@@ -95,24 +113,6 @@ pub trait Noise {
         Self: Sized,
     {
         Tileable::new(self, width, height)
-    }
-
-    /// Adds `value` to the seed.
-    #[inline(always)]
-    fn add_seed(self, value: i32) -> AddSeed<Self>
-    where
-        Self: Sized,
-    {
-        AddSeed { noise: self, value }
-    }
-
-    /// Multiplies the seed by `value`.
-    #[inline(always)]
-    fn mul_seed(self, value: i32) -> MulSeed<Self>
-    where
-        Self: Sized,
-    {
-        MulSeed { noise: self, value }
     }
 
     /// Translates the point before it is used to sample `self`.
