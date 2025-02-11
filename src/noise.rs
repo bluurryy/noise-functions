@@ -9,7 +9,7 @@ use crate::{
     Sample, ValueOrNoise,
 };
 
-/// Provides modifier methods for noise types.
+/// Provides utility methods for noise types.
 pub trait Noise {
     /// Samples the noise in 2D.
     fn sample2<Point>(&self, point: Point) -> f32
