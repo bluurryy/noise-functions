@@ -274,7 +274,7 @@ macro_rules! impl_improves {
 }
 
 impl_improves! {
-    /// Provides modifier methods for `OpenSimplex` noises.
+    /// Provides utility methods for `OpenSimplex` noise types.
     trait OpenSimplexNoise {
         /// Sample this OpenSimplexNoise unskewed.
         #[doc(hidden)]
