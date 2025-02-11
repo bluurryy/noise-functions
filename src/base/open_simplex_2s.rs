@@ -693,7 +693,7 @@ fn grad4(seed: Wrapping<i64>, xsvp: Wrapping<i64>, ysvp: Wrapping<i64>, zsvp: Wr
 fn fast_floor(x: f32) -> i32 {
     let xi = x as i32;
     if x < xi as f32 {
-        xi - 1
+        xi.wrapping_sub(1)
     } else {
         xi
     }
