@@ -78,7 +78,7 @@ pub trait Noise {
     ///
     /// This outputs values is in the [-1, 1] range.
     ///
-    /// **Note:** This modifier assumes the base noise returns values in the [-1, 1] range.
+    /// **Note:** This modifier assumes `self` returns values in the [-1, 1] range.
     #[inline(always)]
     fn ridged(self) -> Ridged<Self>
     where
@@ -91,7 +91,7 @@ pub trait Noise {
     ///
     /// This outputs values is in the [-1, 1] range.
     ///
-    /// **Note:** This modifier assumes the base noise returns values in the [-1, 1] range.
+    /// **Note:** This modifier assumes `self` returns values in the [-1, 1] range.
     #[inline(always)]
     fn triangle_wave<F>(self, frequency: F) -> TriangleWave<Self, F::Noise>
     where
