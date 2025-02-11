@@ -2,7 +2,7 @@
 
 ## Unreleased
 - **breaking:** moved `sample_with_seed` to `Sample` trait
-- **breaking:** moved `sample` to `Noise` trait
+- **breaking:** removed `sample` method
 - **breaking:** removed `SampleWithSeed` trait
 - **breaking:** removed `Weighted`'s `seed` and `frequency` methods in favor of  the ones provided by `Noise`
 - **breaking:** `frequency` can now be called with a noise argument

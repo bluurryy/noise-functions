@@ -129,8 +129,8 @@ where
             let x = x as f32 * 1.34900342;
             let y = y as f32 * 0.93124235;
             let p = [x, y];
-            let av = a.sample(p);
-            let bv = b.sample(p);
+            let av = a.sample2(p);
+            let bv = b.sample2(p);
             max_error = max_error.max((av - bv).abs());
         }
     }
