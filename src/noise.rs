@@ -217,7 +217,7 @@ pub trait Noise {
         Rem { lhs: self, rhs: rhs.into_noise() }
     }
 
-    /// Computes the minimum of the two output values, ignoring NaN.
+    /// Computes the minimum of the two output values.
     fn min<Rhs>(self, rhs: Rhs) -> Min<Self, Rhs::Noise>
     where
         Self: Sized,
@@ -226,7 +226,7 @@ pub trait Noise {
         Min { lhs: self, rhs: rhs.into_noise() }
     }
 
-    /// Computes the maximum of the two output values, ignoring NaN.
+    /// Computes the maximum of the two output values.
     fn max<Rhs>(self, rhs: Rhs) -> Max<Self, Rhs::Noise>
     where
         Self: Sized,
