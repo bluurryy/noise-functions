@@ -252,15 +252,6 @@ pub trait Noise {
         }
     }
 
-    /// Raises the output value to a power.
-    fn pow<Rhs>(self, rhs: Rhs) -> Pow<Self, Rhs::Noise>
-    where
-        Self: Sized,
-        Rhs: ValueOrNoise,
-    {
-        Pow { lhs: self, rhs: rhs.into_noise() }
-    }
-
     /// Linearly interpolates between `self` and `b`.
     #[doc(alias = "mix")]
     #[doc(alias = "blend")]
@@ -275,6 +266,15 @@ pub trait Noise {
             b: b.into_noise(),
             t: t.into_noise(),
         }
+    }
+
+    /// Raises the output value to a power.
+    fn pow<Rhs>(self, rhs: Rhs) -> Pow<Self, Rhs::Noise>
+    where
+        Self: Sized,
+        Rhs: ValueOrNoise,
+    {
+        Pow { lhs: self, rhs: rhs.into_noise() }
     }
 
     /// Performs negation on the output value.
