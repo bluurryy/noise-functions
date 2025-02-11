@@ -11,7 +11,7 @@ pub trait Noise {
     /// Samples the noise with seed 0.
     fn sample<const DIM: usize, Point>(&self, point: Point) -> f32
     where
-        Self: Sample<DIM, Point> + Sized,
+        Self: Sized + Sample<DIM, Point>,
     {
         self.sample_with_seed(point, 0)
     }
