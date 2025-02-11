@@ -85,9 +85,7 @@ pub use constant::Constant;
 pub use noise::Noise;
 pub use noise_fn::NoiseFn;
 pub use open_simplex_2::OpenSimplexNoise;
-pub use sample::{Sample, Sample2, Sample3, Sample4};
-#[cfg(feature = "nightly-simd")]
-pub use sample::{Sample2a, Sample3a, Sample4a};
+pub use sample::Sample;
 pub use value_or_noise::ValueOrNoise;
 
 #[inline(always)]
