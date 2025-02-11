@@ -337,6 +337,13 @@ pub trait Noise {
     {
         Map { noise: self, f }
     }
+
+    /// Returns the `Noise` by reference.
+    ///
+    /// This reference also implements `Noise`.
+    fn by_ref(&self) -> &Self {
+        self
+    }
 }
 
 impl<N: Noise> Noise for &N {}
