@@ -3,11 +3,11 @@ use core::simd::{LaneCount, Simd, SupportedLaneCount};
 
 use crate::{math::abs, Noise, Sample};
 
-/// Applies a triangle wave to the output of a noise function.
+/// Modifies a noise to create a peak at 0.
 ///
 /// This outputs values is in the [-1, 1] range.
 ///
-/// **Note:** This modifier assumes the base noise returns values in the [-1, 1] range.
+/// **Note:** This modifier assumes `self` returns values in the [-1, 1] range.
 pub struct Ridged<Noise> {
     pub noise: Noise,
 }
