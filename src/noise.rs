@@ -115,7 +115,7 @@ pub trait Noise {
         MulSeed { noise: self, value }
     }
 
-    /// Translates the point before it is being sampled by the base noise.
+    /// Translates the point before it is used to sample `self`.
     fn translate_x<X>(self, x: X) -> TranslateX<Self, X::Noise>
     where
         Self: Sized,
@@ -124,7 +124,7 @@ pub trait Noise {
         TranslateX { noise: self, x: x.into_noise() }
     }
 
-    /// Translates the point before it is being sampled by the base noise.
+    /// Translates the point before it is used to sample `self`.
     fn translate_xy<X, Y>(self, x: X, y: Y) -> TranslateXy<Self, X::Noise, Y::Noise>
     where
         Self: Sized,
@@ -138,7 +138,7 @@ pub trait Noise {
         }
     }
 
-    /// Translates the point before it is being sampled by the base noise.
+    /// Translates the point before it is used to sample `self`.
     fn translate_xyz<X, Y, Z>(self, x: X, y: Y, z: Z) -> TranslateXyz<Self, X::Noise, Y::Noise, Z::Noise>
     where
         Self: Sized,
@@ -154,7 +154,7 @@ pub trait Noise {
         }
     }
 
-    /// Translates the point before it is being sampled by the base noise.
+    /// Translates the point before it is used to sample `self`.
     fn translate_xyzw<X, Y, Z, W>(self, x: X, y: Y, z: Z, w: W) -> TranslateXyzw<Self, X::Noise, Y::Noise, Z::Noise, W::Noise>
     where
         Self: Sized,
