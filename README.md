@@ -13,29 +13,29 @@ Check out the [live demo][demo] and [node editor][playground] (experimental)!
 Click on the images to view the code that created them.
 
 ### Basic
-[![](/example-images/cell_distance_sq.jpg "Cell Distance Squared")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L36)
-[![](/example-images/cell_distance.jpg "Cell Distance")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L37)
-[![](/example-images/cell_value.jpg "Cell Value")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L39)
-[![](/example-images/perlin.jpg "Perlin")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L40)
-[![](/example-images/open_simplex_2.jpg "OpenSimplex2")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L42)
-[![](/example-images/open_simplex_2s.jpg "OpenSimplex2s")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L43)
-[![](/example-images/value.jpg "Value")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L44)
-[![](/example-images/value_cubic.jpg "Value Cubic")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L45)
+[![](/example-images/cell_distance_sq.jpg "Cell Distance Squared")](./generate-example-images/src/main.rs#L36)
+[![](/example-images/cell_distance.jpg "Cell Distance")](./generate-example-images/src/main.rs#L37)
+[![](/example-images/cell_value.jpg "Cell Value")](./generate-example-images/src/main.rs#L39)
+[![](/example-images/perlin.jpg "Perlin")](./generate-example-images/src/main.rs#L40)
+[![](/example-images/open_simplex_2.jpg "OpenSimplex2")](./generate-example-images/src/main.rs#L42)
+[![](/example-images/open_simplex_2s.jpg "OpenSimplex2s")](./generate-example-images/src/main.rs#L43)
+[![](/example-images/value.jpg "Value")](./generate-example-images/src/main.rs#L44)
+[![](/example-images/value_cubic.jpg "Value Cubic")](./generate-example-images/src/main.rs#L45)
 
 ### Fractal
-[![](/example-images/fbm.jpg "Fbm (OpenSimplex2)")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L47)
-[![](/example-images/ridged.jpg "Ridged (OpenSimplex2)")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L48)
-[![](/example-images/ping_pong.jpg "Ping Pong (OpenSimplex2)")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L49)
+[![](/example-images/fbm.jpg "Fbm (OpenSimplex2)")](./generate-example-images/src/main.rs#L47)
+[![](/example-images/ridged.jpg "Ridged (OpenSimplex2)")](./generate-example-images/src/main.rs#L48)
+[![](/example-images/ping_pong.jpg "Ping Pong (OpenSimplex2)")](./generate-example-images/src/main.rs#L49)
 
 ### Domain warped
-[![](/example-images/warped.jpg "Domain Warped (OpenSimplex2s)")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L51)
-[![](/example-images/warped_fbm.jpg "Domain Warped Fbm (OpenSimplex2s)")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L61)
+[![](/example-images/warped.jpg "Domain Warped (OpenSimplex2s)")](./generate-example-images/src/main.rs#L51)
+[![](/example-images/warped_fbm.jpg "Domain Warped Fbm (OpenSimplex2s)")](./generate-example-images/src/main.rs#L52)
 
 ### Tileable
-[![](/example-images/tileable_perlin.jpg "Tileable (Perlin)")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L73)
-[![](/example-images/tileable_value.jpg "Tileable (Value)")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L75)
-[![](/example-images/tileable_cell_value.jpg "Tileable (CellValue)")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L77)
-[![](/example-images/tileable_cell_distance_sq.jpg "Tileable (CellDistanceSq)")](https://github.com/bluurryy/noise-functions/blob/014d4159f3ddfa5d9d6f03bffd17eecf40de8388/generate-example-images/src/main.rs#L79)
+[![](/example-images/tileable_perlin.jpg "Tileable (Perlin)")](./generate-example-images/src/main.rs#L57)
+[![](/example-images/tileable_value.jpg "Tileable (Value)")](./generate-example-images/src/main.rs#L58)
+[![](/example-images/tileable_cell_value.jpg "Tileable (CellValue)")](./generate-example-images/src/main.rs#L59)
+[![](/example-images/tileable_cell_distance_sq.jpg "Tileable (CellDistanceSq)")](./generate-example-images/src/main.rs#L60)
 
 # Motivation
 Noise libraries like [`noise`](https://docs.rs/noise) or [`libnoise`](https://docs.rs/libnoise) create a permutation table at runtime for each instance of `Perlin` and the like. This library uses static permutation tables / hashing instead. As such, there is no need to store and reuse noise structs for the sake of efficiency. There is no downside to writing code like this:
