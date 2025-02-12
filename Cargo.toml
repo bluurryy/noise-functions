@@ -49,6 +49,3 @@ pre-release-replacements = [
 
 [workspace]
 members = ["crates/noise-functions-config", "generate-example-images"]
-
-[workspace.metadata.release]
-pre-release-commit-message = "release: {{crate_name}} version {{version}}"
