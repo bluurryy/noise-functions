@@ -43,10 +43,12 @@ all-features = true
 [package.metadata.release]
 allow-branch = ["main"]
 pre-release-hook = ["just", "pre-release"]
-pre-release-commit-message = "release: version {{version}}"
 pre-release-replacements = [
   { file = "CHANGELOG.md", search = "Unreleased", replace = "{{version}} ({{date}})" },
 ]
 
 [workspace]
 members = ["crates/noise-functions-config", "generate-example-images"]
+
+[workspace.metadata.release]
+pre-release-commit-message = "release: {{crate_name}} version {{version}}"
