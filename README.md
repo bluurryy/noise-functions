@@ -7,7 +7,7 @@
 
 A collection of fast and lightweight noise functions.
 
-Check out the [live demo][demo]!
+Check out the [live demo][demo] and [node editor][playground] (experimental)!
 
 # Example Images
 Click on the images to view the code that created them.
@@ -53,6 +53,7 @@ fn my_noise(point: Vec2) -> f32 {
 
 [config]: https://docs.rs/noise-functions-config
 [demo]: https://bluurryy.github.io/noise-functions-demo/
+[playground]: https://bluurryy.github.io/noise-functions-playground/
 
 ## License
 

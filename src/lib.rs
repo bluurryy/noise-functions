@@ -1,7 +1,10 @@
 //!
 //! Fast and lightweight noise algorithm implementations.
 //!
-//! Check out the [live demo](https://bluurryy.github.io/noise-functions-demo/)!
+//! Check out the [live demo][demo] and [node editor][playground] (experimental)!
+//!
+//! [demo]: https://bluurryy.github.io/noise-functions-demo/
+//! [playground]: https://bluurryy.github.io/noise-functions-playground/
 //!
 //! ## Examples
 //! ```
