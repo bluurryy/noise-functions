@@ -1,5 +1,5 @@
 //!
-//! Fast and lightweight noise algorithm implementations.
+//! A collection of fast and lightweight noise functions.
 //!
 //! Check out the [live demo][demo] and [node editor][playground] (experimental)!
 //!
