@@ -3,7 +3,7 @@ use core::simd::{f32x2, f32x4};
 
 use crate::{
     modifiers::{
-        Abs, Add, AddSeed, Ceil, Clamp, Div, Fbm, Floor, Frequency, Lerp, Map, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sqrt, Sub, Tileable, TranslateX, TranslateXy,
+        Abs, Add, AddSeed, Ceil, Clamp, Div, Fbm, Floor, Frequency, Lerp, Map, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sin, Sqrt, Sub, Tileable, TranslateX, TranslateXy,
         TranslateXyz, TranslateXyzw, TriangleWave,
     },
     Sample, ValueOrNoise,
@@ -378,6 +378,14 @@ pub trait Noise {
         Self: Sized,
     {
         Round { noise: self }
+    }
+
+    /// Computes the sine of the output value (in radians).
+    fn sin(self) -> Sin<Self>
+    where
+        Self: Sized,
+    {
+        Sin { noise: self }
     }
 
     /// Maps the output value.
