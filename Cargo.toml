@@ -10,13 +10,7 @@ documentation = "https://docs.rs/noise-functions"
 repository = "https://github.com/bluurryy/noise-functions"
 readme = "README.md"
 rust-version = "1.82.0"
-exclude = [
-  "inspect-asm",
-  "example-images",
-  "justfile",
-  ".github",
-  "cspell.json",
-]
+exclude = ["example-images", "justfile", ".github", "cspell.json"]
 
 [features]
 default = ["std", "alloc"]
