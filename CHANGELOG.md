@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-- **added:** `sin` modifier
+- **added:** `sin` and `cos` modifiers
 
 ## 0.8.0 (2025-02-12)
 - **breaking:** moved `sample_with_seed` to `Sample` trait
