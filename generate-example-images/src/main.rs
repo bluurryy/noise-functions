@@ -4,9 +4,11 @@ use noise_functions::*;
 const SIZE: usize = 128;
 const WIDTH: usize = SIZE;
 const HEIGHT: usize = SIZE;
+
+/// The noises are sampled with x and y in the range of -FREQUENCY..+FREQUENCY.
 const FREQUENCY: f32 = 3.0;
 
-/// Creates an image from the coordinates x and y in the range of -3..+3.
+/// Creates an image from the coordinates x and y in the range of -FREQUENCY..+FREQUENCY.
 /// Maps values in a range of -1..+1 to black..white.
 fn noise_to_image(noise: impl Sample<2>) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let mut image = ImageBuffer::new(WIDTH as u32, HEIGHT as u32);
