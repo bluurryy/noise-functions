@@ -3,8 +3,8 @@ use core::simd::{f32x2, f32x4};
 
 use crate::{
     modifiers::{
-        Abs, Add, AddSeed, Ceil, Clamp, Cos, Div, Fbm, Floor, Frequency, Lerp, Map, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sin, Sqrt, Sub, Tileable, TranslateX, TranslateXy,
-        TranslateXyz, TranslateXyzw, TriangleWave,
+        Abs, Add, AddSeed, Ceil, Clamp, Cos, Div, Fbm, Floor, Frequency, Lerp, Map, Max, Min, Mul, MulSeed, Neg, Pow, Rem, Ridged, Round, Seeded, Sin, Sqrt, Sub, Tan, Tileable, TranslateX,
+        TranslateXy, TranslateXyz, TranslateXyzw, TriangleWave,
     },
     Sample, ValueOrNoise,
 };
@@ -394,6 +394,14 @@ pub trait Noise {
         Self: Sized,
     {
         Cos { noise: self }
+    }
+
+    /// Computes the tangent of the output value (in radians).
+    fn tan(self) -> Tan<Self>
+    where
+        Self: Sized,
+    {
+        Tan { noise: self }
     }
 
     /// Maps the output value.

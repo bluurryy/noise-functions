@@ -36,6 +36,11 @@ mod libm_math {
     }
 
     #[inline(always)]
+    pub(crate) fn tan(f: f32) -> f32 {
+        libm::tanf(f)
+    }
+
+    #[inline(always)]
     pub(crate) fn min(a: f32, b: f32) -> f32 {
         libm::fminf(a, b)
     }
@@ -91,6 +96,11 @@ mod std_math {
     #[inline(always)]
     pub(crate) fn cos(f: f32) -> f32 {
         f32::cos(f)
+    }
+
+    #[inline(always)]
+    pub(crate) fn tan(f: f32) -> f32 {
+        f32::tan(f)
     }
 
     #[inline(always)]
