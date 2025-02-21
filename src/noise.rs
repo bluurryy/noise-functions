@@ -417,6 +417,18 @@ pub trait Noise {
     /// Returns the `Noise` by reference.
     ///
     /// This reference also implements `Noise`.
+    ///
+    /// # Examples
+    /// ```
+    /// # use noise_functions::{Noise, Sample};
+    /// fn my_noise(base_noise: impl Sample<2>, point: [f32; 2]) -> f32 {
+    ///     // If we weren't using `by_ref` then `add_seed` would consume `base_noise`
+    ///     // and we couldn't use it again in the next line.
+    ///     let a = base_noise.by_ref().add_seed(1).sample2(point);
+    ///     let b = base_noise.by_ref().add_seed(2).sample2(point);
+    ///     a + b
+    /// }
+    /// ```
     fn by_ref(&self) -> &Self
     where
         Self: Sized,
