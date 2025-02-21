@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.1 (2025-02-21)
 - **added:** `sin`, `cos` and `tan` modifiers
 
 ## 0.8.0 (2025-02-12)
