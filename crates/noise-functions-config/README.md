@@ -7,7 +7,7 @@
 Configurable noise generator struct for the [`noise-functions`](https://docs.rs/noise-functions) crate.
 
 <!-- crate documentation feature start -->
-### Feature flags
+## Feature flags
 <!-- feature documentation start -->
 - **`std`** *(enabled by default)* — Uses floating point functions from the standard library.
 - **`libm`** — Uses `libm` for floating point functions. Required for `no_std`.

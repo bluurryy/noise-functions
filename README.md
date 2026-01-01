@@ -12,7 +12,7 @@ Check out the [live demo][demo] and [node editor][playground] (experimental)!
 
 <!-- crate documentation intro end -->
 
-# Example Images
+## Example Images
 Click on the images to view the code that created them.
 
 ### Basic
@@ -41,7 +41,7 @@ Click on the images to view the code that created them.
 [![](/example-images/tileable_cell_distance_sq.jpg "Tileable (CellDistanceSq)")](./generate-example-images/src/main.rs#L62)
 
 <!-- crate documentation feature start -->
-### Feature flags
+## Feature flags
 <!-- feature documentation start -->
 - **`std`** *(enabled by default)* — Uses floating point functions from the standard library.
 - **`alloc`** *(enabled by default)* — Adds trait implementations for boxed trait objects.
@@ -55,7 +55,7 @@ Click on the images to view the code that created them.
 [demo]: https://bluurryy.github.io/noise-functions-demo/
 <!-- crate documentation feature end -->
 
-# Motivation
+## Motivation
 Noise libraries like [`noise`](https://docs.rs/noise) or [`libnoise`](https://docs.rs/libnoise) create a permutation table at runtime for each instance of `Perlin` and the like. This library uses static permutation tables / hashing instead. As such, there is no need to store and reuse noise structs for the sake of efficiency. There is no downside to writing code like this:
 ```rust
 fn my_noise(point: Vec2) -> f32 {
@@ -66,7 +66,7 @@ fn my_noise(point: Vec2) -> f32 {
 > [!NOTE]
 > This library uses `f32` instead of `f64`.
 
-## Why not [`fastnoise-lite`](https://docs.rs/fastnoise-lite)?
+### Why not [`fastnoise-lite`](https://docs.rs/fastnoise-lite)?
 `fastnoise-lite` provides its noise generation via a big struct that you are to mutate to get the noise you want. If you already know what noise you want or you want to compose multiple noises in a custom way then this design is less efficient and less convenient. There is the [`noise-functions-config`][config] crate that provides a similar configurable struct (the [demo] is powered by it). It opts to return a trait object like `Box<dyn Sample<2>>` instead of branching on each sample call.
 
 [config]: https://docs.rs/noise-functions-config

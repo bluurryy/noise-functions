@@ -45,3 +45,6 @@ pre-release-replacements = [
 
 [workspace]
 members = ["crates/noise-functions-config", "generate-example-images"]
+
+[workspace.metadata.insert-docs]
+shrink-headings = 0
