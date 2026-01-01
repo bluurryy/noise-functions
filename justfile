@@ -1,5 +1,3 @@
-set shell := ["nu", "-c"]
-
 default:
   @just --list
 
@@ -23,10 +21,10 @@ check:
   just check-msrv
 
 check-msrv:
-  cargo ('+' + (open Cargo.toml).package.rust-version) check
-  cargo ('+' + (open Cargo.toml).package.rust-version) check --no-default-features --features libm
-  cargo ('+' + (open Cargo.toml).package.rust-version) check -p noise-functions-config
-  cargo ('+' + (open Cargo.toml).package.rust-version) check -p noise-functions-config --no-default-features --features libm
+  cargo +1.82.0 check
+  cargo +1.82.0 check --no-default-features --features libm
+  cargo +1.82.0 check -p noise-functions-config
+  cargo +1.82.0 check -p noise-functions-config --no-default-features --features libm
 
 test:
   cargo +nightly test
