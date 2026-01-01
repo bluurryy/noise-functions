@@ -8,7 +8,8 @@ pre-release:
   just doc
   just test
   cargo +stable clippy --all
-  # cspell lint --gitignore "**" --exclude "from_open_simplex_2"
+  # https://github.com/crate-ci/typos
+  typos
   cargo +stable semver-checks
 
 check:
