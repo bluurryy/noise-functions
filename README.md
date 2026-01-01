@@ -17,10 +17,10 @@ Click on the images to view the code that created them.
 [![](/example-images/cell_distance.jpg "Cell Distance")](./generate-example-images/src/main.rs#L39)
 [![](/example-images/cell_value.jpg "Cell Value")](./generate-example-images/src/main.rs#L41)
 [![](/example-images/perlin.jpg "Perlin")](./generate-example-images/src/main.rs#L42)
-[![](/example-images/open_simplex_2.jpg "OpenSimplex2")](./generate-example-images/src/main.rs#L43)
-[![](/example-images/open_simplex_2s.jpg "OpenSimplex2s")](./generate-example-images/src/main.rs#L44)
-[![](/example-images/value.jpg "Value")](./generate-example-images/src/main.rs#L45)
-[![](/example-images/value_cubic.jpg "Value Cubic")](./generate-example-images/src/main.rs#L46)
+[![](/example-images/open_simplex_2.jpg "OpenSimplex2")](./generate-example-images/src/main.rs#L44)
+[![](/example-images/open_simplex_2s.jpg "OpenSimplex2s")](./generate-example-images/src/main.rs#L45)
+[![](/example-images/value.jpg "Value")](./generate-example-images/src/main.rs#L46)
+[![](/example-images/value_cubic.jpg "Value Cubic")](./generate-example-images/src/main.rs#L47)
 
 ### Fractal
 [![](/example-images/fbm.jpg "Fbm (OpenSimplex2)")](./generate-example-images/src/main.rs#L49)
