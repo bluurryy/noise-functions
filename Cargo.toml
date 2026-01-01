@@ -24,7 +24,9 @@ alloc = []
 ## Uses `libm` for floating point functions. Required for `no_std`.
 libm = ["dep:libm"]
 
-## Adds support for sampling with simd types.
+## Adds support for sampling with simd types. 
+## Some of the noise algorithms have optimized implementations for simd that can be faster than the scalar versions.
+## Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
 nightly-simd = []
 
 [dependencies]
