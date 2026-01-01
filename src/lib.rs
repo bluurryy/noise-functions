@@ -53,7 +53,7 @@
     cfg_attr(doc, doc = ::document_features::document_features!())
 )]
 #![cfg_attr(feature = "nightly-simd", feature(portable_simd))]
-#![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide), doc(cfg_hide(no_global_oom_handling, feature = "nightly-const-fn-float")))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![allow(clippy::excessive_precision, clippy::needless_late_init, clippy::too_many_arguments, clippy::approx_constant)]
 
 #[cfg(any(feature = "std", test))]
