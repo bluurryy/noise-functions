@@ -36,6 +36,3 @@ test:
 
 doc *args:
   cargo +nightly rustdoc {{args}} --features nightly-simd,document-features -- --cfg docsrs
-
-inspect-asm:
-  just crates/inspect-asm/inspect-asm
