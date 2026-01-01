@@ -1,10 +1,11 @@
-//!
+//! <!-- crate documentation intro start -->
 //! A collection of fast and lightweight noise functions.
 //!
 //! Check out the [live demo][demo] and [node editor][playground] (experimental)!
 //!
 //! [demo]: https://bluurryy.github.io/noise-functions-demo/
 //! [playground]: https://bluurryy.github.io/noise-functions-playground/
+//! <!-- crate documentation intro end -->
 //!
 //! ## Examples
 //! ```
@@ -46,12 +47,18 @@
 //! let value = OpenSimplex2s.improve3_xy().sample3(point);
 //! ```
 //!
+//! <!-- crate documentation feature start -->
 //! ## Feature flags
+//! <!-- feature documentation start -->
+//! - **`std`** *(enabled by default)* — Uses floating point functions from the standard library.
+//! - **`alloc`** *(enabled by default)* — Adds trait implementations for boxed trait objects.
+//! - **`libm`** — Uses `libm` for floating point functions. Required for `no_std`.
+//! - **`nightly-simd`** — Adds support for sampling with simd types.
+//!   Some of the noise algorithms have optimized implementations for simd that can be faster than the scalar versions.
+//!   Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
+//! <!-- feature documentation end -->
+//! <!-- crate documentation feature end -->
 #![no_std]
-#![cfg_attr(
-    feature = "document-features",
-    cfg_attr(doc, doc = ::document_features::document_features!())
-)]
 #![cfg_attr(feature = "nightly-simd", feature(portable_simd))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![allow(clippy::excessive_precision, clippy::needless_late_init, clippy::too_many_arguments, clippy::approx_constant)]

@@ -12,4 +12,5 @@ check:
   cargo +nightly clippy --tests --all --all-features
 
 doc *args:
+  cargo-insert-docs --allow-staged
   cargo +nightly rustdoc {{args}} --all-features -- --cfg docsrs

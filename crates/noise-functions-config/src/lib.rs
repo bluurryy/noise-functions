@@ -2,11 +2,16 @@
 //!
 //! Every `enum` of this crate implements `FromStr`, `to_str` and has a `VARIANTS` constant.
 //!
+//! <!-- crate documentation feature start -->
 //! ## Feature flags
-#![cfg_attr(
-    feature = "document-features",
-    cfg_attr(doc, doc = ::document_features::document_features!())
-)]
+//! <!-- feature documentation start -->
+//! - **`std`** *(enabled by default)* — Uses floating point functions from the standard library.
+//! - **`libm`** — Uses `libm` for floating point functions. Required for `no_std`.
+//! - **`nightly-simd`** — Adds support for sampling with simd types.
+//!   Some of the noise algorithms have optimized implementations for simd that can be faster than the scalar versions.
+//!   Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
+//! <!-- feature documentation end -->
+//! <!-- crate documentation feature end -->
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "nightly-simd", feature(portable_simd))]
 #![cfg_attr(docsrs, feature(doc_cfg))]

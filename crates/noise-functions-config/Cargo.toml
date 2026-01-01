@@ -17,10 +17,12 @@ default = ["std"]
 ## Uses floating point functions from the standard library.
 std = ["noise-functions/std"]
 
-## Required for `no_std`.
+## Uses `libm` for floating point functions. Required for `no_std`.
 libm = ["noise-functions/libm"]
 
-## Adds support for sampling with simd types.
+## Adds support for sampling with simd types. 
+## Some of the noise algorithms have optimized implementations for simd that can be faster than the scalar versions.
+## Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
 nightly-simd = ["noise-functions/nightly-simd"]
 
 [dependencies]

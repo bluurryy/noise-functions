@@ -33,4 +33,5 @@ test:
   cargo +nightly test --no-default-features --features libm,nightly-simd
 
 doc *args:
+  cargo-insert-docs --allow-staged
   cargo +nightly rustdoc {{args}} --features nightly-simd,document-features -- --cfg docsrs

@@ -5,9 +5,12 @@
 [![Rust](https://img.shields.io/crates/msrv/noise-functions)](#)
 [![License](https://img.shields.io/crates/l/noise_functions)](#license)
 
+<!-- crate documentation intro start -->
 A collection of fast and lightweight noise functions.
 
 Check out the [live demo][demo] and [node editor][playground] (experimental)!
+
+<!-- crate documentation intro end -->
 
 # Example Images
 Click on the images to view the code that created them.
@@ -36,6 +39,21 @@ Click on the images to view the code that created them.
 [![](/example-images/tileable_value.jpg "Tileable (Value)")](./generate-example-images/src/main.rs#L60)
 [![](/example-images/tileable_cell_value.jpg "Tileable (CellValue)")](./generate-example-images/src/main.rs#L61)
 [![](/example-images/tileable_cell_distance_sq.jpg "Tileable (CellDistanceSq)")](./generate-example-images/src/main.rs#L62)
+
+<!-- crate documentation feature start -->
+### Feature flags
+<!-- feature documentation start -->
+- **`std`** *(enabled by default)* — Uses floating point functions from the standard library.
+- **`alloc`** *(enabled by default)* — Adds trait implementations for boxed trait objects.
+- **`libm`** — Uses `libm` for floating point functions. Required for `no_std`.
+- **`nightly-simd`** — Adds support for sampling with simd types.
+  Some of the noise algorithms have optimized implementations for simd that can be faster than the scalar versions.
+  Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
+<!-- feature documentation end -->
+
+[playground]: https://bluurryy.github.io/noise-functions-playground/
+[demo]: https://bluurryy.github.io/noise-functions-demo/
+<!-- crate documentation feature end -->
 
 # Motivation
 Noise libraries like [`noise`](https://docs.rs/noise) or [`libnoise`](https://docs.rs/libnoise) create a permutation table at runtime for each instance of `Perlin` and the like. This library uses static permutation tables / hashing instead. As such, there is no need to store and reuse noise structs for the sake of efficiency. There is no downside to writing code like this:
