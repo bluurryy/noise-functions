@@ -29,9 +29,11 @@ libm = ["dep:libm"]
 ## Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
 nightly-simd = []
 
+## Deprecated feature. Does nothing.
+document-features = []
+
 [dependencies]
 libm = { version = "0.2.8", optional = true, default-features = false }
-document-features = { version = "0.2.8", optional = true }
 
 [package.metadata.docs.rs]
 all-features = true
@@ -48,3 +50,4 @@ members = ["crates/noise-functions-config", "generate-example-images"]
 
 [workspace.metadata.insert-docs]
 shrink-headings = 0
+hidden-features = ["document-features"]

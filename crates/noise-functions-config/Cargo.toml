@@ -25,9 +25,11 @@ libm = ["noise-functions/libm"]
 ## Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
 nightly-simd = ["noise-functions/nightly-simd"]
 
+## Deprecated feature. Does nothing.
+document-features = []
+
 [dependencies]
 noise-functions = { path = "../..", version = "0.8.1", default-features = false }
-document-features = { version = "0.2.8", optional = true }
 
 [package.metadata.docs.rs]
 all-features = true
