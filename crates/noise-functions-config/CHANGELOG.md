@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- **added:** explain purpose of `nightly-simd` feature
+
 ## 0.10.0 (2025-02-12)
 - **breaking:** upgraded `noise-functions` dependency to `0.8.0`
 - 

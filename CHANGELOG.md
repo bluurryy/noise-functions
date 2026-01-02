@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+- **added:** explain purpose of `nightly-simd` feature
+- **changed:** removed `document-features` dependency
+
 ## 0.8.1 (2025-02-21)
 - **added:** `sin`, `cos` and `tan` modifiers
 
