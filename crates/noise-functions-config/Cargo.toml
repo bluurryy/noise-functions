@@ -29,7 +29,7 @@ nightly-simd = ["noise-functions/nightly-simd"]
 document-features = []
 
 [dependencies]
-noise-functions = { path = "../..", version = "0.8.1", default-features = false }
+noise-functions = { path = "../..", version = "0.8.2", default-features = false }
 
 [package.metadata.docs.rs]
 all-features = true
