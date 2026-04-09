@@ -4,7 +4,8 @@ default:
 pre-release:
   just check
   just doc
-  cargo +stable semver-checks
+  # only checking default features, since emver-checks@0.47.0 uses an older nightly which is incompatible with the current nightly simd
+  cargo +stable semver-checks --default-features
 
 check:
   cargo +nightly fmt --all
