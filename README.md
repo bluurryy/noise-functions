@@ -51,8 +51,8 @@ Click on the images to view the code that created them.
   Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
 <!-- feature documentation end -->
 
-[playground]: https://bluurryy.github.io/noise-functions-playground/
 [demo]: https://bluurryy.github.io/noise-functions-demo/
+[playground]: https://bluurryy.github.io/noise-functions-playground/
 <!-- crate documentation feature end -->
 
 ## Motivation

@@ -8,7 +8,8 @@ pre-release:
   cargo +stable clippy --all
   # https://github.com/crate-ci/typos
   typos
-  cargo +stable semver-checks
+  # semver-checks@0.47.0 uses an older nightly with an incompatible nightly simd
+  cargo +stable semver-checks --default-features
 
 check:
   cargo +nightly fmt --all

@@ -18,7 +18,7 @@ const_assert!(i32::BITS <= usize::BITS, "We cast i32 to usize for indexing.");
 
 #[cfg(feature = "nightly-simd")]
 mod entry {
-    use core::simd::{f32x2, f32x4, LaneCount, Simd, SupportedLaneCount};
+    use core::simd::{f32x2, f32x4, Simd};
 
     const_assert!(
         core::mem::size_of::<f32x2>() == 8 && core::mem::align_of::<f32x2>() <= 8,
@@ -31,14 +31,9 @@ mod entry {
     );
 
     #[repr(transparent)]
-    pub(crate) struct Entry<const N: usize>(pub Simd<f32, N>)
-    where
-        LaneCount<N>: SupportedLaneCount;
+    pub(crate) struct Entry<const N: usize>(pub Simd<f32, N>);
 
-    impl<const N: usize> Entry<N>
-    where
-        LaneCount<N>: SupportedLaneCount,
-    {
+    impl<const N: usize> Entry<N> {
         pub(crate) fn as_array(&self) -> &[f32; N] {
             self.0.as_array()
         }

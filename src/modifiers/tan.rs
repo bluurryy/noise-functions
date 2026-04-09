@@ -1,5 +1,5 @@
 #[cfg(feature = "nightly-simd")]
-use core::simd::{LaneCount, Simd, SupportedLaneCount};
+use core::simd::Simd;
 
 use crate::{math::tan, Noise, Sample};
 
@@ -25,7 +25,6 @@ where
 impl<const DIM: usize, const LANES: usize, N> Sample<DIM, Simd<f32, LANES>> for Tan<N>
 where
     N: Sample<DIM, Simd<f32, LANES>>,
-    LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
     fn sample_with_seed(&self, point: Simd<f32, LANES>, seed: i32) -> f32 {

@@ -1,5 +1,5 @@
 #[cfg(feature = "nightly-simd")]
-use core::simd::{LaneCount, Simd, SupportedLaneCount};
+use core::simd::Simd;
 
 use crate::{Noise, Sample};
 
@@ -27,7 +27,6 @@ impl<N, F, const DIM: usize, const LANES: usize> Sample<DIM, Simd<f32, LANES>> f
 where
     N: Sample<DIM, Simd<f32, LANES>>,
     F: Fn(f32) -> f32,
-    LaneCount<LANES>: SupportedLaneCount,
 {
     #[inline]
     fn sample_with_seed(&self, point: Simd<f32, LANES>, seed: i32) -> f32 {

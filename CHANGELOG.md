@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- **changed:** update `nightly-simd` feature to compile on current nightly
+
 ## 0.8.2 (2026-01-02)
 - **added:** explain purpose of `nightly-simd` feature
 - **changed:** removed `document-features` dependency
