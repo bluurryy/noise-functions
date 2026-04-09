@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.3 (2026-04-09)
 - **changed:** update `nightly-simd` feature to compile on current nightly
 
 ## 0.8.2 (2026-01-02)
