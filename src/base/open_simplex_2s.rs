@@ -136,9 +136,9 @@ impl OpenSimplexNoise for OpenSimplex2s {
         let xrb = fast_floor(xr);
         let yrb = fast_floor(yr);
         let zrb = fast_floor(zr);
-        let xi = (xr - xrb as f32) as f32;
-        let yi = (yr - yrb as f32) as f32;
-        let zi = (zr - zrb as f32) as f32;
+        let xi = xr - xrb as f32;
+        let yi = yr - yrb as f32;
+        let zi = zr - zrb as f32;
 
         // Prime pre-multiplication for hash. Also flip seed for second lattice copy.
         let xrbp = Wrapping(xrb as i64) * Wrapping(PRIME_X);
@@ -430,10 +430,10 @@ impl OpenSimplexNoise for OpenSimplex2s {
         let ysb = fast_floor(ys);
         let zsb = fast_floor(zs);
         let wsb = fast_floor(ws);
-        let xsi = (xs - xsb as f32) as f32;
-        let ysi = (ys - ysb as f32) as f32;
-        let zsi = (zs - zsb as f32) as f32;
-        let wsi = (ws - wsb as f32) as f32;
+        let xsi = xs - xsb as f32;
+        let ysi = ys - ysb as f32;
+        let zsi = zs - zsb as f32;
+        let wsi = ws - wsb as f32;
 
         // Unskewed offsets
         let ssi = (xsi + ysi + zsi + wsi) * UNSKEW_4D;

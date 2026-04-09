@@ -28,8 +28,8 @@ impl OpenSimplexNoise for OpenSimplex2 {
         // Get base points and offsets.
         let xsb = fast_floor(xs);
         let ysb = fast_floor(ys);
-        let xi = (xs - xsb as f32) as f32;
-        let yi = (ys - ysb as f32) as f32;
+        let xi = xs - xsb as f32;
+        let yi = ys - ysb as f32;
 
         // Prime pre-multiplication for hash.
         let xsbp = Wrapping(xsb as i64) * Wrapping(PRIME_X);
@@ -89,9 +89,9 @@ impl OpenSimplexNoise for OpenSimplex2 {
         let xrb = fast_round(xr);
         let yrb = fast_round(yr);
         let zrb = fast_round(zr);
-        let mut xri = (xr - xrb as f32) as f32;
-        let mut yri = (yr - yrb as f32) as f32;
-        let mut zri = (zr - zrb as f32) as f32;
+        let mut xri = xr - xrb as f32;
+        let mut yri = yr - yrb as f32;
+        let mut zri = zr - zrb as f32;
 
         // -1 if positive, 1 if negative.
         let mut x_nsign = (-1.0 - xri) as i32 | 1;
@@ -188,10 +188,10 @@ impl OpenSimplexNoise for OpenSimplex2 {
         let ysb = fast_floor(ys);
         let zsb = fast_floor(zs);
         let wsb = fast_floor(ws);
-        let mut xsi = (xs - xsb as f32) as f32;
-        let mut ysi = (ys - ysb as f32) as f32;
-        let mut zsi = (zs - zsb as f32) as f32;
-        let mut wsi = (ws - wsb as f32) as f32;
+        let mut xsi = xs - xsb as f32;
+        let mut ysi = ys - ysb as f32;
+        let mut zsi = zs - zsb as f32;
+        let mut wsi = ws - wsb as f32;
 
         // Determine which lattice we can be confident has a contributing point its corresponding cell's base simplex.
         // We only look at the spaces between the diagonal planes. This proved effective in all of my tests.
