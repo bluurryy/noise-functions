@@ -23,7 +23,7 @@ pre-release-replacements = [
 ]
 
 [dependencies]
-noise-functions = { path = "../..", version = "0.8.3", default-features = false, features = [
+noise-functions = { path = "../..", version = "0.8.4", default-features = false, features = [
   "alloc"
 ] }
 
