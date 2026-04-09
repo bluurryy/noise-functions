@@ -49,6 +49,8 @@ Click on the images to view the code that created them.
 - **`nightly-simd`** — Adds support for sampling with simd types.
   Some of the noise algorithms have optimized implementations for simd that can be faster than the scalar versions.
   Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
+
+  Breaking changes to this feature may happen in minor releases to keep up with changes on the nightly channel!
 <!-- feature documentation end -->
 
 [demo]: https://bluurryy.github.io/noise-functions-demo/
