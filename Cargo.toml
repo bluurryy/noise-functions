@@ -17,6 +17,8 @@ all-features = true
 
 [package.metadata.release]
 allow-branch = ["main"]
+consolidate-commits = false
+pre-release-commit-message = "release: `noise-functions` version {{version}}"
 pre-release-hook = ["just", "pre-release"]
 pre-release-replacements = [
   { file = "CHANGELOG.md", search = "Unreleased", replace = "{{version}} ({{date}})" },
@@ -24,6 +26,9 @@ pre-release-replacements = [
 
 [workspace]
 members = ["crates/noise-functions-config", "generate-example-images"]
+
+[workspace.metadata.release]
+consolidate-commits = false
 
 [workspace.metadata.insert-docs]
 shrink-headings = 0

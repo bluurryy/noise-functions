@@ -16,8 +16,9 @@ all-features = true
 
 [package.metadata.release]
 allow-branch = ["main"]
+consolidate-commits = false
 pre-release-hook = ["just", "pre-release"]
-pre-release-commit-message = "release: version {{version}}"
+pre-release-commit-message = "release: `noise-functions-config` version {{version}}"
 pre-release-replacements = [
   { file = "CHANGELOG.md", search = "Unreleased", replace = "{{version}} ({{date}})" },
 ]
