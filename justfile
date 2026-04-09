@@ -34,5 +34,5 @@ test:
   cargo +nightly test --no-default-features --features libm,nightly-simd
 
 doc *args:
-  cargo-insert-docs --allow-staged
+  cargo-insert-docs --allow-staged --workspace --exclude generate-example-images
   cargo +nightly rustdoc {{args}} --features nightly-simd -- --cfg docsrs
