@@ -65,7 +65,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![allow(clippy::excessive_precision, clippy::needless_late_init, clippy::too_many_arguments, clippy::approx_constant)]
 
-#[cfg(any(feature = "std", test))]
+#[cfg(feature = "std")]
 extern crate std;
 
 #[cfg(feature = "alloc")]
@@ -88,7 +88,7 @@ mod noise;
 mod noise_fn;
 mod open_simplex_2;
 mod sample;
-#[cfg(test)]
+#[cfg(all(feature = "std", test))]
 mod tests;
 mod value_or_noise;
 

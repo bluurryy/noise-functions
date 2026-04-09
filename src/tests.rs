@@ -1,5 +1,5 @@
 use core::{cell::Cell, f32};
-use std::thread_local;
+use std::{boxed::Box, thread_local};
 
 use crate::{Constant, Noise, NoiseFn, OpenSimplex2, Perlin, Sample};
 
@@ -147,6 +147,6 @@ fn test_trait_object_noise() {
     let perlin_dyn: &dyn Sample<2> = &Perlin;
     let _value = (&perlin_dyn).sample2([1.0, 2.0]);
 
-    let perlin_box_dyn: alloc::boxed::Box<dyn Sample<2>> = alloc::boxed::Box::new(Perlin);
+    let perlin_box_dyn: Box<dyn Sample<2>> = Box::new(Perlin);
     let _value = perlin_box_dyn.sample2([1.0, 2.0]);
 }
