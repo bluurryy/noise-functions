@@ -14,6 +14,8 @@ Configurable noise generator struct for the [`noise-functions`](https://docs.rs/
 - **`nightly-simd`** — Adds support for sampling with simd types.
   Some of the noise algorithms have optimized implementations for simd that can be faster than the scalar versions.
   Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
+
+  Breaking changes to this feature may happen in minor releases to keep up with changes on the nightly channel!
 <!-- feature documentation end -->
 
 <!-- crate documentation feature end -->
