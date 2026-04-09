@@ -437,7 +437,7 @@ pub trait Noise {
     }
 }
 
-impl<N: Noise> Noise for &N {}
+impl<N: Noise + ?Sized> Noise for &N {}
 
 #[cfg(feature = "alloc")]
 impl<N: Noise + ?Sized> Noise for alloc::boxed::Box<N> {}

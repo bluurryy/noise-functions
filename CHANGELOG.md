@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- **added:** `&dyn Sample` now implements `Sample` and `Noise`
 - **changed:** the `std` feature now also enables the `alloc` feature
 
 ## 0.8.3 (2026-04-09)

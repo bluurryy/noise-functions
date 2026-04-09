@@ -7,7 +7,7 @@ pub trait Sample<const DIM: usize, Point = [f32; DIM]>: Noise {
 
 impl<const DIM: usize, Point, N> Sample<DIM, Point> for &N
 where
-    N: Sample<DIM, Point>,
+    N: Sample<DIM, Point> + ?Sized,
 {
     #[inline(always)]
     fn sample_with_seed(&self, point: Point, seed: i32) -> f32 {
