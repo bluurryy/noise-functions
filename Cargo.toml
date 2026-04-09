@@ -2,38 +2,15 @@
 name = "noise-functions"
 version = "0.8.2"
 edition = "2021"
-license = "MIT OR Apache-2.0"
-description = "A collection of fast and lightweight noise functions."
-categories = ["no-std", "graphics", "game-development", "algorithms"]
-keywords = ["noise", "perlin", "simplex", "procedural", "random"]
-documentation = "https://docs.rs/noise-functions"
-repository = "https://github.com/bluurryy/noise-functions"
-readme = "README.md"
 rust-version = "1.82.0"
-exclude = ["example-images", "justfile", ".github", "cspell.json"]
-
-[features]
-default = ["std", "alloc"]
-
-## Uses floating point functions from the standard library.
-std = []
-
-## Adds trait implementations for boxed trait objects.
-alloc = []
-
-## Uses `libm` for floating point functions. Required for `no_std`.
-libm = ["dep:libm"]
-
-## Adds support for sampling with simd types. 
-## Some of the noise algorithms have optimized implementations for simd that can be faster than the scalar versions.
-## Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
-nightly-simd = []
-
-## Deprecated feature. Does nothing.
-document-features = []
-
-[dependencies]
-libm = { version = "0.2.8", optional = true, default-features = false }
+description = "A collection of fast and lightweight noise functions."
+documentation = "https://docs.rs/noise-functions"
+readme = "README.md"
+repository = "https://github.com/bluurryy/noise-functions"
+license = "MIT OR Apache-2.0"
+keywords = ["noise", "perlin", "procedural", "random", "simplex"]
+categories = ["algorithms", "game-development", "graphics", "no-std"]
+exclude = [".github", "cspell.json", "example-images", "justfile"]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -51,3 +28,26 @@ members = ["crates/noise-functions-config", "generate-example-images"]
 [workspace.metadata.insert-docs]
 shrink-headings = 0
 hidden-features = ["document-features"]
+
+[dependencies]
+libm = { version = "0.2.8", default-features = false, optional = true }
+
+[features]
+default = ["alloc", "std"]
+
+## Uses floating point functions from the standard library.
+std = []
+
+## Adds trait implementations for boxed trait objects.
+alloc = []
+
+## Uses `libm` for floating point functions. Required for `no_std`.
+libm = ["dep:libm"]
+
+## Adds support for sampling with simd types.
+## Some of the noise algorithms have optimized implementations for simd that can be faster than the scalar versions.
+## Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
+nightly-simd = []
+
+## Deprecated feature. Does nothing.
+document-features = []

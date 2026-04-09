@@ -2,14 +2,28 @@
 name = "noise-functions-config"
 version = "0.10.0"
 edition = "2021"
-license = "MIT OR Apache-2.0"
 description = "Configurable noise generator for `noise-functions`."
-categories = ["no-std", "graphics", "game-development", "algorithms"]
-keywords = ["noise", "perlin", "simplex", "procedural", "random"]
 documentation = "https://docs.rs/noise-functions-config"
-repository = "https://github.com/bluurryy/noise-functions"
 readme = "README.md"
+repository = "https://github.com/bluurryy/noise-functions"
+license = "MIT OR Apache-2.0"
+keywords = ["noise", "perlin", "procedural", "random", "simplex"]
+categories = ["algorithms", "game-development", "graphics", "no-std"]
 exclude = ["justfile"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[package.metadata.release]
+allow-branch = ["main"]
+pre-release-hook = ["just", "pre-release"]
+pre-release-commit-message = "release: version {{version}}"
+pre-release-replacements = [
+  { file = "CHANGELOG.md", search = "Unreleased", replace = "{{version}} ({{date}})" },
+]
+
+[dependencies]
+noise-functions = { path = "../..", version = "0.8.2", default-features = false }
 
 [features]
 default = ["std"]
@@ -20,24 +34,10 @@ std = ["noise-functions/std"]
 ## Uses `libm` for floating point functions. Required for `no_std`.
 libm = ["noise-functions/libm"]
 
-## Adds support for sampling with simd types. 
+## Adds support for sampling with simd types.
 ## Some of the noise algorithms have optimized implementations for simd that can be faster than the scalar versions.
 ## Currently those are the 2d and 3d implementations of `Perlin`, `Cell*` and `Value*` noises.
 nightly-simd = ["noise-functions/nightly-simd"]
 
 ## Deprecated feature. Does nothing.
 document-features = []
-
-[dependencies]
-noise-functions = { path = "../..", version = "0.8.2", default-features = false }
-
-[package.metadata.docs.rs]
-all-features = true
-
-[package.metadata.release]
-allow-branch = ["main"]
-pre-release-hook = ["just", "pre-release"]
-pre-release-commit-message = "release: version {{version}}"
-pre-release-replacements = [
-    { file = "CHANGELOG.md", search = "Unreleased", replace = "{{version}} ({{date}})" },
-]
