@@ -1,7 +1,8 @@
 # Changelog
 
 ## Unreleased
-- **added:** explain purpose of `nightly-simd` feature
+- **changed:** enable `noise-functions`' alloc feature since this crate requires the `alloc` crate anyhow
+- **docs:** explain purpose of `nightly-simd` feature
 
 ## 0.10.0 (2025-02-12)
 - **breaking:** upgraded `noise-functions` dependency to `0.8.0`
