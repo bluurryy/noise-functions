@@ -36,7 +36,7 @@ libm = { version = "0.2.8", default-features = false, optional = true }
 default = ["alloc", "std"]
 
 ## Uses floating point functions from the standard library.
-std = []
+std = ["alloc"]
 
 ## Adds trait implementations for boxed trait objects.
 alloc = []

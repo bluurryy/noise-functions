@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- **changed:** the `std` feature now also enables the `alloc` feature
+
 ## 0.8.3 (2026-04-09)
 - **changed:** update `nightly-simd` feature to compile on current nightly
 
