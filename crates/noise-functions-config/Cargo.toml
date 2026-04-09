@@ -1,6 +1,6 @@
 [package]
 name = "noise-functions-config"
-version = "0.10.0"
+version = "0.10.1"
 edition = "2021"
 description = "Configurable noise generator for `noise-functions`."
 documentation = "https://docs.rs/noise-functions-config"
