@@ -61,7 +61,7 @@
 //! <!-- feature documentation end -->
 //! <!-- crate documentation feature end -->
 #![no_std]
-#![cfg_attr(feature = "nightly-simd", feature(portable_simd))]
+#![cfg_attr(feature = "nightly-simd", feature(portable_simd), allow(clippy::incompatible_msrv))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![allow(clippy::excessive_precision, clippy::needless_late_init, clippy::too_many_arguments, clippy::approx_constant)]
 
