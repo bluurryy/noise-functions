@@ -89,6 +89,14 @@ fn translate_doesnt_crash() {
     Sample::<4>::sample_with_seed(&Constant(0.0).translate_xyzw(0.0, 0.0, 0.0, 0.0), [0.0; 4], 0);
 }
 
+/// This test is meant to run under Miri to check for UB
+#[test]
+#[cfg(feature = "nightly-simd")]
+fn sound_when_out_of_bounds() {
+    _ = crate::ValueCubic.sample3a(std::simd::f32x4::splat(f32::INFINITY));
+    _ = crate::ValueCubic.sample3a(std::simd::f32x4::splat(i32::MAX as f32 * 10.0));
+}
+
 #[test]
 fn clamp() {
     assert_eq!(Constant(0.0).clamp(1.0, 2.0).sample2([0.0; 2]), 1.0);
