@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- **fixed:** fix undefined behavior in SIMD sampling Perlin, Value and Cell noise in 2D and 3D (only affects `nightly-simd` feature)
+
 ## 0.8.4 (2026-04-09)
 - **added:** `&dyn Sample` now implements `Sample` and `Noise`
 - **changed:** the `std` feature now also enables the `alloc` feature
