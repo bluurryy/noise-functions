@@ -220,6 +220,7 @@ pub fn fast_max(a: f32, b: f32) -> f32 {
 
 #[cfg(test)]
 mod tests {
+    #[cfg(feature = "nightly-simd")]
     use super::*;
 
     /// Note: this test is meant to be run under Miri to check soundness of the `to_int_unchecked` usage.
