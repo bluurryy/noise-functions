@@ -1,6 +1,6 @@
 [package]
 name = "noise-functions"
-version = "0.8.4"
+version = "0.8.5"
 edition = "2021"
 rust-version = "1.82.0"
 description = "A collection of fast and lightweight noise functions."
