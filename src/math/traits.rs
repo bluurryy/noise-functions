@@ -45,7 +45,7 @@ impl<const LANES: usize> FloorToInt for Simd<f32, LANES> {
 
     #[inline(always)]
     fn floor_to_int(self) -> Self::Output {
-        let int = unsafe { self.to_int_unchecked::<i32>() };
+        let int = simd_float_to_int_saturating(self);
         int - self.simd_ge(splat(0.0)).select(splat(0), splat(1))
     }
 }
@@ -79,8 +79,7 @@ impl<const LANES: usize> RoundToInt for Simd<f32, LANES> {
 
     #[inline(always)]
     fn round_to_int(self) -> Self::Output {
-        let f = self + self.simd_ge(splat(0.0)).select(splat(0.5), splat(-0.5));
-        unsafe { f.to_int_unchecked() }
+        simd_float_to_int_saturating(self + self.simd_ge(splat(0.0)).select(splat(0.5), splat(-0.5)))
     }
 }
 
@@ -184,6 +183,22 @@ where
     Simd::splat(value)
 }
 
+/// Acts like `float_value as i32` (rounds down and saturates when out of bounds) but on a SIMD vector.
+///
+/// Differs in that values above i32::MAX are clamped slightly below it (for efficient implementation).
+#[cfg(feature = "nightly-simd")]
+fn simd_float_to_int_saturating<const LANES: usize>(floats: Simd<f32, LANES>) -> Simd<i32, LANES> {
+    let not_nan = floats.is_nan().select(Simd::<f32, LANES>::splat(0.0), floats);
+
+    let lower_bound = const { Simd::splat(i32::MIN as f32) };
+    // i32::MAX gets rounded up when converted to f32, so we have to take a step down to stay in bounds of i32
+    let upper_bound = const { Simd::splat((i32::MAX as f32).next_down()) };
+    let clamped = not_nan.simd_clamp(lower_bound, upper_bound);
+
+    // SAFETY: we have adjusted the input to be representable as i32
+    unsafe { clamped.to_int_unchecked::<i32>() }
+}
+
 #[inline(always)]
 pub fn fast_min(a: f32, b: f32) -> f32 {
     if a < b {
@@ -200,5 +215,50 @@ pub fn fast_max(a: f32, b: f32) -> f32 {
         a
     } else {
         b
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[cfg(feature = "nightly-simd")]
+    use super::*;
+
+    /// Note: this test is meant to be run under Miri to check soundness of the `to_int_unchecked` usage.
+    #[test]
+    #[cfg(feature = "nightly-simd")]
+    fn float_to_int() {
+        use core::{
+            f32,
+            simd::{f32x4, i32x4},
+        };
+
+        #[track_caller]
+        fn check_case(input: f32, expected_output: i32) {
+            assert_eq!(input as i32, expected_output, "expectation of {expected_output:?} doesn't match `{input:?} as i32`");
+            check_case_without_comparison(input, expected_output);
+        }
+        #[track_caller]
+        fn check_case_without_comparison(input: f32, expected_output: i32) {
+            // values in other lanes confirm the lanes are acting independently
+            assert_eq!(
+                simd_float_to_int_saturating(f32x4::from([input, 0.0, 1.0, 3.5])),
+                i32x4::from([expected_output, 0, 1, 3]),
+                "simd {input}"
+            );
+        }
+
+        check_case(f32::NAN, 0);
+        check_case(-f32::INFINITY, i32::MIN);
+        check_case(const { (i32::MIN as f32).next_down() }, i32::MIN);
+        check_case(const { i32::MIN as f32 }, i32::MIN);
+        check_case(const { (i32::MIN as f32).next_up() }, -2147483520);
+        check_case(const { i32::MIN as f32 }, i32::MIN);
+        check_case(-1.5, -1);
+        check_case(-0.0, 0);
+        check_case(0.0, 0);
+        check_case(1.5, 1);
+        check_case(const { (i32::MAX as f32).next_down() }, 2147483520);
+        check_case_without_comparison(const { i32::MAX as f32 }, 2147483520);
+        check_case_without_comparison(const { (i32::MAX as f32).next_up() }, 2147483520);
     }
 }
