@@ -226,8 +226,10 @@ mod tests {
     #[test]
     #[cfg(feature = "nightly-simd")]
     fn float_to_int() {
-        use core::f32;
-        use std::simd::{f32x4, i32x4};
+        use core::{
+            f32,
+            simd::{f32x4, i32x4},
+        };
 
         #[track_caller]
         fn check_case(input: f32, expected_output: i32) {
